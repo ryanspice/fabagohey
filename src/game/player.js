@@ -1,5 +1,6 @@
 
 import RagPhysics from './ragphysics';
+
 export default class Player extends RagPhysics {
 
 	constructor(img,x,y,s,a,c,xx,yy,w,h,visuals){

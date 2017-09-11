@@ -1,10 +1,17 @@
 
+import {
+	State
+} from 'ryanspice2016-spicejs';
 
 import Player from './player';
 import Skeleton from './skeleton';
-import Bone from './bone';
 
-let Game = {
+//rename these
+var s = 1.125 + 0.2;
+var xx = 0;2
+var xxx = 0;
+
+export default new State({
 
 	init:function(){
 
@@ -38,11 +45,6 @@ let Game = {
 	this.bgItems3 = [];
 
 	this.enemies = [];
-
-	let s = 1.125 + 0.2;
-	let xx = 0;2
-	let xxx = 0;
-
 	for(let i = 3; i>=0;i--)
 		(this.bgItems.push(this.visuals.createMapObject('Tile',this.bg[i],0,0,s,1,xx,0,0,xxx+272,160,-3+i))),
 		(this.bgItems2.push(this.visuals.createMapObject('Tile',this.bg[i],-272*s,0,s,1,xx,0,0,xxx+272,160,-3+i))),
@@ -68,7 +70,7 @@ let Game = {
 	for (var i = 24; i>=0;i--){
 
 		let count = 0;
-		for (var j = 0; j < Math.floor(Math.random() * 70); j++) {
+		for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
 	    	count++;
 		}
 
@@ -84,7 +86,7 @@ let Game = {
 },draw:function(){
 
 	if (this.app.client.graphics.getErrors()!==0)
-		this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000")
+		this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
 
 	let col = "#FFFFFF";
 	this.hits = [];
@@ -208,5 +210,5 @@ let Game = {
 		item.x = item.w + pox * ((2-i)/100);
 	}
 
-}};
-export default Game;
+}
+});

@@ -1,15 +1,21 @@
 
+import {
+	State
+} from 'ryanspice2016-spicejs';
+
 import Game from './game';
 
-let Loading = {
+export default new State({
+
 	init:function(){
 		this.x =0;
-		var a = 12;
-		var r= 1.6;
-		var d = 6;
-		var b = this.x/1080;
-	//		this.visuals.Circle(window.innerWidth/3,100,3,"#A9CCE3",1);
+		let a = 12;
+		let r= 1.6;
+		let d = 6;
+		let b = this.x/1080;
+
 		this.list = [];
+
 		for(var i=8;i>=0;--i){
 
 			var obj = new Circle((-7+this.app.client.width/2+Math.cos((b+i)*7)*a),this.app.client.height/1.5+Math.sin((b+i)*7)*a,r,"#33FF33",1,this.visuals);
@@ -20,6 +26,7 @@ let Loading = {
 
 		this.app.client.loader.graphics = this.graphics;
 		let loader2 = this.app.client.loader;
+
 		loader2.asyncLoadImage('./parallax-forest-back-trees','s1').then(()=>
 		loader2.asyncLoadImage('./parallax-forest-front-trees','s2').then(()=>
 		loader2.asyncLoadImage('./parallax-forest-lights','s1').then(()=>
@@ -63,10 +70,11 @@ let Loading = {
 			//this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#111111");
 
 	},update:function(){
-		var a = 12;
-		var c = 3;
-		var d = 6;
-		var b = this.x/1080;
+
+		let a = 12;
+		let c = 3;
+		let d = 6;
+		let b = this.x/1080;
 
 		this.x+=3;
 		let colour = "#EE3333";
@@ -82,6 +90,6 @@ let Loading = {
 			item.col = colour;
 		}
 
-}};
+	}
 
-export default Loading;
+});
