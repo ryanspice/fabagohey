@@ -1,20 +1,16 @@
 
-
-//require('file?name=[name].[ext]!../index.html');
-
 import SpiceJS from "ryanspice2016-spicejs";
-/*
 
-console.log(SpiceJS);
-*/
+import Loading from './game/loading';
 
-class steve extends Number {
+const Application = SpiceJS.create();
 
-		constructor(a:Object){
-			super()
+Application.OnLoad = (self) => {
 
-		}
+	self.main = Loading;
 
-}
+	self.Start(320, 180);
 
-let s:Object = {};
+	window.Application = this;
+
+};

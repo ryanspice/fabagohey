@@ -25,7 +25,8 @@ const source = {
         html404:"../404.html"
     },
 	plugins:[        new CopyWebpackPlugin([
-	            { from: './src/index.html' }
+	            { from: './src/index.html' },
+	            { from: './src/images', to:'./images/' }
 	        ]),
         new webpack.NamedModulesPlugin(),
 		new webpack.optimize.OccurrenceOrderPlugin(true),
