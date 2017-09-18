@@ -27,6 +27,8 @@ export default new State({
 		this.app.client.loader.graphics = this.graphics;
 		let loader2 = this.app.client.loader;
 
+		loader2.asyncLoadImage('./Cursive1_MyEdit','c1').then(()=>
+		loader2.asyncLoadImage('./Untitled','ut').then(()=>
 		loader2.asyncLoadImage('./parallax-forest-back-trees','s1').then(()=>
 		loader2.asyncLoadImage('./parallax-forest-front-trees','s2').then(()=>
 		loader2.asyncLoadImage('./parallax-forest-lights','s1').then(()=>
@@ -42,7 +44,7 @@ export default new State({
 		loader2.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Dead','s').then(()=>
 		loader2.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Idle','s').then(()=>{
 
-		}))))))))))))));
+		}))))))))))))))));
 
 
 		this.visuals.bufferIndex = 1;

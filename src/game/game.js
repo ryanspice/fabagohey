@@ -3,12 +3,21 @@ import {
 	State
 } from 'ryanspice2016-spicejs';
 
+import _CHARMAP_ from './maps';
+
+import Time from './time';
+
 import Player from './player';
 import Skeleton from './skeleton';
 
+import Letter from './letter';
+
+	function reverseString(str) {
+	  return (str === '') ? '' : reverseString(str.substr(1)) + str.charAt(0);
+	}
 //rename these
 var s = 1.125 + 0.2;
-var xx = 0;2
+var xx = 0;
 var xxx = 0;
 
 export default new State({
@@ -17,28 +26,35 @@ export default new State({
 
 	let loader = this.app.client.loader;
 
-	this.bg = [
-		loader.getImageReference('./parallax-forest-back-trees'),
-		loader.getImageReference('./parallax-forest-lights'),
-		loader.getImageReference('./parallax-forest-middle-trees'),
-		loader.getImageReference('./parallax-forest-front-trees'),
-	];
+	(this.loadImages = ()=>{
 
-	this.sprSkeleton = [
-		loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
-		loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
-		loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
-		loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
-		loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
-		loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
-	];
+		this.font = loader.getImageReference('./Cursive1_MyEdit');
+		this.line = loader.getImageReference('./Untitled');
 
-	this.sprKnight = [
-		loader.getImageReference('./knight_3_improved_slash_animation_2'),
-		loader.getImageReference('./knight_walk_animation'),
-		loader.getImageReference('./knight_3_block'),
-		loader.getImageReference('./knight_3_idle')
-	];
+		this.bg = [
+			loader.getImageReference('./parallax-forest-back-trees'),
+			loader.getImageReference('./parallax-forest-lights'),
+			loader.getImageReference('./parallax-forest-middle-trees'),
+			loader.getImageReference('./parallax-forest-front-trees'),
+		];
+
+		this.sprSkeleton = [
+			loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
+			loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
+			loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
+			loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
+			loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
+			loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
+		];
+
+		this.sprKnight = [
+			loader.getImageReference('./knight_3_improved_slash_animation_2'),
+			loader.getImageReference('./knight_walk_animation'),
+			loader.getImageReference('./knight_3_block'),
+			loader.getImageReference('./knight_3_idle')
+		];
+
+	})();
 
 	this.bgItems = [];
 	this.bgItems2 = [];
@@ -55,8 +71,8 @@ export default new State({
 		this.bgItems.priority = -i;
 	}
 
-	this.player = new Player(this.sprKnight[0],20,120,1,1,1,0,0,(167/4),46,this.visuals)
-	this.player.pState = 'idle';
+	this.player = new Player(this.sprKnight[0],-20,50,1,1,1,0,0,(167/4),46,this.visuals)
+	this.player.pState = 'walk';
 
 	this.player.sprWalk = this.sprKnight[1];
 	this.player.sprBlock = this.sprKnight[2];
@@ -67,23 +83,102 @@ export default new State({
 	Skeleton.sprIdle = this.sprSkeleton[0];
 	Skeleton.sprWalk = this.sprSkeleton[1];
 
-	for (var i = 24; i>=0;i--){
+	for (var i = 14; i>=0;i--){
 
 		let count = 0;
 		for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
 	    	count++;
 		}
 
-		let y = 160 + count;
-		y = 160;
-		let s = new Skeleton(this.sprSkeleton[0],120 + i*20*(y/100),y,-1,1,1,0,-3,(264/11),35,this.visuals);
-		s.priority = 5;
-		this.enemies.push(s);
+		setTimeout(()=>{
+
+			let y = 160 + count;
+			y = 160;
+			let s = new Skeleton(this.sprSkeleton[0],320 + i*20*(y/100),y,-1,1,1,0,-3,(264/11),35,this.visuals);
+			s.priority = 5;
+			this.enemies.push(s);
+
+		},100*i)
 	}
 
 	this.visuals.bufferIndex = 0;
 
-},draw:function(){
+	this.characters = _CHARMAP_;
+
+	this.characterList=(string,xx,yy,s=1)=>{
+
+		let arr = [];
+
+		for (var i = string.length-1; i>=0;i--){
+
+			if (string[i]==" ")
+				continue;
+
+			let x = (this.characters.indexOf(string[i]));
+
+			let y = 0;
+			let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
+			l.priority = 27;
+			l.characterNum = x;
+			arr.push(l);
+
+		}
+		return arr;
+	};
+
+	this.updateCharacterList=(list,string, xx,yy)=>{
+		for (var i = list.length-1;i>=0;i--){
+				list[i].characterNum = String(this.characters.indexOf('0'));
+		}
+		for (var ii = 0;ii<string.length;ii++){
+
+			let x = (this.characters.indexOf(string[ii]));
+
+			list[ii].character = string[ii];
+			list[ii].characterNum = String(x);
+			//for (var i = list.length-1; i>=0;i--){
+			//}
+		}
+
+	}
+
+	for (var i = 10;i>=0;i--){
+		let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
+		t.priority = 8;
+		t.type = '_image_part';
+	}
+
+	this.score = '000000';
+	this.multiplier = 'x';
+
+	this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
+	this.UI_Multiplier = this.characterList((this.multiplier),0,10,0.5);
+	this.UI_Time = this.characterList('00',320/2-(8*2),5);
+
+	let best = '010000';
+	let yourbest = '000000';
+	this.UI_Best = this.characterList('Best '+best,378-108	,5,0.5);
+	this.UI_Your = this.characterList('You '+yourbest,378-103.5	,10,0.5);
+
+	this.time =	new Time();
+	this.getTime = ()=>{
+
+		let time = this.time.seconds;//this.time.minutes;// +""+ (this.time.seconds);
+		if (this.time.seconds<10)
+			time = "0" + this.time.seconds;
+		if (Number(time)<61)
+		return String(Number(60-time));
+		else
+		return "XX";
+
+	}
+
+},
+draw:function(){
+
+	this.updateCharacterList(this.UI_ScoreNumbers,reverseString(this.score),0,15);
+	this.updateCharacterList(this.UI_Time,reverseString(this.getTime()),0,15);
+
 
 	if (this.app.client.graphics.getErrors()!==0)
 		this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");

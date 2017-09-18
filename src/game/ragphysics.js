@@ -33,17 +33,18 @@ export default class RagPhysics extends Sprite {
 	bounds(){
 
 		if (this.position.y<140)
-			this.position.y=140, this.diry = 0;
+			/*this.position.y=140, */this.diry = 0;
 
 		if (this.position.y>175)
 			this.position.y=175;
 
 		if (this.position.y<165)
-			this.position.y=165;// this.diry = 0;
+			this.position.y = 165;//this.position.y=165;// this.diry = 0;
 
 		if (this.position.y>165)
 			this.position.y=165;
 
+		//this.position.x = this.app.client.math.Clamp(0,1)
 
 
 		if (this.position.x<-120)

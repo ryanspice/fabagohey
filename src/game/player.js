@@ -15,6 +15,7 @@ export default class Player extends RagPhysics {
 		this.priority = 6;
 		this.thyme = new Date();
 		this.off = {y:-2};
+		this.vel = {y:1};
 	}
 
 	draw(){
@@ -53,6 +54,7 @@ export default class Player extends RagPhysics {
 			if (gamepad.right)
 				this.position.x+=this.dir,this.pState = 'walk', this.dir = 0.5;
 
+
 			if (gamepad.up)
 				this.position.y+=this.diry,this.pState = 'walk', this.diry = -0.5;
 			if (gamepad.down)
@@ -82,6 +84,10 @@ export default class Player extends RagPhysics {
 				}
 		}
 		this.bounds();
+
+		if (this.x<20)
+			this.x+=1,this.pState = 'walk';
+
 
 		this.off = {y:-2};
 		switch(this.pState){
