@@ -12,6 +12,7 @@ export default class RagPhysics extends Sprite {
 		super(img,x,y,s,a,c,xx,yy,w,h,visuals);
 		this.collision = false;
 		this.hit = false;
+		this.index = 0;
 	}
 
 	getX(){
@@ -28,6 +29,11 @@ export default class RagPhysics extends Sprite {
 	getPosition(){
 
 		return new Vector(this.getX(),this.getY());
+	}
+
+	getIndex(){
+
+		return this.index.toFixed(0);
 	}
 
 	bounds(){
@@ -48,7 +54,7 @@ export default class RagPhysics extends Sprite {
 
 
 		if (this.position.x<-120)
-			this.position.x=-120, this.pState = 'idle';
+			this.position.x=-120;//, this.pState = 'idle';
 
 		//if (this.position.x>300)
 		//	this.position.x=300, this.pState = 'idle';

@@ -25,6 +25,7 @@ export default new State({
 	init:function(){
 
 	let loader = this.app.client.loader;
+	this.debug = false;
 
 	(this.loadImages = ()=>{
 
@@ -166,7 +167,7 @@ export default new State({
 		let time = this.time.seconds;//this.time.minutes;// +""+ (this.time.seconds);
 		if (this.time.seconds<10)
 			time = "0" + this.time.seconds;
-		if (Number(time)<61)
+		if (Number(time)<60)
 		return String(Number(60-time));
 		else
 		return "XX";
@@ -179,17 +180,14 @@ draw:function(){
 	this.updateCharacterList(this.UI_ScoreNumbers,reverseString(this.score),0,15);
 	this.updateCharacterList(this.UI_Time,reverseString(this.getTime()),0,15);
 
-
 	if (this.app.client.graphics.getErrors()!==0)
 		this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
 
 	let col = "#FFFFFF";
 	this.hits = [];
 
-	//this.player.priority = -this.player.position.y;
-
 	let pos = Player.position;
-	let a = 0;//0.1;
+	let a = this.debug?0.1:0;//0.1;
 	pos.y-=25;
 
 	for (var i = this.enemies.length-1; i>=0;i--){
@@ -247,10 +245,10 @@ draw:function(){
 				){
 					if (this.player.pState =="attack")
 					if (Enemy.pState !="dead"){
-						if (Math.floor(this.player.index)==5)
+						if (this.player.getIndex()==5)
 							col = "#FF00FF",this.hits.push(Enemy);
 
-						if (Math.floor(this.player.index)==8)
+						if (this.player.getIndex()==8)
 							col = "#FF00FF",this.hits.push(Enemy);
 					}
 				}

@@ -80,8 +80,8 @@ export default class Player extends RagPhysics {
 					this.xx=0;
 					this.w = (167/4);
 
-					this.yy = 0;
 				}
+
 		}
 		this.bounds();
 
@@ -97,6 +97,7 @@ export default class Player extends RagPhysics {
 				this.img = this.sprWalk;
 				z = (336/8);
 				this.xx =z*Math.round(this.index);
+
 
 				if (this.index<7)
 					this.index+=0.1;
