@@ -6,6 +6,7 @@ export default class Player extends RagPhysics {
 	constructor(img,x,y,s,a,c,xx,yy,w,h,visuals){
 
 		super(img,x,y,s,a,c,xx,yy,w,h,visuals);
+
 		this.type = "e"
 
 		this.type = '';
@@ -28,17 +29,9 @@ export default class Player extends RagPhysics {
 
 	}
 
-	update(){
-
-		let t = new Date().getTime();
-		let z;
+	controls(){
 
 		let gamepad =  this.visuals.app.input.gamepads
-		//if (SpiceJS.controller.list().input.gamepads)
-			//this.pState = 'walk';
-		this.pState = 'idle';
-		let s = this.dir;
-		let sy = this.dir;
 		if (gamepad){
 
 
@@ -61,28 +54,29 @@ export default class Player extends RagPhysics {
 				this.position.y+=this.diry,this.pState = 'walk', this.diry = 0.5;
 
 			if (gamepad.a)
-				s=0,this.pState = 'block',this.index+=0.1;
+				this.pState = 'block',this.index+=0.1;
 
 
 			if (gamepad.y){
 
 				this.dir = this.dir/10000, this.diry = this.diry/10000, this.pState = 'attack';
 
-				this.h = 80;
-				this.w = (800/10);
 
 			}
 
-			if (this.pState != 'attack'){
-
-					this.yy = 0;
-					this.h = 42;
-					this.xx=0;
-					this.w = (167/4);
-
-				}
 
 		}
+
+	}
+
+
+	update(){
+		let t = new Date().getTime();
+		let z;
+
+		this.pState = 'idle';
+
+		this.controls();
 		this.bounds();
 
 		if (this.x<20)
@@ -90,6 +84,17 @@ export default class Player extends RagPhysics {
 
 
 		this.off = {y:-2};
+
+		if (this.pState != 'attack'){
+
+			this.yy = 0;
+			this.h = 42;
+			this.xx=0;
+			this.w = (167/4);
+
+		}
+
+
 		switch(this.pState){
 
 			case 'walk':
@@ -135,6 +140,8 @@ export default class Player extends RagPhysics {
 
 			case 'attack':
 
+				this.h = 80;
+				this.w = (800/10);
 				this.img = this.sprAttack;
 				z = (800/10);
 				this.xx =-20 + z*Math.round(this.index);
@@ -154,7 +161,6 @@ export default class Player extends RagPhysics {
 	}
 
 }
-
 
 Player.offset = new Vector(0,0);
 Player.position = new Vector(0,0);

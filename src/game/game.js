@@ -1,34 +1,45 @@
-
-import {
-	State
-} from 'ryanspice2016-spicejs';
-
+//@flow
+import utils from './utils.js';
 import _CHARMAP_ from './maps';
 
-import Time from './time';
+/* Imports from SpiceJS */
 
+import {
+	State,
+	Sprite,
+	// $FlowFixMe
+} from 'ryanspice2016-spicejs';
+
+/* Import types from SpiceJS */
+
+import {
+	IState
+	// $FlowFixMe
+} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
+
+/* TODO: export properly from spicejs */
+
+declare var Vector;
+
+import Time from './time';
 import Player from './player';
 import Skeleton from './skeleton';
-
 import Letter from './letter';
 
-	function reverseString(str) {
-	  return (str === '') ? '' : reverseString(str.substr(1)) + str.charAt(0);
-	}
 //rename these
-var s = 1.125 + 0.2;
-var xx = 0;
-var xxx = 0;
+let s = 1.125 + 0.2;
+let xx = 0;
+let xxx = 0;
 
-const Game = {
+const Game:IState = {
 
-	init:function(){
+	init:async function(){
 
-		let loader = this.app.client.loader;
-		this.debug = false;
+		this.debug = true;
 
-		(this.loadImages = ()=>{
+		await (this.loadImages = ()=>{
 
+			let loader = this.app.client.loader;
 			this.font = loader.getImageReference('./Cursive1_MyEdit');
 			this.line = loader.getImageReference('./Untitled');
 
@@ -62,24 +73,15 @@ const Game = {
 		this.bgItems3 = [];
 
 		this.enemies = [];
+
 		for(let i = 3; i>=0;i--) {
-
 			let item;
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-272,0,s,1,xx,0,0,xxx+272,160,-3+i)));
+			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			item.priority = -3+ i;
+			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 			item.priority = -2 + i;
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,0,s,1,xx,0,0,xxx+272,160,-3+i)));
-			item.priority = -2 + i;
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],272,0,s,1,xx,0,0,xxx+272,160,-3+i)));
-			item.priority = -2 + i;
-
-		}
-			//(this.bgItems2.push(this.visuals.createMapObject('Tile',this.bg[i],-272*s,0,s,1,xx,0,0,xxx+272,160,-3+i))),
-			//(this.bgItems3.push(this.visuals.createMapObject('Tile',this.bg[i],272*s,0,s,1,xx,0,0,xxx+272,160,-3+i)));
-
-		for(let i = this.bgItems.length; i>=0;i--) {
-
-			//this.bgItems.priority = -i;
-
+			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			item.priority = -1	 + i;
 		}
 
 		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
@@ -94,101 +96,115 @@ const Game = {
 		Skeleton.sprIdle = this.sprSkeleton[0];
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
-					for (var i = 14; i>=0;i--){
+		for (var i = 14; i>=0;i--){
+			let count = 0;
+			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
+		    	count++;
+			}
+			let s = new Skeleton(this.sprSkeleton[0],300,130,-1,1,1,0,-3,(264/11),35,this.visuals);
+			s.priority = 5;
+			this.enemies.push(s);
+			/*
+			setTimeout(()=>{
 
-						let count = 0;
-						for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
-					    	count++;
-						}
+				let y = 160 + count;
+				y = 60;
+				let s = new Skeleton(this.sprSkeleton[0],300 + i*20*(y/100),y,-1,1,1,0,-3,(264/11),35,this.visuals);
+				s.priority = 5;
+				this.enemies.push(s);
 
-						setTimeout(()=>{
+			},	100*i)
+			*/
+		}
 
-							let y = 160 + count;
-							y = 160;
-							let s = new Skeleton(this.sprSkeleton[0],320 + i*20*(y/100),y,-1,1,1,0,-3,(264/11),35,this.visuals);
-							s.priority = 5;
-							this.enemies.push(s);
+		this.visuals.bufferIndex = 0;
 
-						},100*i)
-					}
+		this.initUI = await (()=>{
+		this.characters = _CHARMAP_;
 
-					this.visuals.bufferIndex = 0;
+		this.characterList=(string,xx,yy,s=1)=>{
 
-					this.characters = _CHARMAP_;
+			let arr = [];
 
-					this.characterList=(string,xx,yy,s=1)=>{
+			for (var i = string.length-1; i>=0;i--){
 
-						let arr = [];
+				if (string[i]==" ")
+					continue;
 
-						for (var i = string.length-1; i>=0;i--){
+				let x = (this.characters.indexOf(string[i]));
 
-							if (string[i]==" ")
-								continue;
+				let y = 0;
+				let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
+				l.priority = 27;
+				l.characterNum = x;
+				arr.push(l);
 
-							let x = (this.characters.indexOf(string[i]));
+			}
 
-							let y = 0;
-							let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
-							l.priority = 27;
-							l.characterNum = x;
-							arr.push(l);
+			return arr;
+		};
 
-						}
-						return arr;
-					};
+		this.updateCharacterList=(list,string, xx,yy)=>{
 
-					this.updateCharacterList=(list,string, xx,yy)=>{
-						for (var i = list.length-1;i>=0;i--){
-								list[i].characterNum = String(this.characters.indexOf('0'));
-						}
-						for (var ii = 0;ii<string.length;ii++){
+			for (var i = list.length-1;i>=0;i--){
+					list[i].characterNum = String(this.characters.indexOf('0'));
+			}
+			for (var ii = 0;ii<string.length;ii++){
 
-							let x = (this.characters.indexOf(string[ii]));
+				let x = (this.characters.indexOf(string[ii]));
 
-							list[ii].character = string[ii];
-							list[ii].characterNum = String(x);
-							//for (var i = list.length-1; i>=0;i--){
-							//}
-						}
+				list[ii].character = string[ii];
+				list[ii].characterNum = String(x);
+				//for (var i = list.length-1; i>=0;i--){
+				//}
+			}
 
-					}
+		}
 
-					for (var i = 10;i>=0;i--){
-						let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
-						t.priority = 8;
-						t.type = '_image_part';
-					}
+		for (let i = 10;i>=0;i--){
+			let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
+			t.priority = 8;
+			t.type = '_image_part';
+		}
 
-					this.score = '000000';
-					this.multiplier = 'x';
+		this.score = '000000';
+		this.multiplier = 'x';
 
-					this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
-					this.UI_Multiplier = this.characterList((this.multiplier),0,10,0.5);
-					this.UI_Time = this.characterList('00',320/2-(8*2),5);
+		let best = '010000';
+		let yourbest = '000000';
 
-					let best = '010000';
-					let yourbest = '000000';
-					this.UI_Best = this.characterList('Best '+best,378-108	,5,0.5);
-					this.UI_Your = this.characterList('You '+yourbest,378-103.5	,10,0.5);
 
-					this.time =	new Time();
-					this.getTime = ()=>{
+			this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
+			this.UI_Multiplier = this.characterList((this.multiplier),0,10,0.5);
+			this.UI_Time = this.characterList('00',320/2-(8*2),5);
 
-						let time = this.time.seconds;//this.time.minutes;// +""+ (this.time.seconds);
-						if (this.time.seconds<10)
-							time = "0" + this.time.seconds;
-						if (Number(time)<60)
-						return String(Number(60-time));
-						else
-						return "XX";
+			this.UI_Best = this.characterList('Best '+best,378-108	,5,0.5);
+			this.UI_Your = this.characterList('You '+yourbest,378-103.5	,10,0.5);
 
-					}
+		})();
+
+		this.time =	new Time();
+
+		this.getTime = ()=>{
+
+			let time = this.time.seconds;	//this.time.minutes;// +""+ (this.time.seconds);
+			if (this.time.seconds<10)
+				time = "0" + this.time.seconds;
+			if (Number(time)<60)
+			return String(Number(60-time));
+			else
+			return "XX";
+
+		}
+
+		this.ready = true;
 	}
 ,
 	draw:function(){
-
-			this.updateCharacterList(this.UI_ScoreNumbers,reverseString(this.score),0,15);
-			this.updateCharacterList(this.UI_Time,reverseString(this.getTime()),0,15);
+if (!this.ready)
+	return;
+			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
+			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
 
 			if (this.app.client.graphics.getErrors()!==0)
 				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
@@ -197,14 +213,16 @@ const Game = {
 			this.hits = [];
 
 			let pos = Player.position;
-			let a = this.debug?0.1:0;//0.1;
+			let a = this.debug?1:0;//0.1;
 			pos.y-=25;
 
 			for (var i = this.enemies.length-1; i>=0;i--){
+
 				let Enemy = this.enemies[i];
 				var collision = false;
 
 				for (var i2 = this.enemies.length-1; i2>=0;i2--){
+
 					let Enemy2 = this.enemies[i2];
 					let diff2 = Vector.Difference(Enemy.getPosition(), Enemy2.getPosition());
 
@@ -289,12 +307,19 @@ const Game = {
 ,
 	update:function(){
 
-				this.player.update();
-		return;
-		if (this.app.client.graphics.getErrors()!==0)
-			console.log('loading'+this.app.client.graphics.getErrors());
+		if (!this.ready)
+			return;
 
 		this.player.update();
+
+		if (this.app.client.graphics.getErrors()!==0) {
+
+			console.log('loading'+this.app.client.graphics.getErrors());
+
+		}
+
+		this.player.update();
+		return;
 		Player.position = this.player.position;
 		let pox = -this.player.x*15;
 		for (var i = this.bgItems.length-1; i>=0;i--){
