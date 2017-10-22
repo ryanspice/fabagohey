@@ -98,4 +98,18 @@ export default class NewSprite extends Sprite {
 
 	}
 
+
+	/**/
+
+	set state(val:IState){
+		this.index = 0;
+		this._state = val;
+	}
+
+	/**/
+
+	get state():IState {
+		return this._state;
+	}
+
 }

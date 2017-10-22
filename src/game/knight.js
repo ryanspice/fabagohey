@@ -33,60 +33,21 @@ export default class Knight extends RagPhysics {
 		this.visuals.image_flip(-1 + this.x,1)
 
 	}
-	controls(){
-		console.log(this)
-		console.log(this.visuals)
-		let gamepad =  this.visuals.app.input.gamepads
-		if (gamepad){
 
-
-			if (gamepad.a)
-				this.dir=this.dir/1000,this.diry=this.diry/10000,this.pState = 'block',this.index+=0.1;
-
-			if ((gamepad.left)||(gamepad.right))
-			if (gamepad.x)
-				this.position.x+=this.dir, this.index+=0.1;
-
-			if (gamepad.left)
-				this.position.x+=this.dir,this.pState = 'walk', this.dir = -0.5;
-			if (gamepad.right)
-				this.position.x+=this.dir,this.pState = 'walk', this.dir = 0.5;
-
-
-			if (gamepad.up)
-				this.position.y+=this.diry,this.pState = 'walk', this.diry = -0.5;
-			if (gamepad.down)
-				this.position.y+=this.diry,this.pState = 'walk', this.diry = 0.5;
-
-			if (gamepad.a)
-				this.pState = 'block',this.index+=0.1;
-
-
-			if (gamepad.y){
-
-				this.dir = this.dir/10000, this.diry = this.diry/10000, this.pState = 'attack';
-
-
-			}
-
-
-		}
-
-	}
 
 
 	update(){
+
 		let t = new Date().getTime();
 		let z;
-
-		this.pState = 'idle';
 
 		this.controls();
 		this.bounds();
 
 		if (this.x<20)
-			this.x+=1,this.pState = 'walk';
-
+			this.x+=1,this.index+=0.05,this.pState = 'walk';
+		if (this.x==20)
+			this.pState = 'idle';
 
 		this.off = {y:-2};
 
@@ -152,7 +113,32 @@ export default class Knight extends RagPhysics {
 				this.xx =-20 + z*Math.round(this.index);
 
 				this.off = {y:3};
-				this.index = 4+Math.sin(t/(360-this.agility))*4;
+
+				if ((this.visuals.app.input.pressed)||(this.visuals.app.input.keyController.keyboardCheck('space')))
+				if (this.index<3)
+				this.index +=0.1;
+
+				//if (!this.visuals.app.input.pressed)
+				if (this.index<3)
+				this.index +=0.1;
+				else {
+
+					if ((this.visuals.app.input.pressed)||(this.visuals.app.input.keyController.keyboardCheck('space')))
+					if (this.index<7)
+					this.index +=0.1;
+					else
+					this.pState = 'idle';
+
+				}
+
+					//if (this.visuals.app.input.pressed)
+					if (this.index>3)
+					if (this.index<7)
+					this.index +=0.1;
+					else
+					this.pState = 'idle';
+
+				//4+Math.sin(t/(360-this.agility))*4;
 				/*
 				if (this.index<3.4)
 					this.index+=0.05;
