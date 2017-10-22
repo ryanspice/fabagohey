@@ -199,6 +199,23 @@ const Game:IState = {
 
 		}
 
+		this.drawBorders = ()=>{
+
+			if (this.app.client.graphics.getErrors()!==0)
+				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
+				else
+				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
+			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
+
+		}
+
+		this.updateUI = ()=>{
+
+			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
+			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
+
+		}
+
 		this.ready = true;
 	}
 ,
@@ -207,23 +224,15 @@ const Game:IState = {
 		if (!this.ready)
 			return;
 
-			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
-			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
+		this.updateUI();
+		this.drawBorders();
 
-			if (this.app.client.graphics.getErrors()!==0)
-				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
+		let col = "#FFFFFF";
+		this.hits = [];
 
-
-				if (this.app.client.graphics.getErrors()==0)
-				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
-				this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
-
-			let col = "#FFFFFF";
-			this.hits = [];
-
-			let pos = Player.position;
-			let a = this.debug?1:0;//0.1;
-			pos.y-=25;
+		let pos = Player.position;
+		let a = this.debug?1:0;//0.1;
+		pos.y-=25;
 
 			for (var i = this.enemies.length-1; i>=0;i--){
 
@@ -309,7 +318,7 @@ const Game:IState = {
 				Hits.index = 0;
 			}
 
-			this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
+		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
 
 
 	}
