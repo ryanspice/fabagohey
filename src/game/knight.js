@@ -8,7 +8,7 @@ import type {
 
 export default class Knight extends RagPhysics {
 
-	constructor(...args:dtoDrawData[]){
+	constructor(...args:Array<any>){
 
 		super(...args);
 

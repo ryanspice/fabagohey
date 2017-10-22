@@ -65,7 +65,16 @@ export default class Player extends Knight {
 
 		}
 
+		if (this.visuals.app.input.keyController.keyboardCheck('space'))
+			this.pState = 'attack';
+		if (this.visuals.app.input.pressed)
+			this.pState = 'attack';
 
+		if (this.visuals.app.input.keyController.keyboardCheck('a'))
+			this.pState = 'walk',this.dir=-0.5,this.position.x+=this.dir;
+
+		if (this.visuals.app.input.keyController.keyboardCheck('d'))
+			this.pState = 'walk',this.dir=0.5,this.position.x+=this.dir;
 
 
 	}
@@ -74,13 +83,14 @@ export default class Player extends Knight {
 		let t = new Date().getTime();
 		let z;
 
-		this.pState = 'idle';
 
 		this.controls();
 		this.bounds();
 
 		if (this.x<20)
 			this.x+=1,this.pState = 'walk';
+		if (this.x<=20)
+			this.x+=1,this.pState = 'idle';
 
 
 		this.off = {y:-2};
@@ -92,6 +102,7 @@ export default class Player extends Knight {
 			this.xx=0;
 			this.w = (167/4);
 
+			//		this.pState = 'idle';
 		}
 
 
@@ -147,7 +158,32 @@ export default class Player extends Knight {
 				this.xx =-20 + z*Math.round(this.index);
 
 				this.off = {y:3};
-				this.index = 4+Math.sin(t/(360-this.agility))*4;
+
+				if (this.visuals.app.input.pressed)
+				if (this.index<3)
+				this.index +=0.1;
+
+				//if (!this.visuals.app.input.pressed)
+				if (this.index<3)
+				this.index +=0.1;
+				else {
+
+					if (this.visuals.app.input.pressed)
+					if (this.index<7)
+					this.index +=0.1;
+					else
+					this.pState = 'idle';
+
+				}
+
+					//if (this.visuals.app.input.pressed)
+					if (this.index>3)
+					if (this.index<7)
+					this.index +=0.1;
+					else
+					this.pState = 'idle';
+
+				//4+Math.sin(t/(360-this.agility))*4;
 				/*
 				if (this.index<3.4)
 					this.index+=0.05;

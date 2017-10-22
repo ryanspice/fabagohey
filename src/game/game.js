@@ -318,9 +318,8 @@ const Game:IState = {
 				Hits.index = 0;
 			}
 
+		//debug
 		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
-
-
 	}
 ,
 	update:function(){
@@ -332,37 +331,13 @@ const Game:IState = {
 
 		if (this.app.client.graphics.getErrors()!==0) {
 
+			//TODO: logg in SpiceJS. Test.
 			console.log('loading'+this.app.client.graphics.getErrors());
-
 		}
 
 		this.player.update();
+		
 		return;
-		/*
-		Player.position = this.player.position;
-		let pox = -this.player.x*15;
-		for (var i = this.bgItems.length-1; i>=0;i--){
-			let item = this.bgItems[i];
-			item.y = -25// -this.player.y/6- (15*i/1);
-			item.x = pox * ((2-i)/100);
-			//if (i==0){
-			Player.offset.x = -item.x;
-			Player.offset.y = item.y;
-			//}
-		}
-
-		for (var i = 0; i < this.bgItems2.length;i++){
-			let item = this.bgItems2[i];
-			item.y = -25// -this.player.y/6- (15*i/1);
-			item.x = -item.w + pox * ((2-i)/100);
-		}
-
-		for (var i = 0; i < this.bgItems3.length;i++){
-			let item = this.bgItems3[i];
-			item.y = -25// -this.player.y/6- (15*i/1);
-			item.x = item.w + pox * ((2-i)/100);
-		}
-		*/
 	}
 
 }
