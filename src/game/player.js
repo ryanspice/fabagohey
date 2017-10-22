@@ -12,69 +12,63 @@ import type {
 	dtoBatchDataValidation
 } from './core/interfaces';
 
+import {
+	StatsBuffer
+} from './utils';
+
 export default class Player extends Knight {
+
+	gamepad:any;
 
 	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals){
 
-		let obj:dtoDrawData = {
-			img:data,
-			x:x,
-			y:y,
-			s:s,
-			a:a,
-			c:c,
-			xx:xx,
-			yy:yy,
-			w:w,
-			h:h,
-			visuals:visuals
-		};
+		super(new StatsBuffer(data,x,y,s,a,c,xx,yy,w,h,visuals));
 
-		//super(img,x,y,s,a,c,xx,yy,w,h,visuals);
-		super(obj);
+		this.gamepad =  this.visuals.app.input.gamepads;
 
 	}
 
 	controls(){
 
-		let gamepad =  this.visuals.app.input.gamepads
-		if (gamepad){
+		//TODO: add gamepads to get in app.client in #TodoSpiceJS
+		let gamepad = this.gamepad;// = this.visuals.app.input.gamepads;
+
+		if (!gamepad)
+			return;
+
+		if (gamepad.a)
+			this.dir=this.dir/1000,this.diry=this.diry/10000,this.pState = 'block',this.index+=0.1;
+
+		if ((gamepad.left)||(gamepad.right))
+		if (gamepad.x)
+			this.position.x+=this.dir, this.index+=0.1;
+
+		if (gamepad.left)
+			this.position.x+=this.dir,this.pState = 'walk', this.dir = -0.5;
+		if (gamepad.right)
+			this.position.x+=this.dir,this.pState = 'walk', this.dir = 0.5;
 
 
-			if (gamepad.a)
-				this.dir=this.dir/1000,this.diry=this.diry/10000,this.pState = 'block',this.index+=0.1;
+		if (gamepad.up)
+			this.position.y+=this.diry,this.pState = 'walk', this.diry = -0.5;
+		if (gamepad.down)
+			this.position.y+=this.diry,this.pState = 'walk', this.diry = 0.5;
 
-			if ((gamepad.left)||(gamepad.right))
-			if (gamepad.x)
-				this.position.x+=this.dir, this.index+=0.1;
-
-			if (gamepad.left)
-				this.position.x+=this.dir,this.pState = 'walk', this.dir = -0.5;
-			if (gamepad.right)
-				this.position.x+=this.dir,this.pState = 'walk', this.dir = 0.5;
+		if (gamepad.a)
+			this.pState = 'block',this.index+=0.1;
 
 
-			if (gamepad.up)
-				this.position.y+=this.diry,this.pState = 'walk', this.diry = -0.5;
-			if (gamepad.down)
-				this.position.y+=this.diry,this.pState = 'walk', this.diry = 0.5;
+		if (gamepad.y){
 
-			if (gamepad.a)
-				this.pState = 'block',this.index+=0.1;
-
-
-			if (gamepad.y){
-
-				this.dir = this.dir/10000, this.diry = this.diry/10000, this.pState = 'attack';
-
-
-			}
+			this.dir = this.dir/10000, this.diry = this.diry/10000, this.pState = 'attack';
 
 
 		}
 
-	}
 
+
+
+	}
 
 	update(){
 		let t = new Date().getTime();
