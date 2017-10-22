@@ -1,4 +1,5 @@
 //@flow
+
 import utils from './utils.js';
 import _CHARMAP_ from './maps';
 
@@ -85,6 +86,7 @@ const Game:IState = {
 		}
 
 		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
+
 		this.player.pState = 'walk';
 
 		this.player.sprWalk = this.sprKnight[1];
@@ -120,59 +122,59 @@ const Game:IState = {
 		this.visuals.bufferIndex = 0;
 
 		this.initUI = await (()=>{
-		this.characters = _CHARMAP_;
 
-		this.characterList=(string,xx,yy,s=1)=>{
+			this.characters = _CHARMAP_;
 
-			let arr = [];
+			this.characterList=(string,xx,yy,s=1)=>{
 
-			for (var i = string.length-1; i>=0;i--){
+				let arr = [];
 
-				if (string[i]==" ")
-					continue;
+				for (var i = string.length-1; i>=0;i--){
 
-				let x = (this.characters.indexOf(string[i]));
+					if (string[i]==" ")
+						continue;
 
-				let y = 0;
-				let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
-				l.priority = 27;
-				l.characterNum = x;
-				arr.push(l);
+					let x = (this.characters.indexOf(string[i]));
+
+					let y = 0;
+					let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
+					l.priority = 27;
+					l.characterNum = x;
+					arr.push(l);
+
+				}
+
+				return arr;
+			};
+
+			this.updateCharacterList=(list,string, xx,yy)=>{
+
+				for (var i = list.length-1;i>=0;i--){
+						list[i].characterNum = String(this.characters.indexOf('0'));
+				}
+				for (var ii = 0;ii<string.length;ii++){
+
+					let x = (this.characters.indexOf(string[ii]));
+
+					list[ii].character = string[ii];
+					list[ii].characterNum = String(x);
+					//for (var i = list.length-1; i>=0;i--){
+					//}
+				}
 
 			}
 
-			return arr;
-		};
-
-		this.updateCharacterList=(list,string, xx,yy)=>{
-
-			for (var i = list.length-1;i>=0;i--){
-					list[i].characterNum = String(this.characters.indexOf('0'));
-			}
-			for (var ii = 0;ii<string.length;ii++){
-
-				let x = (this.characters.indexOf(string[ii]));
-
-				list[ii].character = string[ii];
-				list[ii].characterNum = String(x);
-				//for (var i = list.length-1; i>=0;i--){
-				//}
+			for (let i = 10;i>=0;i--){
+				let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
+				t.priority = 8;
+				t.type = '_image_part';
 			}
 
-		}
+			this.score = '000000';
+			this.multiplier = 'x';
 
-		for (let i = 10;i>=0;i--){
-			let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
-			t.priority = 8;
-			t.type = '_image_part';
-		}
-
-		this.score = '000000';
-		this.multiplier = 'x';
-
-		let best = '010000';
-		let yourbest = '000000';
-
+			let best = '010000';
+			let yourbest = '000000';
 
 			this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
 			this.UI_Multiplier = this.characterList((this.multiplier),0,10,0.5);
@@ -201,13 +203,20 @@ const Game:IState = {
 	}
 ,
 	draw:function(){
-if (!this.ready)
-	return;
+
+		if (!this.ready)
+			return;
+
 			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
 			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
 
 			if (this.app.client.graphics.getErrors()!==0)
 				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
+
+
+				if (this.app.client.graphics.getErrors()==0)
+				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
+				this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
 
 			let col = "#FFFFFF";
 			this.hits = [];

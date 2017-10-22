@@ -1,69 +1,71 @@
 //@flow
 
+declare var Vector;
+
 import {
 	Sprite
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
-import {
+import type {
 	dtoDrawData,
-	dtoBatchData
+	dtoBatchDataValidation
 } from './core/interfaces';
 
 /* Import types from SpiceJS */
 
 import {
+	IVector,
+	IState,
 	IVisuals
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 import Player from './player';
 
-
-
 export default class RagPhysics extends Sprite {
 
+	/* TODO: figure out how to pass my own type? */
 	constructor(...args:Array<any>){
 
-		let s = args.length;
-
-		if (s>1){
+		//TODO: move into SpiceJS Sprite
+		if (args.length>1){
 
 			super(...args);
-		}
-		else {
 
-			let vas = args[0];
-			let img = vas.img;
-			let x = vas.x;
-			let y = vas.y;
-			let s = vas.s;
-			let a = vas.a;
-			let c = vas.c;
-			let xx = vas.xx;
-			let yy = vas.yy;
-			let w = vas.w;
-			let h = vas.h;
-			let visuals = vas.visuals;
+		} else {
+
+			let vas:dtoDrawData = args[0];
+			let img:dtoBatchDataValidation = vas.img;
+			let x:number = vas.x;
+			let y:number = vas.y;
+			let s:number = vas.s;
+			let a:number = vas.a;
+			let c:number = vas.c;
+			let xx:number = vas.xx;
+			let yy:number = vas.yy;
+			let w:number = vas.w;
+			let h:number = vas.h;
+			let visuals:IVisuals = vas.visuals;
 
 			super(img,x,y,s,a,c,xx,yy,w,h,visuals);
-			
+
 		}
 
 		this.collision = false;
 		this.hit = false;
 		this.index = 0;
+
 	}
 
 	getX(){
 
 		return this.position.x-Player.offset.x;
-
 	}
+
 	getY(){
 
 		return this.position.y+Player.offset.y;
-
 	}
 
 	getPosition(){
@@ -78,13 +80,10 @@ export default class RagPhysics extends Sprite {
 
 	bounds(){
 
-
-
-
-
 		if (this.position.y<130)
 			this.position.y=130, this.diry = 0;
-/*
+
+		/*
 		if (this.position.y>175)
 			this.position.y=175;
 
@@ -97,7 +96,6 @@ export default class RagPhysics extends Sprite {
 
 		//this.position.x = this.app.client.math.Clamp(0,1)
 
-
 		if (this.position.x<-120)
 			this.position.x=-120;//, this.pState = 'idle';
 
@@ -106,20 +104,19 @@ export default class RagPhysics extends Sprite {
 
 	}
 
-	move(vector){
+	move(vector:IVector){
 
 		this.position = Vector.Combine(this.position,vector);
 
 	}
 
-	set state(val){
+	set state(val:IState){
 		this._state = val;
 	}
 
-	get state(){
+	get state():IState {
 
 		return this._state;
-
 	}
 
 }

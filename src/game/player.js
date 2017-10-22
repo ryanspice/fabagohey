@@ -3,15 +3,20 @@
 import Knight from './knight';
 
 import {
+	IVisuals
+	// $FlowFixMe
+} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
+
+import type {
 	dtoDrawData,
-	dtoBatchData
+	dtoBatchDataValidation
 } from './core/interfaces';
 
 export default class Player extends Knight {
 
-	constructor(data:dtoBatchData,x,y,s,a,c,xx,yy,w,h,visuals){
+	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals){
 
-		let obj = {
+		let obj:dtoDrawData = {
 			img:data,
 			x:x,
 			y:y,

@@ -1,3 +1,5 @@
+//@flow
+
 export interface IState {
 
 	init:Function;
@@ -5,7 +7,7 @@ export interface IState {
 }
 
 export type dtoDrawData = {
-	img:HTMLImageElement|Image,
+	img:dtoBatchDataValidation,
 	x:number,
 	y:number,
 	s:number,
@@ -20,3 +22,4 @@ export type dtoDrawData = {
 }
 
 export type dtoBatchData = dtoDrawData|Image;
+export type dtoBatchDataValidation = dtoBatchData|HTMLImageElement|number|string;

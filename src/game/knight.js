@@ -2,9 +2,13 @@
 
 import RagPhysics from './ragphysics';
 
+import type {
+	dtoDrawData
+} from './core/interfaces';
+
 export default class Knight extends RagPhysics {
 
-	constructor(...args){
+	constructor(...args:dtoDrawData[]){
 
 		super(...args);
 
