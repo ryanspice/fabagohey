@@ -15,6 +15,9 @@ export default class Knight extends RagPhysics {
 		this.type = "e"
 
 		this.type = '';
+
+		this.velocity = new Vector();
+
 		this.dir = 1;
 		this.diry = 1;
 		this.agility = 5;
@@ -26,10 +29,10 @@ export default class Knight extends RagPhysics {
 
 	draw(){
 
-		if (this.dir<0)
+		if (this.velocity.x<0)
 		this.visuals.image_flip(-1 + this.x,1)
 		this.visuals._image_part(this.img,this.x,this.y+this.off.y-this.h/1.5,this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
-		if (this.dir<0)
+		if (this.velocity.x<0)
 		this.visuals.image_flip(-1 + this.x,1)
 
 	}
@@ -40,14 +43,23 @@ export default class Knight extends RagPhysics {
 
 		let t = new Date().getTime();
 		let z;
+		this.position.x+=this.velocity.x;
+		this.velocity.x*=0.94;
+		if (this.velocity.x>0)
+		if (this.velocity.x<0.2)
+			this.velocity.x = 0,this.pState = 'idle';
+		if (this.velocity.x<0)
+		if (this.velocity.x>-0.2)
+			this.velocity.x = -0.001,this.pState = 'idle';
 
 		this.controls();
 		this.bounds();
 
 		if (this.x<20)
-			this.x+=1,this.index+=0.05,this.pState = 'walk';
-		if (this.x==20)
-			this.pState = 'idle';
+			this.velocity.x+=0.21,this.index+=0.05,this.pState = 'walk';
+		if (this.velocity.x>19)
+		if (this.velocity.x<=21)
+			this.velocity.x = 0,this.index=0,this.pState = 'idle';
 
 		this.off = {y:-2};
 
@@ -116,11 +128,11 @@ export default class Knight extends RagPhysics {
 
 				if ((this.visuals.app.input.pressed)||(this.visuals.app.input.keyController.keyboardCheck('space')))
 				if (this.index<3)
-				this.index +=0.1;
+					this.index +=0.1;
 
 				//if (!this.visuals.app.input.pressed)
 				if (this.index<3)
-				this.index +=0.1;
+					this.index +=0.1;
 				else {
 
 					if ((this.visuals.app.input.pressed)||(this.visuals.app.input.keyController.keyboardCheck('space')))
@@ -131,20 +143,12 @@ export default class Knight extends RagPhysics {
 
 				}
 
-					//if (this.visuals.app.input.pressed)
-					if (this.index>3)
-					if (this.index<7)
+				if (this.index>3)
+				if (this.index<7)
 					this.index +=0.1;
-					else
+				else
 					this.pState = 'idle';
 
-				//4+Math.sin(t/(360-this.agility))*4;
-				/*
-				if (this.index<3.4)
-					this.index+=0.05;
-					else
-					this.index = -0.5;
-				*/
 			break;
 
 		}

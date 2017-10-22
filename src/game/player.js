@@ -28,7 +28,7 @@ export default class Player extends Knight {
 
 	}
 
-	controls(){
+	gamepadControls(){
 
 		//TODO: add gamepads to get in app.client in #TodoSpiceJS
 		let gamepad = this.gamepad;// = this.visuals.app.input.gamepads;
@@ -62,8 +62,11 @@ export default class Player extends Knight {
 
 			this.dir = this.dir/10000, this.diry = this.diry/10000, this.pState = 'attack';
 
-
 		}
+
+	}
+
+	keyboardControls(){
 
 		if (this.visuals.app.input.keyController.keyboardCheck('space'))
 			this.pState = 'attack';
@@ -71,14 +74,24 @@ export default class Player extends Knight {
 			this.pState = 'attack';
 
 		if (this.visuals.app.input.keyController.keyboardCheck('a'))
-			this.pState = 'walk',this.dir=-0.5,this.position.x+=this.dir;
+			this.pState = 'walk',this.velocity.x=-this.agility/10;//,this.position.x+=this.dir;
 
 		if (this.visuals.app.input.keyController.keyboardCheck('d'))
-			this.pState = 'walk',this.dir=0.5,this.position.x+=this.dir;
-
+			this.pState = 'walk',this.velocity.x=this.agility/10;//,this.position.x+=this.dir;
 
 	}
 
+	controls(){
+
+		this.gamepadControls();
+		this.keyboardControls();
+
+	}
+
+	setIndex(){
+
+
+	}
 
 
 }
