@@ -320,6 +320,7 @@ if (!this.ready)
 
 		this.player.update();
 		return;
+		/*
 		Player.position = this.player.position;
 		let pox = -this.player.x*15;
 		for (var i = this.bgItems.length-1; i>=0;i--){
@@ -343,7 +344,7 @@ if (!this.ready)
 			item.y = -25// -this.player.y/6- (15*i/1);
 			item.x = item.w + pox * ((2-i)/100);
 		}
-
+		*/
 	}
 
 }

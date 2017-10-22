@@ -1,15 +1,55 @@
+//@flow
 
 import {
 	Sprite
+	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
+
+import {
+	dtoDrawData,
+	dtoBatchData
+} from './core/interfaces';
+
+/* Import types from SpiceJS */
+
+import {
+	IVisuals
+	// $FlowFixMe
+} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 import Player from './player';
 
+
+
 export default class RagPhysics extends Sprite {
 
-	constructor(img,x,y,s,a,c,xx,yy,w,h,visuals){
+	constructor(...args:Array<any>){
 
-		super(img,x,y,s,a,c,xx,yy,w,h,visuals);
+		let s = args.length;
+
+		if (s>1){
+
+			super(...args);
+		}
+		else {
+
+			let vas = args[0];
+			let img = vas.img;
+			let x = vas.x;
+			let y = vas.y;
+			let s = vas.s;
+			let a = vas.a;
+			let c = vas.c;
+			let xx = vas.xx;
+			let yy = vas.yy;
+			let w = vas.w;
+			let h = vas.h;
+			let visuals = vas.visuals;
+
+			super(img,x,y,s,a,c,xx,yy,w,h,visuals);
+			
+		}
+
 		this.collision = false;
 		this.hit = false;
 		this.index = 0;

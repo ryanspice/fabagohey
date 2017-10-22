@@ -1,37 +1,37 @@
 //@flow
 
-import Knight from './knight';
+import RagPhysics from './ragphysics';
 
-import {
-	dtoDrawData,
-	dtoBatchData
-} from './core/interfaces';
+export default class Knight extends RagPhysics {
 
-export default class Player extends Knight {
+	constructor(...args){
 
-	constructor(data:dtoBatchData,x,y,s,a,c,xx,yy,w,h,visuals){
+		super(...args);
 
-		let obj = {
-			img:data,
-			x:x,
-			y:y,
-			s:s,
-			a:a,
-			c:c,
-			xx:xx,
-			yy:yy,
-			w:w,
-			h:h,
-			visuals:visuals
-		};
+		this.type = "e"
 
-		//super(img,x,y,s,a,c,xx,yy,w,h,visuals);
-		super(obj);
-
+		this.type = '';
+		this.dir = 1;
+		this.diry = 1;
+		this.agility = 5;
+		this.priority = 6;
+		this.thyme = new Date();
+		this.off = {y:-2};
+		this.vel = {y:1};
 	}
 
-	controls(){
+	draw(){
 
+		if (this.dir<0)
+		this.visuals.image_flip(-1 + this.x,1)
+		this.visuals._image_part(this.img,this.x,this.y+this.off.y-this.h/1.5,this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
+		if (this.dir<0)
+		this.visuals.image_flip(-1 + this.x,1)
+
+	}
+	controls(){
+		console.log(this)
+		console.log(this.visuals)
 		let gamepad =  this.visuals.app.input.gamepads
 		if (gamepad){
 
@@ -160,8 +160,4 @@ export default class Player extends Knight {
 		}
 
 	}
-
 }
-
-Player.offset = new Vector(0,0);
-Player.position = new Vector(0,0);
