@@ -6,6 +6,7 @@ import {
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 import NewSprite from './newsprite';
+declare var Vector;
 
 /*
 	handles all physics for moving characterlike objects

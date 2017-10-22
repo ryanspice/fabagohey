@@ -26,15 +26,21 @@ export default class Knight extends RagPhysics {
 		this.vel = {y:1};
 	}
 
+	/**/
+
 	draw(){
 
 		if (this.velocity.x<0)
-		this.visuals.image_flip(-1 + this.x,1)
+			this.visuals.image_flip(-1 + this.x,1)
+
 		this.visuals._image_part(this.img,this.x,this.y+this.off.y-this.h/1.5,this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
+
 		if (this.velocity.x<0)
-		this.visuals.image_flip(-1 + this.x,1)
+			this.visuals.image_flip(-1 + this.x,1)
 
 	}
+
+	/**/
 
 	update(){
 
@@ -42,11 +48,10 @@ export default class Knight extends RagPhysics {
 		let z;
 		this.position.x+=this.velocity.x;
 
-		if (this.velocity.x>0)
-		if (this.velocity.x<0.2)
+		if ((this.velocity.x>0)&&(this.velocity.x<0.2))
 			this.velocity.x = 0,this.pState = 'idle';
-		if (this.velocity.x<-0.001)
-		if (this.velocity.x>-0.2)
+
+		if ((this.velocity.x<-0.001)&&(this.velocity.x>-0.2))
 			this.velocity.x = -0.001,this.pState = 'idle';
 
 		this.controls();
@@ -54,8 +59,8 @@ export default class Knight extends RagPhysics {
 
 		if (this.x<20)
 			this.velocity.x=0.2,this.index+=0.005,this.pState = 'walk';
-		if (this.velocity.x>19)
-		if (this.velocity.x<=21)
+
+		if ((this.velocity.x>19) && (this.velocity.x<=21))
 			this.velocity.x = 0,this.index=0,this.pState = 'idle';
 
 		this.off = {y:-2};
@@ -68,7 +73,6 @@ export default class Knight extends RagPhysics {
 			this.w = (167/4);
 
 		}
-
 
 		switch(this.pState){
 
