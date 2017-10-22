@@ -1,5 +1,7 @@
 //@flow
 
+declare var Vector;
+
 import Knight from './knight';
 
 import {
@@ -27,6 +29,8 @@ export default class Player extends Knight {
 		this.gamepad =  this.visuals.app.input.gamepads;
 
 	}
+
+	/**/
 
 	gamepadControls(){
 
@@ -66,6 +70,8 @@ export default class Player extends Knight {
 
 	}
 
+	/**/
+
 	keyboardControls(){
 
 		if (this.visuals.app.input.keyController.keyboardCheck('space'))
@@ -80,6 +86,8 @@ export default class Player extends Knight {
 			this.pState = 'walk',this.velocity.x=this.agility/10;//,this.position.x+=this.dir;
 
 	}
+
+	/**/
 
 	controls(){
 

@@ -9,7 +9,12 @@ Application.OnLoad = (self) => {
 
 	self.main = Loading;
 
+	self.options.flags.seamless = true;
+	self.options.override.SelectStart = true;
+	self.options.override.ContextMenu = true;
+
 	self.Start(320, 180);
+
 
 	window.Application = this;
 
