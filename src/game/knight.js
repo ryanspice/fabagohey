@@ -16,7 +16,6 @@ export default class Knight extends RagPhysics {
 
 		this.type = '';
 
-		this.velocity = new Vector();
 
 		this.dir = 1;
 		this.diry = 1;
@@ -37,14 +36,11 @@ export default class Knight extends RagPhysics {
 
 	}
 
-
-
 	update(){
 
 		let t = new Date().getTime();
 		let z;
 		this.position.x+=this.velocity.x;
-		this.velocity.x*=0.94;
 
 		if (this.velocity.x>0)
 		if (this.velocity.x<0.2)
@@ -57,7 +53,7 @@ export default class Knight extends RagPhysics {
 		this.bounds();
 
 		if (this.x<20)
-			this.velocity.x+=0.21,this.index+=0.05,this.pState = 'walk';
+			this.velocity.x=0.2,this.index+=0.005,this.pState = 'walk';
 		if (this.velocity.x>19)
 		if (this.velocity.x<=21)
 			this.velocity.x = 0,this.index=0,this.pState = 'idle';
@@ -118,7 +114,7 @@ export default class Knight extends RagPhysics {
 			break;
 
 			case 'attack':
-			
+
 				this.h = 80;
 				this.w = (800/10);
 				this.img = this.sprAttack;

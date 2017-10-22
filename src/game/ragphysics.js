@@ -21,10 +21,12 @@ export default class RagPhysics extends NewSprite {
 		this.hit = false;
 		this.index = 0;
 
+		this.velocity = new Vector();
 	}
 
 	bounds(){
 
+				this.velocity.x*=0.94;
 		if (this.position.y<130)
 			this.position.y=130, this.diry = 0;
 
@@ -47,18 +49,6 @@ export default class RagPhysics extends NewSprite {
 		//if (this.position.x>300)
 		//	this.position.x=300, this.pState = 'idle';
 
-	}
-
-	/**/
-
-	set state(val:IState){
-		this._state = val;
-	}
-
-	/**/
-
-	get state():IState {
-		return this._state;
 	}
 
 }
