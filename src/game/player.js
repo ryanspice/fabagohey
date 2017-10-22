@@ -88,12 +88,6 @@ export default class Player extends Knight {
 
 	}
 
-	setIndex(){
-
-
-	}
-
-
 }
 
 Player.offset = new Vector(0,0);

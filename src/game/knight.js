@@ -45,10 +45,11 @@ export default class Knight extends RagPhysics {
 		let z;
 		this.position.x+=this.velocity.x;
 		this.velocity.x*=0.94;
+
 		if (this.velocity.x>0)
 		if (this.velocity.x<0.2)
 			this.velocity.x = 0,this.pState = 'idle';
-		if (this.velocity.x<0)
+		if (this.velocity.x<-0.001)
 		if (this.velocity.x>-0.2)
 			this.velocity.x = -0.001,this.pState = 'idle';
 
@@ -117,7 +118,7 @@ export default class Knight extends RagPhysics {
 			break;
 
 			case 'attack':
-
+			
 				this.h = 80;
 				this.w = (800/10);
 				this.img = this.sprAttack;
