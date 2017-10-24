@@ -1,17 +1,30 @@
+//@flow
 
 import {
 	State
+	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
+
+import {
+	IState
+	// $FlowFixMe
+} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
+
+/* TODO: export properly from spicejs */
+
+declare var Vector;
+declare var Circle;
 
 import Game from './game';
 
-export default new State({
+const Loading:IState = {
 
-	init:function(){
+	init: async function(){
+
 		this.x =0;
 		let a = 12;
 		let r= 1.6;
-		let d = 6;
+		let d = 3;
 		let b = this.x/1080;
 
 		this.list = [];
@@ -44,34 +57,69 @@ export default new State({
 		loader2.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Dead','s').then(()=>
 		loader2.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Idle','s').then(()=>{
 
+			let loader = this.app.client.loader;
+			let s = 1.125 + 0.2;
+			let xx = 0;
+			let xxx = 0;
+			this.bg = [];
+			this.bgItems = [];
+			this.enemies = [];
+
+			this.bg = [
+				loader.getImageReference('./parallax-forest-back-trees'),
+				loader.getImageReference('./parallax-forest-lights'),
+				loader.getImageReference('./parallax-forest-middle-trees'),
+				loader.getImageReference('./parallax-forest-front-trees'),
+			];
+
+
+			for(let i = 3; i>=0;i--) {
+				let item;
+				(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+				item.priority = -3+ i;
+				(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+				item.priority = -2 + i;
+				(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+				item.priority = -1	 + i;
+			}
+
 		}))))))))))))))));
 
 
-		this.visuals.bufferIndex = 1;
+		this.drawBorders = ()=>{
 
-	},draw:function(){
+			this.visuals.rect(0,0,-600/this.app.scale,400,"#000000")
+			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
 
-		if (this.app.client.graphics.getErrors()!==0)
-			this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#111111")
-				else{
-					this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000")
+		}
+
+		this.visuals.bufferIndex = 0;
+
+	}
+
+	,draw(){
+
+		this.drawBorders();
+
+		if (this.app.client.graphics.getErrors()==0) {
 
 			let gamepad =  this.visuals.app.input.gamepads;
+
 			if (gamepad)
 			if ((gamepad.left)||(gamepad.right)||(gamepad.x)||(gamepad.a)||(gamepad.y)||this.app.input.pressed) {
 
-					this.app.client.update.state = new State(Game);
+				this.app.client.update.state = new State(Game);
 
-					for(var i=8;i>=0;--i){
-						this.list[i].delete = true;
-					}
-
+				for(var i=8;i>=0;--i){
+					this.list[i].delete = true;
 				}
 
 			}
-			//this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#111111");
 
-	},update:function(){
+		}
+			//this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#111111");
+	}
+	,update:function(){
 
 		let a = 12;
 		let c = 3;
@@ -94,4 +142,6 @@ export default new State({
 
 	}
 
-});
+}
+
+export default new State(Loading);

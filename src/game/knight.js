@@ -19,13 +19,6 @@ export default class Knight extends RagPhysics {
 	off:Vector = new Vector();
 	vel:Vector = new Vector();
 
-	/**/
-
-	get isAttacking():boolean {
-
-		return ((this.visuals.app.input.pressed)||(this.visuals.app.input.keyController.keyboardCheck('space')));
-	}
-
 	constructor(...args:Array<any>){
 
 		super(...args);
@@ -34,7 +27,6 @@ export default class Knight extends RagPhysics {
 
 		this.type = '';
 
-
 		this.dir = 1;
 		this.diry = 1;
 		this.agility = 5;
@@ -42,6 +34,13 @@ export default class Knight extends RagPhysics {
 		this.thyme = new Date();
 		this.off.y = -2;
 		this.vel.y = 1;
+	}
+
+	/**/
+
+	get isAttacking():boolean {
+
+		return ((this.visuals.app.input.pressed)||(this.visuals.app.input.keyController.keyboardCheck('space')));
 	}
 
 	/* override sprite draw */
@@ -71,7 +70,8 @@ export default class Knight extends RagPhysics {
 
 		let t = new Date().getTime();
 		let z;
-		this.position.x+=this.velocity.x;
+
+		this.move(this.velocity);
 
 		if ((this.velocity.x>0)&&(this.velocity.x<0.2))
 			this.velocity.x = 0,this.pState = 'idle';
@@ -107,7 +107,6 @@ export default class Knight extends RagPhysics {
 				z = (336/8);
 				this.xx =z*Math.round(this.index);
 
-
 				if (this.index<7)
 					this.index+=0.1;
 					else
@@ -134,12 +133,7 @@ export default class Knight extends RagPhysics {
 				z = (168/4);
 				this.xx =z*Math.round(this.index);
 				this.index = 1+Math.sin(t/360)*1;
-				/*
-				if (this.index<3.4)
-					this.index+=0.05;
-					else
-					this.index = -0.5;
-				*/
+
 			break;
 
 			case 'attack':
@@ -179,6 +173,5 @@ export default class Knight extends RagPhysics {
 		}
 
 	}
-
 
 }

@@ -74,9 +74,7 @@ export default class Player extends Knight {
 
 	keyboardControls(){
 
-		if (this.visuals.app.input.keyController.keyboardCheck('space'))
-			this.pState = 'attack';
-		if (this.visuals.app.input.pressed)
+		if ((this.visuals.app.input.keyController.keyboardCheck('space'))||(this.visuals.app.input.pressed))
 			this.pState = 'attack';
 
 		if (this.visuals.app.input.keyController.keyboardCheck('a'))
@@ -93,6 +91,18 @@ export default class Player extends Knight {
 
 		this.gamepadControls();
 		this.keyboardControls();
+
+	}
+
+	/**/
+
+	collideWithEnemy(enemy:any){
+
+		this.velocity.x *=0.19;
+
+		if (enemy.pState=="attack")
+		if (enemy.getIndex()==8)
+			this.velocity.x -= this.dir*2;
 
 	}
 

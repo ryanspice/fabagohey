@@ -3,15 +3,11 @@
 import utils from './utils.js';
 import _CHARMAP_ from './maps';
 
-/* Imports from SpiceJS */
-
 import {
 	State,
 	Sprite,
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
-
-/* Import types from SpiceJS */
 
 import {
 	IState
@@ -98,7 +94,7 @@ const Game:IState = {
 		Skeleton.sprIdle = this.sprSkeleton[0];
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
-		for (var i = 14; i>=0;i--){
+		for (var i = 1; i>=0;i--){
 			let count = 0;
 			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
 		    	count++;
@@ -230,86 +226,121 @@ const Game:IState = {
 		let col = "#FFFFFF";
 		this.hits = [];
 
-		let pos = Player.position;
-		let a = this.debug?1:0;//0.1;
-		pos.y-=25;
+		let a = this.debug?0.5:0;
+		//0.1;
+		//pos.y-=25;
+		//console.log(this.player.x)
+		//console.log(this.enemies.length);
 
-			for (var i = this.enemies.length-1; i>=0;i--){
+		//check
+		let checkEnemy = (e,e2)=>{
+			if (e.pState =='dead')
+				return true;
+			if (e==e2)
+				return true;
+			return false;
+		}
 
-				let Enemy = this.enemies[i];
-				var collision = false;
+		var i2 = this.enemies.length-1;
+		var i = this.enemies.length-1;
+		let Within = (a:number,b:number,c:number):boolean=> {
+			return (a>b&&a<c);
+		}
+		//for each enemy
+		for (i; i>=0;i--){
+			//enemy in enemies
+			let Enemy = this.enemies[i];
 
-				for (var i2 = this.enemies.length-1; i2>=0;i2--){
+			//validate enemy for collision
+			if (checkEnemy(Enemy, null))
+				continue;
 
-					let Enemy2 = this.enemies[i2];
-					let diff2 = Vector.Difference(Enemy.getPosition(), Enemy2.getPosition());
+			//this collide with any other?
+			var collision = false;
 
-					if (Enemy2.pState == 'dead')
-						continue;
-					if (Enemy2==Enemy)
-						continue;
+			//compare enemy to enemies
+			for (i2; i2>=0;i2--){
 
-					if (diff2.x<15)
-					if (diff2.x>0)
-					Enemy2.position.x--,collision = true;
+				//compared enemy in enemies
+				let compare_enemy = this.enemies[i2];
 
-					if (diff2.x>-15)
-					if (diff2.x<0)
-					Enemy2.position.y++,collision = true;
-				}
+				//get vector difference
+				let compare_difference = Vector.Difference(Enemy.getPosition(), compare_enemy.getPosition());
 
-				if (Enemy.pState != 'dead')
-				if (collision)
-					Enemy.position.offset(-1*Enemy.s,0);
-
-				let diff = Vector.Difference(pos, Enemy.getPosition());
-
-				Enemy.collision = 0;
-				if ((diff.x>0))
-				Enemy.s = 1;
-				if ((diff.x<0))
-				Enemy.s = -1;
-
-				if (Enemy.pState != 'dead')
-				if ((diff.y>-125)&&(diff.y<125)){
-
-
-					if ((diff.x>-this.player.w/1.25)&&(diff.x<this.player.w/1.25))
-						col = "#FFFF00";
+				//validate enemy for collision
+				if (checkEnemy(Enemy, compare_enemy))
+					continue;
 
 
-					if ((diff.x>-this.player.w/5)&&(diff.x<this.player.w/5))
-						Enemy.position.offset(-1*Enemy.s,0);
+				if (compare_difference.x<20)
+				if (compare_difference.x>0)
+				compare_enemy.velocity.x--,collision = true;
 
-
-					if ((diff.x>-this.player.w/1.95)&&(diff.x<this.player.w/1.95)){
-						col = "#FF4444";
-						let dir = this.player.dir*-2;
-						if (
-							((dir<0)&&(Enemy.s<0))||
-							((dir>0)&&(Enemy.s>0))
-						){
-							if (this.player.pState =="attack")
-							if (Enemy.pState !="dead"){
-								if (this.player.getIndex()==5)
-									col = "#FF00FF",this.hits.push(Enemy);
-
-								if (this.player.getIndex()==8)
-									col = "#FF00FF",this.hits.push(Enemy);
-							}
-						}
-					}
-
-					if ((diff.x>-15)&&(diff.x<15))
-					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FF0000"),Enemy.collision = 2;
-					else
-					if ((diff.x>-25)&&(diff.x<25))
-					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFF00"),Enemy.collision = 1;
-					else
-					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFFFF")
-				}
+				if (compare_difference.x>-20)
+				if (compare_difference.x<0)
+				compare_enemy.velocity.x++,collision = true;
 
 			}
+
+			//if collision with enemy
+			if (collision)
+				Enemy.position.offset(-1*Enemy.s,0);
+
+			//Collision with PLAYER
+			let diff = Vector.Difference(this.player.getPosition(), Enemy.getPosition());
+
+			Enemy.collision = 0;
+			if ((diff.x>0))
+				Enemy.s = 1;
+			if ((diff.x<0))
+				Enemy.s = -1;
+
+			if ((diff.y>-125)&&(diff.y<125)){
+
+
+				this.player.collideWithEnemy(Enemy);
+				if ((diff.x>-this.player.w/1.25)&&(diff.x<this.player.w/1.25))
+					col = "#FFFF00";
+
+
+				if ((diff.x>-this.player.w/5)&&(diff.x<this.player.w/5))
+					Enemy.position.offset(-1*Enemy.s,0);
+
+
+				if ((diff.x>-this.player.w/1.95)&&(diff.x<this.player.w/1.95)){
+					col = "#FF4444";
+					let dir = this.player.dir*-2;
+					if (
+						((dir<0)&&(Enemy.s<0))||
+						((dir>0)&&(Enemy.s>0))
+					){
+
+						if (this.player.pState =="attack"){
+							if (this.player.getIndex()==5)
+								col = "#FF00FF",this.hits.push(Enemy);
+
+							if (this.player.getIndex()==8)
+								col = "#FF00FF",this.hits.push(Enemy);
+						} else {
+
+
+						}
+
+
+					}
+				}
+
+				if ((diff.x>-15)&&(diff.x<15))
+					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FF0000"),Enemy.collision = 2;
+				else
+				if ((diff.x>-25)&&(diff.x<25))
+					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFF00"),Enemy.collision = 1;
+				else
+					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFFFF")
+
+			}
+
+		}
 
 			for (var i = this.hits.length-1; i>=0;i--){
 				let Hits = this.hits[i];
@@ -321,8 +352,7 @@ const Game:IState = {
 		//debug
 		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
 	}
-,
-	update:function(){
+	,update:function(){
 
 		if (!this.ready)
 			return;
@@ -336,7 +366,7 @@ const Game:IState = {
 		}
 
 		this.player.update();
-		
+
 		return;
 	}
 
