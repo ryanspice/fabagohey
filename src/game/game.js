@@ -283,51 +283,51 @@ const Game:IState = {
 			//Collision with PLAYER
 			let diff = Vector.Difference(this.player.getPosition(), Enemy.getPosition());
 
+			//reset enemy collision state
 			Enemy.collision = 0;
-			if ((diff.x>0))
-				Enemy.s = 1;
-			if ((diff.x<0))
-				Enemy.s = -1;
 
-			if ((diff.y<-125)&&(diff.y>125))
+			//set enemy s based on diff.x
+			Enemy.s = diff.x>0?1:-1;
+
+			//reduce area of checking
+			if (!Within(diff.y,-75,75))
+			if (!Within(diff.x,-75,75))
 				continue;
 
+			//trigger player collision event
 			this.player.collideWithEnemy(Enemy);
 
+			//set warning colour
 			if (Within(diff.x,-this.player.w/1.25,this.player.w/1.25))
 				col = "#FFFF00";
-				//if ((diff.x>-this.player.w/1.25)&&(diff.x<this.player.w/1.25))
 
+			//move enemy (collision)
 			if (Within(diff.x,-this.player.w/5,this.player.w/5))
 				Enemy.position.offset(-1*Enemy.s,0);
 
-				//if ((diff.x>-this.player.w/5)&&(diff.x<this.player.w/5))
-					//Enemy.position.offset(-1*Enemy.s,0);
+			//check attacking then enemy (collision)
+			if (Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
 
+				col = "#FF4444";
 
-				//if ((diff.x>-this.player.w/1.95)&&(diff.x<this.player.w/1.95)){
-				if (Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
-					col = "#FF4444";
-					let dir = this.player.dir*-2;
-					if (
-						((dir<0)&&(Enemy.s<0))||
-						((dir>0)&&(Enemy.s>0))
-					){
+				//Check player facing direction
+				//TODO: not use enemy.DS
+				if (((diff.x>0)==(this.player.velocity.x<0))&&(this.player.isAttacking)){
 
-						if (this.player.pState =="attack"){
-							if (this.player.getIndex()==5)
-								col = "#FF00FF",this.hits.push(Enemy);
+					//Push a hit
+					if (this.player.getIndex()==5)
+						col = "#FF00FF",(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
 
-							if (this.player.getIndex()==8)
-								col = "#FF00FF",this.hits.push(Enemy);
-						} else {
-
-
-						}
-
-					}
+					//Push a hit
+					if (this.player.getIndex()==8)
+						col = "#FF00FF",(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
 
 				}
+
+			}
+
+			//Debug: draw collision rectangles
+			if (this.debug){
 
 				if (Within(diff.x,-15,15))
 					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FF0000"),Enemy.collision = 2;
@@ -336,14 +336,20 @@ const Game:IState = {
 					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFF00"),Enemy.collision = 1;
 				else
 					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFFFF");
+
+			}
+
 		}
 
-		for (var i = this.hits.length-1; i>=0;i--){
+		/*
+		var i = this.hits.length-1
+		for (i; i>=0;i--){
 			let Hits = this.hits[i];
 			Hits.hit = true;
 			Hits.pState = 'hit';
 			Hits.index = 0;
 		}
+		*/
 
 		//debug
 		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)

@@ -32,6 +32,10 @@ export default class Player extends Knight {
 
 	/**/
 
+	get isAttacking():boolean {	return this.pState =="attack"; }
+
+	/**/
+
 	gamepadControls(){
 
 		//TODO: add gamepads to get in app.client in #TodoSpiceJS
