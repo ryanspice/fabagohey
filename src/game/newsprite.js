@@ -62,6 +62,8 @@ export default class NewSprite extends Sprite {
 
 	}
 
+	//TODO: add get collision mask
+
 	/**/
 
 	getX(){

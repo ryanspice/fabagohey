@@ -85,12 +85,9 @@ const Game:IState = {
 
 		for(let i = 3; i>=0;i--) {
 			let item;
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			item.priority = -3+ i;
+			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			item.priority = -2 + i;
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			item.priority = -1	 + i;
+			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 		}
 
 		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
@@ -299,16 +296,22 @@ const Game:IState = {
 			if (!utils.Within(diff.x,-75,75))
 				continue;
 
-			//trigger player collision event
-			this.player.collideWithEnemy(Enemy);
 
 			//set warning colour
-			if (utils.Within(diff.x,-this.player.w/1.25,this.player.w/1.25))
+			if (utils.Within(diff.x,-this.player.w/1.25,this.player.w/1.25)){
 				col = "#FFFF00";
+			} else {
+
+			}
 
 			//move enemy (collision)
-			if (utils.Within(diff.x,-this.player.w/5,this.player.w/5))
+			if (utils.Within(diff.x,-this.player.w/5,this.player.w/5)){
 				Enemy.position.offset(-1*Enemy.s,0);
+				//trigger player collision event
+				this.player.collideWithEnemy(Enemy);
+			} else {
+
+			}
 
 			//check attacking then enemy (collision)
 			if (utils.Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
@@ -364,7 +367,7 @@ const Game:IState = {
 		if (!this.ready)
 			return;
 
-		this.player.update();
+		//this.player.update();
 
 		if (this.app.client.graphics.getErrors()!==0) {
 
@@ -373,6 +376,16 @@ const Game:IState = {
 		}
 
 		this.player.update();
+		//console.log(this.Loading);
+		for(let i = this.bgItems.length-1; i>=0;i--) {
+
+			let item = (this.bgItems[i]);
+			/*if ((i==0)||(i==1))
+				item.x -=0;
+				else*/
+				item.x -= this.player.velocity.x/5/i;
+
+		}
 
 		return;
 	}

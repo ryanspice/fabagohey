@@ -75,12 +75,9 @@ const Loading:IState = {
 
 			for(let i = 3; i>=0;i--) {
 				let item;
-				(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-				item.priority = -3+ i;
+				//(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 				(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-				item.priority = -2 + i;
-				(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],272,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-				item.priority = -1	 + i;
+				//(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 			}
 
 		}))))))))))))))));
@@ -108,12 +105,16 @@ const Loading:IState = {
 			if (gamepad)
 			if ((gamepad.left)||(gamepad.right)||(gamepad.x)||(gamepad.a)||(gamepad.y)||this.app.input.pressed) {
 
-				this.app.client.update.state = new State(Game);
-
 				for(var i=8;i>=0;--i){
 					this.list[i].delete = true;
 				}
+				for(var i=this.bgItems.length-1;i>=0;--i){
+					this.bgItems[i].delete = true;
+				}
 
+				this.bgItems = [];
+
+				this.app.client.update.state = new State(Game);
 			}
 
 		}

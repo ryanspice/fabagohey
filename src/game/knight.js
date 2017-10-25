@@ -83,7 +83,7 @@ export default class Knight extends RagPhysics {
 		this.bounds();
 
 		if (this.x<20)
-			this.velocity.x=0.2,this.index+=0.005,this.pState = 'walk';
+			this.velocity.x=0.3,this.index+=0.005,this.pState = 'walk';
 
 		if ((this.velocity.x>19) && (this.velocity.x<=21))
 			this.velocity.x = 0,this.index=0,this.pState = 'idle';
