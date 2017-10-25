@@ -226,6 +226,7 @@ const Game:IState = {
 ,
 	draw:function(){
 
+		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
 
@@ -235,17 +236,11 @@ const Game:IState = {
 		let col = "#FFFFFF";
 		this.hits = [];
 
+		//region collision code
+
 		let a = this.debug?0.5:0;
-		//0.1;
-		//pos.y-=25;
-		//console.log(this.player.x)
-		//console.log(this.enemies.length);
-
-		//check
-
 		var i2 = this.enemies.length-1;
 		var i = this.enemies.length-1;
-
 
 		//for each enemy
 		for (i; i>=0;i--){
@@ -349,21 +344,15 @@ const Game:IState = {
 
 		}
 
-		/*
-		var i = this.hits.length-1
-		for (i; i>=0;i--){
-			let Hits = this.hits[i];
-			Hits.hit = true;
-			Hits.pState = 'hit';
-			Hits.index = 0;
-		}
-		*/
+		//endregion
 
 		//debug
+
 		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
 	}
 	,update:function(){
 
+		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
 
