@@ -1,5 +1,7 @@
 //@flow
 
+import debug from '../config';
+
 import utils from './utils.js';
 import _CHARMAP_ from './maps';
 
@@ -28,16 +30,26 @@ let s = 1.125 + 0.2;
 let xx = 0;
 let xxx = 0;
 
+const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
+	if (e.pState =='dead')
+		return true;
+	if (e==e2)
+		return true;
+	return false;
+}
+
 const Game:IState = {
 
 	init:async function(){
 
-		this.debug = true;
+		this.debug = debug.collision.masks;
 
-		await (this.loadImages = ()=>{
+		 this.loadImages = await (()=>{
 
 			let loader = this.app.client.loader;
 			this.font = loader.getImageReference('./Cursive1_MyEdit');
+
+			//TODO: donot use line, draw a rectangle lol
 			this.line = loader.getImageReference('./Untitled');
 
 			this.bg = [
@@ -233,21 +245,14 @@ const Game:IState = {
 		//console.log(this.enemies.length);
 
 		//check
-		let checkEnemy = (e,e2)=>{
-			if (e.pState =='dead')
-				return true;
-			if (e==e2)
-				return true;
-			return false;
-		}
 
 		var i2 = this.enemies.length-1;
 		var i = this.enemies.length-1;
-		let Within = (a:number,b:number,c:number):boolean=> {
-			return (a>b&&a<c);
-		}
+
+
 		//for each enemy
 		for (i; i>=0;i--){
+
 			//enemy in enemies
 			let Enemy = this.enemies[i];
 
@@ -271,7 +276,7 @@ const Game:IState = {
 				if (checkEnemy(compare_enemy,Enemy))
 					continue;
 
-				if (Within(compare_difference.x,-20,20))
+				if (utils.Within(compare_difference.x,-20,20))
 					compare_enemy.velocity.x+=Enemy.dir/7.5,collision = true; //TODO tweak
 
 			}
@@ -290,23 +295,23 @@ const Game:IState = {
 			Enemy.s = diff.x>0?1:-1;
 
 			//reduce area of checking
-			if (!Within(diff.y,-75,75))
-			if (!Within(diff.x,-75,75))
+			if (!utils.Within(diff.y,-75,75))
+			if (!utils.Within(diff.x,-75,75))
 				continue;
 
 			//trigger player collision event
 			this.player.collideWithEnemy(Enemy);
 
 			//set warning colour
-			if (Within(diff.x,-this.player.w/1.25,this.player.w/1.25))
+			if (utils.Within(diff.x,-this.player.w/1.25,this.player.w/1.25))
 				col = "#FFFF00";
 
 			//move enemy (collision)
-			if (Within(diff.x,-this.player.w/5,this.player.w/5))
+			if (utils.Within(diff.x,-this.player.w/5,this.player.w/5))
 				Enemy.position.offset(-1*Enemy.s,0);
 
 			//check attacking then enemy (collision)
-			if (Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
+			if (utils.Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
 
 				col = "#FF4444";
 
@@ -329,10 +334,10 @@ const Game:IState = {
 			//Debug: draw collision rectangles
 			if (this.debug){
 
-				if (Within(diff.x,-15,15))
+				if (utils.Within(diff.x,-15,15))
 					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FF0000"),Enemy.collision = 2;
 				else
-				if (Within(diff.x,-25,25))
+				if (utils.Within(diff.x,-25,25))
 					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFF00"),Enemy.collision = 1;
 				else
 					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFFFF");

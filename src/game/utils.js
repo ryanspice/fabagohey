@@ -39,9 +39,15 @@ export class StatsBuffer {
 
 }
 
+export const Within = (a:number,b:number,c:number):boolean=> {
+	return (a>b&&a<c);
+}
+
 const utils = {
 
 	reverseString,
+	Within,
 
 }
+
 export default utils;
