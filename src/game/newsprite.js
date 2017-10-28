@@ -1,5 +1,7 @@
 //@flow
 
+import debug from '../config';
+
 /* TODO: implement class features to SpiceJS */
 
 declare var Vector;
@@ -59,6 +61,35 @@ export default class NewSprite extends Sprite {
 			super(img,x,y,s,a,c,xx,yy,w,h,visuals);
 
 		}
+
+	}
+
+	/* returns true if the object is invalid */
+
+	invalidate(e:any|null){
+
+	   	if (this.pState =='dead')
+	   		return true;
+	   	if (this==e)
+	   		return true;
+	   	return false;
+
+   }
+
+	/*TODO: bring into SpiceJS */
+
+	drawDebug(){
+
+		if (this.invalidate())
+			return;
+
+		if (this.collision==2)
+			this.visuals.rect_ext(this.x,this.y+4,25,25,1,debug.collision.maskAlpha,1,"#FF0000");
+		else
+		if (this.collision==1)
+			this.visuals.rect_ext(this.x,this.y+4,25,25,1,debug.collision.maskAlpha,1,"#FFFF00");
+		else
+			this.visuals.rect_ext(this.x,this.y+4,25,25,1,debug.collision.maskAlpha,1,"#FFFFFF");
 
 	}
 

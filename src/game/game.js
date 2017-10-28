@@ -214,11 +214,25 @@ const Game:IState = {
 
 		}
 
+		//trigger the sprites debug draw event TODO: bring into SpiceJS
+
+		this.drawDebug = ()=> {
+
+			if (!this.debug)
+				return;
+
+			for (let i = this.enemies.length-1; i>=0;i--)
+				this.enemies[i].drawDebug();
+
+			return;
+		}
+
 		this.updateUI = ()=>{
 
 			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
 			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
 
+			return;
 		}
 
 		this.ready = true;
@@ -230,15 +244,37 @@ const Game:IState = {
 		if (!this.ready)
 			return;
 
-		this.updateUI();
 		this.drawBorders();
-
+		this.drawDebug();
 		let col = "#FFFFFF";
 		this.hits = [];
 
 		//region collision code
 
-		let a = this.debug?0.5:0;
+
+
+
+		//endregion
+
+		//debug
+
+		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
+	}
+	,update:function(){
+
+		//TODO: put this into spicejs state class
+		if (!this.ready)
+			return;
+
+		if (this.app.client.graphics.getErrors()!==0) {
+
+			//TODO: logg in SpiceJS. Test.
+			console.log('loading'+this.app.client.graphics.getErrors());
+		}
+
+		this.player.update();
+
+
 		var i2 = this.enemies.length-1;
 		var i = this.enemies.length-1;
 
@@ -246,7 +282,7 @@ const Game:IState = {
 		for (i; i>=0;i--){
 
 			//enemy in enemies
-			let Enemy = this.enemies[i];
+			let Enemy:Sprite = this.enemies[i];
 
 			//validate enemy for collision
 			if (checkEnemy(Enemy, null))
@@ -294,7 +330,7 @@ const Game:IState = {
 
 			//set warning colour
 			if (utils.Within(diff.x,-this.player.w/1.25,this.player.w/1.25)){
-				col = "#FFFF00";
+				//col = "#FFFF00";
 			} else {
 
 			}
@@ -311,68 +347,40 @@ const Game:IState = {
 			//check attacking then enemy (collision)
 			if (utils.Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
 
-				col = "#FF4444";
-
 				//Check player facing direction
 				//TODO: not use enemy.DS
 				if (((diff.x>0)==(this.player.velocity.x<0))&&(this.player.isAttacking)){
 
 					//Push a hit
 					if (this.player.getIndex()==5)
-						col = "#FF00FF",(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
+						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
 
 					//Push a hit
 					if (this.player.getIndex()==8)
-						col = "#FF00FF",(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
+						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
 
 				}
 
 			}
-
-			//Debug: draw collision rectangles
-			if (this.debug){
-
-				if (utils.Within(diff.x,-15,15))
-					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FF0000"),Enemy.collision = 2;
+			if (utils.Within(diff.x,-15,15))
+				Enemy.collision = 2;
 				else
 				if (utils.Within(diff.x,-25,25))
-					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFF00"),Enemy.collision = 1;
-				else
-					this.visuals.rect_ext(Enemy.getX(),Enemy.getY()+4,25,25,1,a,1,"#FFFFFF");
-
-			}
+					Enemy.collision = 1;
 
 		}
 
-		//endregion
 
-		//debug
-
-		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
-	}
-	,update:function(){
-
-		//TODO: put this into spicejs state class
-		if (!this.ready)
-			return;
-
-		//this.player.update();
-
-		if (this.app.client.graphics.getErrors()!==0) {
-
-			//TODO: logg in SpiceJS. Test.
-			console.log('loading'+this.app.client.graphics.getErrors());
-		}
-
-		this.player.update();
-		//console.log(this.Loading);
-		for(let i = this.bgItems.length-1; i>=0;i--) {
+		this.updateUI();
+		for(let i = this.bgItems.length-1; i>0;i--) {
 
 			let item = (this.bgItems[i]);
 			/*if ((i==0)||(i==1))
 				item.x -=0;
 				else*/
-				item.x -= this.player.velocity.x/5/i;
+
+				if (item.x>0)
+				item.x -= this.player.velocity.x/5/(i);
 
 		}
 

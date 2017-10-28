@@ -6,6 +6,7 @@ import {
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 import NewSprite from './newsprite';
+
 declare var Vector;
 
 /*
@@ -27,7 +28,8 @@ export default class RagPhysics extends NewSprite {
 
 	bounds(){
 
-				this.velocity.x*=0.94;
+		this.velocity.x*=0.94;
+
 		if (this.position.y<130)
 			this.position.y=130, this.diry = 0;
 
@@ -51,5 +53,6 @@ export default class RagPhysics extends NewSprite {
 		//	this.position.x=300, this.pState = 'idle';
 
 	}
+
 
 }

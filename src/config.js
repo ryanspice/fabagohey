@@ -3,12 +3,14 @@
 interface ISettingsCollision {
 
 	masks:boolean;
+	maskAlpha:number;
 
 }
 
 const collision:ISettingsCollision = {
 
-	masks:false
+	masks:true,
+	maskAlpha:0.15
 
 }
 
