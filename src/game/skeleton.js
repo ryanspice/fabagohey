@@ -13,10 +13,13 @@ export default class Skeleton extends RagPhysics {
 		this.timeoutmax = 120;
 		this.timeout = this.timeoutmax;
 		this.agility = 7;
+		this.off.x = 1000;
+		this.hits = 0;
 	}
 
 	respawn(){
 
+		this.hits = 0;
 		this.agility+=Math.random()*0.1;
 
 		if (this.timeout>0){
@@ -26,13 +29,16 @@ export default class Skeleton extends RagPhysics {
 		this.timeout = this.timeoutmax;
 		//this.position.x = Math.round(-1+Math.random()*2)*600;
 
-		let r = Math.random() < 0.5 ? -0.1 : 1;
+		let r = Math.random() < 0.5 ? -0.25 : 1;
 
-		this.position.x = Player.position.x + r*320;
+		this.position.x = Player.position.x + r*380;
 
 
 		if (this.position.x == 0)
 			this.position.x = 500;
+
+		this.position.x-=this.off.x;
+
 		this.index = 0;
 		this.pState = 'idle';
 	}
@@ -110,7 +116,7 @@ export default class Skeleton extends RagPhysics {
 				if (this.getX()>this.player.getX())
 				this.s = -1,velX -= Math.sin(this.index/360) * this.agility;
 
-			if (this.getY()>this.player.getY()-30)
+			if (this.getY()>this.player.getY()-25)
 				velY += Math.sin(this.index/360) * -1;
 				else
 				velY += Math.sin(this.index/360) * 1;
@@ -161,15 +167,19 @@ export default class Skeleton extends RagPhysics {
 				this.xx =z*Math.round(this.index);
 				this.w = (240/8);
 
-												this.dS = this.s;
-												console.log(this.s);
-												this.index = 7;
+				this.dS = this.s;
+				this.index = 7;
+
 				if (this.index<7)
 					this.index+=0.25;
 					else{
 
-						this.index = 0;
-						this.pState = 'dead';
+
+							this.velocity.x = 0;
+							this.index = 0;
+							this.pState = 'dead';
+
+
 						//this.delete = true;
 						//this.x+=800;
 

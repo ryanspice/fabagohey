@@ -110,9 +110,12 @@ export default class Player extends Knight {
 
 
 			if (enemy.getX()<=this.getX())
-			this.velocity.x += this.dir*1;
+				this.velocity.x += this.dir*1;
 			else
-			this.velocity.x -= this.dir*1;
+				this.velocity.x -= this.dir*1;
+
+			this.pState = 'block';
+			this.index = 5;
 
 		}
 

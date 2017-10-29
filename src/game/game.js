@@ -5,6 +5,8 @@ import debug from '../config';
 import utils from './utils.js';
 import _CHARMAP_ from './maps';
 
+import NewState from './newstate';
+
 import {
 	State,
 	Sprite,
@@ -38,7 +40,10 @@ const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
 	return false;
 }
 
+let _SCORE_ = 0;
+
 const Game:IState = {
+
 
 	init:async function(){
 
@@ -85,9 +90,9 @@ const Game:IState = {
 
 		for(let i = 3; i>=0;i--) {
 			let item;
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			(this.bgItems2.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			(this.bgItems3.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 		}
 
 		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
@@ -103,12 +108,12 @@ const Game:IState = {
 		Skeleton.sprIdle = this.sprSkeleton[0];
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
-		for (var i = 1; i>=0;i--){
+		for (var i = 11; i>=0;i--){
 			let count = 0;
 			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
 		    	count++;
 			}
-			let s = new Skeleton(this.sprSkeleton[0],300,130,-1,1,1,0,-3,(264/11),35,this.visuals);
+			let s = new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),110 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
 			s.priority = 5;
 			this.enemies.push(s);
 			/*
@@ -178,12 +183,17 @@ const Game:IState = {
 			this.score = '000000';
 			this.multiplier = 'x';
 
-			let best = '010000';
-			let yourbest = '000000';
+			let best = '012345';
+			let yourbest = (Number(this.score)||Number('001234'));
+			if (yourbest<10000)
+				yourbest = '0' + yourbest;
+			if (Number(yourbest)<100000)
+				yourbest= '0' + yourbest;
+
 
 			this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
 			this.UI_Multiplier = this.characterList((this.multiplier),0,10,0.5);
-			this.UI_Time = this.characterList('00',320/2-(8*2),5);
+			this.UI_Time = this.characterList('60',320/2-(8*2),5);
 
 			this.UI_Best = this.characterList('Best '+best,378-108	,5,0.5);
 			this.UI_Your = this.characterList('You '+yourbest,378-103.5	,10,0.5);
@@ -205,6 +215,9 @@ const Game:IState = {
 		}
 
 		this.drawBorders = ()=>{
+
+			if (!debug.borders)
+				return;
 
 			if (this.app.client.graphics.getErrors()!==0)
 				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
@@ -232,6 +245,9 @@ const Game:IState = {
 			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
 			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
 
+			this.score = _SCORE_ || 0;//'000000';
+			this.score = String(this.score);
+			console.log(this.score);
 			return;
 		}
 
@@ -246,18 +262,11 @@ const Game:IState = {
 
 		this.drawBorders();
 		this.drawDebug();
+
 		let col = "#FFFFFF";
 		this.hits = [];
 
-		//region collision code
-
-
-
-
-		//endregion
-
-		//debug
-
+		//debug TODO: move to player
 		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
 	}
 	,update:function(){
@@ -274,8 +283,30 @@ const Game:IState = {
 
 		this.player.update();
 
+		let OffsetX = 0;
 
-		var i2 = this.enemies.length-1;
+		for(let i = this.bgItems.length-1; i>=0;i--) {
+
+
+			let item = (this.bgItems[i]);
+
+			let px = this.player.position.x*0.25;
+
+			let a = this.app.client.setWidth/2-px/(i+1);
+			OffsetX = a;
+			item.position.x = a;
+
+			item = (this.bgItems2[i]);
+
+			a = -this.app.client.setWidth/2-px/(i+1);
+			item.position.x = a;
+
+			item = (this.bgItems3[i]);
+
+			a = -px/(i+1);
+			item.position.x = a;
+		}
+
 		var i = this.enemies.length-1;
 
 		//for each enemy
@@ -284,6 +315,9 @@ const Game:IState = {
 			//enemy in enemies
 			let Enemy:Sprite = this.enemies[i];
 
+			if (!Enemy.player)
+				Enemy.player = this.player;
+			Enemy.off.x = OffsetX;
 			//validate enemy for collision
 			if (checkEnemy(Enemy, null))
 				continue;
@@ -292,7 +326,7 @@ const Game:IState = {
 			var collision = false;
 
 			//compare enemy to enemies
-			for (i2; i2>=0;i2--){
+			for (let i2 = this.enemies.length-1; i2>=0;i2--){
 
 				//compared enemy in enemies
 				let compare_enemy = this.enemies[i2];
@@ -305,13 +339,13 @@ const Game:IState = {
 					continue;
 
 				if (utils.Within(compare_difference.x,-20,20))
-					compare_enemy.velocity.x+=Enemy.dir/7.5,collision = true; //TODO tweak
-
+					collision = true, compare_enemy.position.x-=compare_difference.x/100 - Math.random()*1/100;//compare_enemy.velocity.x+=Enemy.dir/1.5,collision = true; //TODO tweak
+					//(compare_difference.x-Enemy.dir/1.5)*(Math.random()*-1+0.5)
 			}
 
 			//if collision with enemy
-			if (collision)
-				Enemy.position.offset(-1*Enemy.s,0);
+			//if (collision)
+			//				Enemy.position.offset(1*Enemy.s,0);
 
 			//Collision with PLAYER
 			let diff = Vector.Difference(this.player.getPosition(), Enemy.getPosition());
@@ -331,6 +365,8 @@ const Game:IState = {
 			//set warning colour
 			if (utils.Within(diff.x,-this.player.w/1.25,this.player.w/1.25)){
 				//col = "#FFFF00";
+				//trigger player collision event
+				this.player.collideWithEnemy(Enemy);
 			} else {
 
 			}
@@ -338,8 +374,6 @@ const Game:IState = {
 			//move enemy (collision)
 			if (utils.Within(diff.x,-this.player.w/5,this.player.w/5)){
 				Enemy.position.offset(-1*Enemy.s,0);
-				//trigger player collision event
-				this.player.collideWithEnemy(Enemy);
 			} else {
 
 			}
@@ -353,11 +387,11 @@ const Game:IState = {
 
 					//Push a hit
 					if (this.player.getIndex()==5)
-						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
+						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0,_SCORE_+=10);//this.hits.push(Enemy);
 
 					//Push a hit
 					if (this.player.getIndex()==8)
-						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0);//this.hits.push(Enemy);
+						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0,_SCORE_+=10);//this.hits.push(Enemy);
 
 				}
 
@@ -371,22 +405,14 @@ const Game:IState = {
 		}
 
 
+		if (this.player.x>20)
 		this.updateUI();
-		for(let i = this.bgItems.length-1; i>0;i--) {
 
-			let item = (this.bgItems[i]);
-			/*if ((i==0)||(i==1))
-				item.x -=0;
-				else*/
 
-				if (item.x>0)
-				item.x -= this.player.velocity.x/5/(i);
-
-		}
 
 		return;
 	}
 
 }
 
-export default new State(Game);
+export default new NewState(Game);

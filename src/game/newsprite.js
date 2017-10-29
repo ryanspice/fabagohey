@@ -34,6 +34,7 @@ import Player from './player';
 
 export default class NewSprite extends Sprite {
 
+
 	/* TODO: figure out how to pass my own type? */
 
 	constructor(...args:Array<any>){
@@ -61,6 +62,7 @@ export default class NewSprite extends Sprite {
 			super(img,x,y,s,a,c,xx,yy,w,h,visuals);
 
 		}
+		this.off = new Vector();
 
 	}
 
@@ -84,12 +86,12 @@ export default class NewSprite extends Sprite {
 			return;
 
 		if (this.collision==2)
-			this.visuals.rect_ext(this.x,this.y+4,25,25,1,debug.collision.maskAlpha,1,"#FF0000");
+			this.visuals.rect_ext(this.getX(),this.getY()+4,25,25,1,debug.collision.maskAlpha,1,"#FF0000");
 		else
 		if (this.collision==1)
-			this.visuals.rect_ext(this.x,this.y+4,25,25,1,debug.collision.maskAlpha,1,"#FFFF00");
+			this.visuals.rect_ext(this.getX(),this.getY()+4,25,25,1,debug.collision.maskAlpha,1,"#FFFF00");
 		else
-			this.visuals.rect_ext(this.x,this.y+4,25,25,1,debug.collision.maskAlpha,1,"#FFFFFF");
+			this.visuals.rect_ext(this.getX(),this.getY()+4,25,25,1,debug.collision.maskAlpha,1,"#FFFFFF");
 
 	}
 
@@ -99,14 +101,14 @@ export default class NewSprite extends Sprite {
 
 	getX(){
 
-		return this.position.x-Player.offset.x;
+		return this.position.x-Player.offset.x+this.off.x;
 	}
 
 	/**/
 
 	getY(){
 
-		return this.position.y+Player.offset.y;
+		return this.position.y+Player.offset.y+this.off.y;
 	}
 
 	/**/
