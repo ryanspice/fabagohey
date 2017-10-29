@@ -12,9 +12,12 @@ export default class Skeleton extends RagPhysics {
 		this.dS = 0;
 		this.timeoutmax = 120;
 		this.timeout = this.timeoutmax;
+		this.agility = 7;
 	}
 
 	respawn(){
+
+		this.agility+=Math.random()*0.1;
 
 		if (this.timeout>0){
 			this.timeout--;
@@ -23,9 +26,9 @@ export default class Skeleton extends RagPhysics {
 		this.timeout = this.timeoutmax;
 		//this.position.x = Math.round(-1+Math.random()*2)*600;
 
-		let r = Math.random() < 0.5 ? -1 : 1;
+		let r = Math.random() < 0.5 ? -0.1 : 1;
 
-		this.position.x = Player.position.x + r*300;
+		this.position.x = Player.position.x + r*320;
 
 
 		if (this.position.x == 0)
@@ -55,8 +58,11 @@ export default class Skeleton extends RagPhysics {
 					return;
 				}
 
-				if (this.getX()>Player.position.x)
-				if (this.getX()<Player.position.x){
+				if (!this.player)
+					return;
+
+				if (this.getX()>this.player.getX())
+				if (this.getX()<this.player.getX()){
 
 
 						this.pState = 'idle';
@@ -72,6 +78,13 @@ export default class Skeleton extends RagPhysics {
 			break;
 
 			case 'walk':
+
+				if (!this.player){
+
+					this.pState = 'idle';
+					return;
+
+				}
 
 				this.img = Skeleton.sprWalk;
 				z = (286/13);
@@ -91,13 +104,13 @@ export default class Skeleton extends RagPhysics {
 
 				let velX = 0;
 				let velY = 0;
-				if (this.getX()<Player.position.x)
-				this.s = 1,velX += Math.sin(this.index/360) * 5;
+				if (this.getX()<this.player.getX())
+				this.s = 1,velX += Math.sin(this.index/360) * this.agility;
 				else
-				if (this.getX()>Player.position.x)
-				this.s = -1,velX -= Math.sin(this.index/360) * 5;
+				if (this.getX()>this.player.getX())
+				this.s = -1,velX -= Math.sin(this.index/360) * this.agility;
 
-			if (this.getY()>Player.position.y)
+			if (this.getY()>this.player.getY()-30)
 				velY += Math.sin(this.index/360) * -1;
 				else
 				velY += Math.sin(this.index/360) * 1;

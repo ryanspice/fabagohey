@@ -1,10 +1,10 @@
 //@flow
 
-declare var Vector;
 
 import Knight from './knight';
 
 import {
+	ISprite,
 	IVisuals
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
@@ -17,7 +17,7 @@ import type {
 import {
 	StatsBuffer
 } from './utils';
-
+declare var Vector;
 
 interface IGeneralControls {
 	up:number;
@@ -26,6 +26,8 @@ interface IGeneralControls {
 	right:number;
 	attack:number;
 }
+
+/* */
 
 export default class Player extends Knight {
 
@@ -73,25 +75,50 @@ export default class Player extends Knight {
 		if (vel_x)
 			this.velocity.x = vel_x,this.pState = 'walk';
 
-			//console.log(vel_x);
 		this.dir = (vel_x>=0)?0.5:-0.5;
 
-		let attack:boolean = Boolean(input.attack);
-		if (attack){
+		if (input.attack){
 
-			this.velocity.x /=10;
-			//this.dir = (-vel_x>=0)?0.5:-0.5;
+			this.velocity.x /=10000;
 			this.pState = 'attack';
 
 			if (this.index<9){
-			this.index+=0.05;
-			if (vel_x)
-				this.index+=0.01;
+
+				this.index+=0.05;
+
+				if (vel_x)
+					this.index+=0.01;
+
+			} else {
+
+				this.index = 0;
+
 			}
 
 		}
 
 	}
+
+	/**/
+
+	collideWithEnemy(enemy:ISprite){
+
+		this.velocity.x *=0.9;
+
+		if (enemy.pState=="attack")
+		if (enemy.getIndex()==8){
+
+
+			if (enemy.getX()<=this.getX())
+			this.velocity.x += this.dir*1;
+			else
+			this.velocity.x -= this.dir*1;
+
+		}
+
+	}
+
+	//region unused
 
 	/* UNUSED
 
@@ -152,17 +179,7 @@ export default class Player extends Knight {
 
 	*/
 
-	/**/
-
-	collideWithEnemy(enemy:any){
-
-		this.velocity.x *=0.19;
-
-		if (enemy.pState=="attack")
-		if (enemy.getIndex()==8)
-			this.velocity.x -= this.dir*2;
-
-	}
+	//endregion unused
 
 }
 
