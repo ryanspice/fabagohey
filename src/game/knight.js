@@ -27,6 +27,8 @@ export default class Knight extends RagPhysics {
 
 		this.type = '';
 
+		this.lastDir = 1;
+
 		this.dir = 1;
 		this.diry = 1;
 		this.agility = 7;
@@ -47,7 +49,8 @@ export default class Knight extends RagPhysics {
 
 	draw(){
 
-		const direction = (this.velocity.x<0);
+		const direction = (this.pState=="block")?(this.lastDir):(this.lastDir = (this.velocity.x<0));
+
 		const flip = (-1 + this.x);
 
 		if (direction) {
