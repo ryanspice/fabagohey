@@ -224,6 +224,8 @@ const Game:IState = {
 				else
 				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
 			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
+			this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
+			this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
 
 		}
 
@@ -247,7 +249,7 @@ const Game:IState = {
 
 			this.score = _SCORE_ || 0;//'000000';
 			this.score = String(this.score);
-			console.log(this.score);
+			
 			return;
 		}
 

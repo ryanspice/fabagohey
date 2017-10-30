@@ -85,9 +85,13 @@ const Loading:IState = {
 
 		this.drawBorders = ()=>{
 
-			this.visuals.rect(0,0,-600/this.app.scale,400,"#000000")
+			if (this.app.client.graphics.getErrors()!==0)
+				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
+				else
+				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
 			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
-
+			this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
+			this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
 		}
 
 		this.visuals.bufferIndex = 0;

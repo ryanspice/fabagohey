@@ -16,14 +16,11 @@ export default class Bone extends RagPhysics {
 		this.vel.y+=0.1;
 		this.vel.x*=0.9;
 
-
-
 		this.xx =1*Math.round(this.index);
 		this.w = (100/7);
 		//if (this.index<4)
 		//	this.index+=0.25;
 	}
-
 
 	draw(){
 		this.update();
