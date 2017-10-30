@@ -1,13 +1,43 @@
+//@flow
+
+declare var Vector;
 
 import Player from './player';
 
 import RagPhysics from './ragphysics';
 
+import {
+	ISprite,
+	IVisuals
+	// $FlowFixMe
+} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
+
+import type {
+	dtoDrawData,
+	dtoBatchDataValidation
+} from './core/interfaces';
+
+import {
+	StatsBuffer,
+	Timer
+} from './utils';
+
+const _AgilityIncrease_ = 0.05;
+
+
+
 export default class Skeleton extends RagPhysics {
 
-	constructor(img,x,y,s,a,c,xx,yy,w,h,visuals){
+	agility:number;
 
-		super(img,x,y,s,a,c,xx,yy,w,h,visuals);
+	tick:Timer = new Timer(120);
+
+	/**/
+
+	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals){
+
+		super(new StatsBuffer(data,x,y,s,a,c,xx,yy,w,h,visuals));
+
 		this.pState = 'walk';
 		this.dS = 0;
 		this.timeoutmax = 120;
@@ -15,33 +45,25 @@ export default class Skeleton extends RagPhysics {
 		this.agility = 7;
 		this.off.x = 1000;
 		this.hits = 0;
+
 	}
+
+	/**/
 
 	respawn(){
 
-		this.hits = 0;
-		this.agility+=Math.random()*0.1;
-
-		if (this.timeout>0){
-			this.timeout--;
+		if (this.tick.next())
 			return;
-		}
-		this.timeout = this.timeoutmax;
-		//this.position.x = Math.round(-1+Math.random()*2)*600;
 
-		let r = Math.random() < 0.5 ? -0.25 : 1;
-
-		this.position.x = Player.position.x + r*380;
-
-
-		if (this.position.x == 0)
-			this.position.x = 500;
-
-		this.position.x-=this.off.x;
-
+		this.hits = 0;
 		this.index = 0;
 		this.pState = 'idle';
+		this.agility+=Math.random()*_AgilityIncrease_;
+		this.position.x = (Player.position.x + ( (Math.random() < 0.5 ? -0.25 : 1)*380) ) - this.off.x;
+
 	}
+
+	/**/
 
 	update(){
 
@@ -51,7 +73,7 @@ export default class Skeleton extends RagPhysics {
 
 			case 'idle':
 
-				this.img = Skeleton.sprIdle;
+				this.image_index = Skeleton.sprIdle;
 				z = (264/11);
 				this.w = (264/11);
 				this.xx =z*Math.round(this.index);
@@ -92,7 +114,7 @@ export default class Skeleton extends RagPhysics {
 
 				}
 
-				this.img = Skeleton.sprWalk;
+				this.image_index = Skeleton.sprWalk;
 				z = (286/13);
 				this.w = (286/13);
 				this.xx =z*Math.round(this.index);
@@ -121,13 +143,7 @@ export default class Skeleton extends RagPhysics {
 				else
 				velY += Math.sin(this.index/360) * 1;
 
-				if (this.collision==1){
 
-
-						this.pState = 'attack';
-						this.index = 0;
-						return;
-				}
 				this.move(new Vector(velX,velY))
 
 
@@ -141,7 +157,7 @@ export default class Skeleton extends RagPhysics {
 			break;
 			case 'attack':
 
-				this.img = Skeleton.sprSkeleton[2];
+				this.image_index = Skeleton.sprSkeleton[2];
 
 				z = (774/18);
 				this.xx =-8+z*Math.round(this.index);
@@ -162,7 +178,7 @@ export default class Skeleton extends RagPhysics {
 			case 'hit':
 
 
-				this.img = Skeleton.sprSkeleton[3];
+				this.image_index = Skeleton.sprSkeleton[3];
 				z = (240/8);
 				this.xx =z*Math.round(this.index);
 				this.w = (240/8);
@@ -174,11 +190,18 @@ export default class Skeleton extends RagPhysics {
 					this.index+=0.25;
 					else{
 
+						if (this.hits<25){
+
+							this.hits++;
+							this.velocity.x = 0;
+
+						}else {
 
 							this.velocity.x = 0;
 							this.index = 0;
 							this.pState = 'dead';
 
+						}
 
 						//this.delete = true;
 						//this.x+=800;
@@ -189,7 +212,7 @@ export default class Skeleton extends RagPhysics {
 			break;
 			case 'dead':
 
-				this.img = Skeleton.sprSkeleton[5];
+				this.image_index = Skeleton.sprSkeleton[5];
 
 				z = (495/15);
 				this.xx =z*Math.round(this.index);
@@ -212,6 +235,15 @@ export default class Skeleton extends RagPhysics {
 		}
 		this.bounds();
 
+
+		if (this.pState!='attack')
+		if (this.collision>=1){
+
+
+				this.pState = 'attack';
+				this.index = 3;
+				return;
+		}
 
 	}
 

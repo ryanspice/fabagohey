@@ -181,7 +181,7 @@ const Game:IState = {
 			}
 
 			this.score = '000000';
-			this.multiplier = 'x';
+			this.multiplier = 'xxx';
 
 			let best = '012345';
 			let yourbest = (Number(this.score)||Number('001234'));
@@ -247,10 +247,9 @@ const Game:IState = {
 			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
 			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
 
-			this.score = _SCORE_ || 0;//'000000';
+			this.score = _SCORE_ || 0;
 			this.score = String(this.score);
-			
-			return;
+
 		}
 
 		this.ready = true;

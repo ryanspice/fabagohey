@@ -4,6 +4,27 @@ import type {
 	dtoBatchDataValidation
 } from './core/interfaces';
 
+export class Timer {
+
+	time:number = 0;
+	max:number;
+
+	constructor(max:number = 0){
+		this.max = max;
+	}
+
+	next(){
+		if (this.time++<=this.max){
+			this.time++;
+			return true;
+		} else {
+			this.time = this.max;
+			return false;
+		}
+	}
+
+}
+
 export const reverseString = (str:string)=>{ return (str === '') ? '' : reverseString(str.substr(1)) + str.charAt(0);};
 
 export class StatsBuffer {
@@ -47,6 +68,7 @@ const utils = {
 
 	reverseString,
 	Within,
+	Timer
 
 }
 

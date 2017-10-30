@@ -34,6 +34,8 @@ import Player from './player';
 
 export default class NewSprite extends Sprite {
 
+	off:Vector = new Vector();
+	vel:Vector = new Vector();
 
 	/* TODO: figure out how to pass my own type? */
 
@@ -130,6 +132,15 @@ export default class NewSprite extends Sprite {
 	move(vector:IVector){
 
 		this.position = Vector.Combine(this.position,vector);
+
+	}
+
+	/* TODO: move to spiceJS */
+
+	set image_index(img:HTMLImageElement){
+
+		if (this.img!=img)
+			this.img = img;
 
 	}
 

@@ -46,8 +46,8 @@ export default class RagPhysics extends NewSprite {
 
 		//this.position.x = this.app.client.math.Clamp(0,1)
 
-		if (this.position.x<-120)
-			this.position.x=-120;//, this.pState = 'idle';
+		//if (this.position.x<-120)
+//			this.position.x=-120;//, this.pState = 'idle';
 
 		//if (this.position.x>300)
 		//	this.position.x=300, this.pState = 'idle';

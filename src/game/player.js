@@ -1,5 +1,6 @@
 //@flow
 
+declare var Vector;
 
 import Knight from './knight';
 
@@ -17,7 +18,6 @@ import type {
 import {
 	StatsBuffer
 } from './utils';
-declare var Vector;
 
 interface IGeneralControls {
 	up:number;
@@ -32,6 +32,8 @@ interface IGeneralControls {
 export default class Player extends Knight {
 
 	gamepad:any;
+
+	/**/
 
 	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals){
 

@@ -16,8 +16,6 @@ export default class Knight extends RagPhysics {
 	agility:number;
 	priority:number;
 	thyme:Date;
-	off:Vector = new Vector();
-	vel:Vector = new Vector();
 
 	constructor(...args:Array<any>){
 
@@ -106,7 +104,7 @@ export default class Knight extends RagPhysics {
 
 			case 'walk':
 
-				this.img = this.sprWalk;
+				this.image_index = this.sprWalk;
 				z = (336/8);
 				this.xx =z*Math.round(this.index);
 
@@ -119,7 +117,7 @@ export default class Knight extends RagPhysics {
 
 			case 'block':
 
-				this.img = this.sprBlock;
+				this.image_index = this.sprBlock;
 				z = (294/7);
 				this.xx =z*Math.round(this.index);
 
@@ -132,7 +130,7 @@ export default class Knight extends RagPhysics {
 
 			case 'idle':
 
-				this.img = this.sprIdle;
+				this.image_index = this.sprIdle;
 				z = (168/4);
 				this.xx =z*Math.round(this.index);
 				this.index = 1+Math.sin(t/360)*1;
@@ -143,7 +141,7 @@ export default class Knight extends RagPhysics {
 
 				this.h = 80;
 				this.w = (800/10);
-				this.img = this.sprAttack;
+				this.image_index = this.sprAttack;
 				z = (800/10);
 				this.xx =-20 + z*Math.round(this.index);
 
