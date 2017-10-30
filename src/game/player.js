@@ -79,6 +79,8 @@ export default class Player extends Knight {
 
 		this.dir = (vel_x>=0)?0.5:-0.5;
 
+		if (this.pState!='block')
+		if (this.pState!='attack')
 		if (input.attack){
 
 			this.velocity.x /=10000;

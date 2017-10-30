@@ -190,18 +190,19 @@ export default class Skeleton extends RagPhysics {
 					this.index+=0.25;
 					else{
 
+						/*
 						if (this.hits<25){
 
 							this.hits++;
 							this.velocity.x = 0;
 
 						}else {
-
+						*/
 							this.velocity.x = 0;
 							this.index = 0;
 							this.pState = 'dead';
 
-						}
+						//}
 
 						//this.delete = true;
 						//this.x+=800;
@@ -247,30 +248,29 @@ export default class Skeleton extends RagPhysics {
 
 	}
 
+	/**/
+
 	draw(){
+
 		this.update();
+
 		if (this.pState == 'dead'){
-
-
-
 			if (this.dS<0)
-			this.visuals.image_flip(-1 + this.getX(),1),this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
+				this.visuals.image_flip(-1 + this.getX(),1),this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
 			else
-			this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
+				this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h);
 			if (this.dS<0)
-			this.visuals.image_flip(-1 + this.getX(),1)
-
-
-
+				this.visuals.image_flip(-1 + this.getX(),1);
 			return;
 		}
 
 		if (this.s<0)
-		this.visuals.image_flip(-1 + this.getX(),1),this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
+			this.visuals.image_flip(-1 + this.getX(),1),this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
 		else
-		this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
+			this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h);
 		if (this.s<0)
-		this.visuals.image_flip(-1 + this.getX(),1)
+			this.visuals.image_flip(-1 + this.getX(),1);
+
 	}
 
 }
