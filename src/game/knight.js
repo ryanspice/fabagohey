@@ -1,12 +1,6 @@
 //@flow
 
-declare var Vector;
-
 import RagPhysics from './ragphysics';
-
-import type {
-	dtoDrawData
-} from './core/interfaces';
 
 export default class Knight extends RagPhysics {
 
@@ -16,6 +10,8 @@ export default class Knight extends RagPhysics {
 	agility:number;
 	priority:number;
 	thyme:Date;
+
+	/**/
 
 	constructor(...args:Array<any>){
 
@@ -34,6 +30,7 @@ export default class Knight extends RagPhysics {
 		this.thyme = new Date();
 		this.off.y = -2;
 		this.vel.y = 1;
+
 	}
 
 	/**/
@@ -47,7 +44,7 @@ export default class Knight extends RagPhysics {
 
 	draw(){
 
-		const direction = (this.pState=="block")?(this.lastDir):(this.lastDir = (this.velocity.x<0));
+		const direction = (this.pState==="block")?(this.lastDir):(this.lastDir = (this.velocity.x<0));
 
 		const flip = (-1 + this.x);
 
@@ -74,24 +71,26 @@ export default class Knight extends RagPhysics {
 
 		this.move(this.velocity);
 
-		if ((this.velocity.x>0)&&(this.velocity.x<0.2))
+		if ((this.velocity.x>0)&&(this.velocity.x<0.2)){
 			this.velocity.x = 0,this.pState = 'idle';
+		}
 
-		if ((this.velocity.x<-0.001)&&(this.velocity.x>-0.2))
+		if ((this.velocity.x<-0.001)&&(this.velocity.x>-0.2)){
 			this.velocity.x = -0.001,this.pState = 'idle';
+		}
 
 		this.controls();
 		this.bounds();
 
-		if (this.x<20)
+		if (this.x<20){
 			this.velocity.x=0.3,this.index+=0.005,this.pState = 'walk';
-
-		if ((this.velocity.x>19) && (this.velocity.x<=21))
+		}
+		if ((this.velocity.x>19) && (this.velocity.x<=21)){
 			this.velocity.x = 0,this.index=0,this.pState = 'idle';
-
+		}
 		this.off.y = -2;
 
-		if (this.pState != 'attack'){
+		if (this.pState !== 'attack'){
 
 			this.yy = 0;
 			this.h = 42;
@@ -105,29 +104,34 @@ export default class Knight extends RagPhysics {
 			case 'walk':
 
 				this.image_index = this.sprWalk;
+
 				z = (336/8);
+
 				this.xx =z*Math.round(this.index);
 
-				if (this.index<7)
+				if (this.index<7){
+
 					this.index+=0.1;
-					else
+				}	else {
+
 					this.index = -0.5;
 
-			break;
+				}
 
+			break;
 			case 'block':
 
 				this.image_index = this.sprBlock;
 				z = (294/7);
 				this.xx =z*Math.round(this.index);
 
-				if (this.index<5.4)
+				if (this.index<5.4){
 					this.index+=0.1;
-					else
+					}else{
 					this.index = 6;
+				}
 
 			break;
-
 			case 'idle':
 
 				this.image_index = this.sprIdle;
@@ -136,7 +140,6 @@ export default class Knight extends RagPhysics {
 				this.index = 1+Math.sin(t/360)*1;
 
 			break;
-
 			case 'attack':
 
 				this.h = 80;
@@ -151,23 +154,31 @@ export default class Knight extends RagPhysics {
 					this.index += (Number(this.index<3)) * 0.1;
 				}
 
-				if (this.index<3)
-					this.index +=0.1;
-				else {
+				if (this.index<3){
 
-					if (this.isAttacking)
-					if (this.index<7)
 					this.index +=0.1;
-					else
-					this.pState = 'idle';
+
+				} else {
+
+					if ((this.isAttacking)&&(this.index<7)){
+
+						this.index +=0.1;
+
+					} else {
+
+						this.pState = 'idle';
+
+					}
 
 				}
 
-				if (this.index>3)
-				if (this.index<7)
+				if ((this.index>3)&&(this.index<7)) {
+
 					this.index +=0.1;
-				else
+				} else {
+
 					this.pState = 'idle';
+				}
 
 			break;
 

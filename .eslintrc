@@ -10,7 +10,43 @@
 },
 
   "rules": {
-    "strict": 0
+
+    	/* Possible Errors */
+
+		"no-irregular-whitespace": 1, // disallow irregular whitespace outside of strings and comments
+
+		"quote-props":1,        // disallow reserved words being used as object literal keys (off by default)
+		"no-sparse-arrays": 1,        // disallow sparse arrays
+		"use-isnan": 1,               // disallow comparisons with the value NaN
+
+
+		"valid-jsdoc": 1,             // Ensure JSDoc comments are valid (off by default)
+		"valid-typeof": 1,            // Ensure that the results of typeof are compared against a valid string
+
+	  	/* Best Practice */
+
+		"strict": 0,
+		"radix": 1,
+		"eqeqeq": 1,                // require the use of === and !==
+		"curly": 1,                 // specify curly brace conventions for all control statements
+
+	    "dot-notation": 1,          // encourages use of dot notation whenever possible
+
+		"no-unused-vars": 1,              // disallow declaration of variables that are not used in the code
+		"no-use-before-define": 1,        // disallow use of variables before they are defined
+		"wrap-regex": 1,
+		"no-var": 1,          // require let or const instead of var (off by default)
+		"no-multiple-empty-lines": 1,   // disallow multiple empty lines (off by default)
+
+		"eol-last": 1,                  // enforce newline at the end of file, with no multiple empty lines
+		"no-mixed-spaces-and-tabs": 1,  // disallow mixed spaces and tabs for indentation
+		"vars-on-top": 1,           // requires to declare all vars on top of their containing scope (off by default)
+
+
+		"no-lone-blocks": 1,        // disallow unnecessary nested blocks
+		"no-loop-func": 1,          // disallow creation of functions within loops
+		"no-implied-eval": 1,       // disallow use of eval()-like methods
+		"no-alert": 1,              // disallow the use of alert, confirm, and prompt
 },
     "plugins": [
         "flowtype"
@@ -27,4 +63,10 @@
 "enable_getters_and_setters":true
 
       }
+
+
+
+
+
+
 }
