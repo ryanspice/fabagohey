@@ -17,6 +17,8 @@ declare var Circle;
 
 import Game from './game';
 
+import ParallaxBackground from './background';
+
 const Loading:IState = {
 
 	init: async function(){
@@ -76,9 +78,17 @@ const Loading:IState = {
 			for(let i = 3; i>=0;i--) {
 				let item;
 				//(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-				(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+				//(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 				//(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 			}
+
+			this.backgrounds = [];
+			this.backgrounds.push(new ParallaxBackground(this.bg[3],0,0,1.2,1,0,0,0,272,160,this.visuals,3));
+			this.backgrounds.push(new ParallaxBackground(this.bg[2],0,0,1.2,1,0,0,0,272,160,this.visuals,2));
+			this.backgrounds.push(new ParallaxBackground(this.bg[1],0,0,1.2,1,0,0,0,272,160,this.visuals,1));
+			this.backgrounds.push(new ParallaxBackground(this.bg[0],0,0,1.2,1,0,0,0,272,160,this.visuals,0));
+			//this.f2 = new ParallaxBackground(this.bg[0],0,100,1.2,1,0,-320/1.2,0,272,160,this.visuals);
+
 
 		}))))))))))))))));
 
@@ -100,25 +110,30 @@ const Loading:IState = {
 
 	,draw(){
 
+		this.backgrounds.forEach(sprite => sprite.updateAll());
+
 		this.drawBorders();
 
-		if (this.app.client.graphics.getErrors()==0) {
+		if (this.app.client.graphics.getErrors()===0) {
 
 			let gamepad =  this.visuals.app.input.gamepads;
 
-			if (gamepad)
-			if ((gamepad.left)||(gamepad.right)||(gamepad.x)||(gamepad.a)||(gamepad.y)||this.app.input.pressed) {
+			if (gamepad){
 
-				for(var i=8;i>=0;--i){
-					this.list[i].delete = true;
+				if ((gamepad.left)||(gamepad.right)||(gamepad.x)||(gamepad.a)||(gamepad.y)||this.app.input.pressed) {
+
+					for(let i=8;i>=0;--i){
+						this.list[i].delete = true;
+					}
+					for(let i=this.bgItems.length-1;i>=0;--i){
+						this.bgItems[i].delete = true;
+					}
+
+					this.bgItems = [];
+
+					this.app.client.update.state = new State(Game);
 				}
-				for(var i=this.bgItems.length-1;i>=0;--i){
-					this.bgItems[i].delete = true;
-				}
 
-				this.bgItems = [];
-
-				this.app.client.update.state = new State(Game);
 			}
 
 		}

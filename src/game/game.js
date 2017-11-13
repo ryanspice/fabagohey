@@ -7,6 +7,8 @@ import _CHARMAP_ from './maps';
 
 import NewState from './newstate';
 
+import Background from './background';
+
 import {
 	State,
 	Sprite,
@@ -41,6 +43,7 @@ const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
 }
 
 let _SCORE_ = 0;
+let _LIVES_ = 0;
 
 const Game:IState = {
 
