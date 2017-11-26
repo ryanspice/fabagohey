@@ -5,31 +5,22 @@ import {
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
-import {
-	IState
-	// $FlowFixMe
-} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
-
-/* TODO: export properly from spicejs */
-
-declare var Vector;
-declare var Circle;
-
 import Game from './game';
 
 import ParallaxBackground from './background';
 import Spinner from './spinner';
 
-const Loading:IState = {
+/* Loading state */
 
-	'init': async function(){
+class Loading extends State {
 
-		this.x =0;
+	constructor(){
 
-		this.list = [];
+		super(Loading);
 
-		//let s = new Spinner(this.visuals,1);
-		//this.list = s.sprites;
+	}
+
+	static async init(){
 
 		this.spinner =  new Spinner(this.visuals,1);
 
@@ -73,36 +64,21 @@ const Loading:IState = {
 
 		}))))))))))))))));
 
-		//Draw back borders TODO: bring into spicejs as default (ore remove necessity)
-
-		this.drawBorders = ()=>{
-
-			if (this.app.client.graphics.getErrors()!==0) {
-
-				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
-
-			} else {
-
-				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000");
-
-			}
-
-			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
-			this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
-			this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
-		}
-
 		//Set buffer index of the UI draw event TODO:
 
 		this.visuals.bufferIndex = 0;
 
+
 	}
 
-	,draw(){
+	static update(){
+
+		this.spinner.updateAll();
+	};
+
+	static draw(){
 
 		this.backgrounds.forEach(background => background.updateAll());
-
-		this.drawBorders();
 
 		if (this.app.client.graphics.getErrors()===0) {
 
@@ -128,18 +104,9 @@ const Loading:IState = {
 
 		}
 			//this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#111111");
-	}
-	,update(){
 
-		let a = 12;
-		let c = 3;
-		let d = 6;
-		let b = this.x/1080;
-		this.spinner.updateAll();
-		this.x+=3;
-
-	}
+	};
 
 }
 
-export default new State(Loading);
+export default new Loading();
