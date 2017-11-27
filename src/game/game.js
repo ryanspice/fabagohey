@@ -45,14 +45,20 @@ const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
 let _SCORE_ = 0;
 let _LIVES_ = 0;
 
-const Game:IState = {
 
+class Game extends State {
 
-	init:async function(){
+	constructor(){
+
+		super(Game);
+
+	}
+
+	static async init(){
 
 		this.debug = debug.collision.masks;
 
-		 this.loadImages = await (()=>{
+		this.loadImages = await (()=>{
 
 			let loader = this.app.client.loader;
 			this.font = loader.getImageReference('./Cursive1_MyEdit');
@@ -256,9 +262,10 @@ const Game:IState = {
 		}
 
 		this.ready = true;
+
 	}
-,
-	draw:function(){
+
+	static draw(){
 
 		//TODO: put this into spicejs state class
 		if (!this.ready)
@@ -272,8 +279,10 @@ const Game:IState = {
 
 		//debug TODO: move to player
 		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
+
 	}
-	,update:function(){
+
+	static update() {
 
 		//TODO: put this into spicejs state class
 		if (!this.ready)
@@ -415,8 +424,9 @@ const Game:IState = {
 
 
 		return;
+
 	}
 
 }
 
-export default new NewState(Game);
+export default new Game();

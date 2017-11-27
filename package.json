@@ -63,12 +63,12 @@
     "style-loader": "^0.13.0",
     "webpack": "^3.0.0",
     "webpack-closure-compiler": "^2.1.5",
-    "webpack-dashboard": "^1.0.0",
-    "webpack-dev-server": "^2.5.0"
+    "webpack-dashboard": "^1.0.2",
+    "webpack-dev-server": "^2.9.4"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
-    "copy-webpack-plugin": "^4.2.0",
+    "copy-webpack-plugin": "^4.2.3",
     "es6-promise": "^3.1.2",
     "html-webpack-plugin": "^1.7.0",
     "ryanspice2016-spicejs": "^0.8.5"
