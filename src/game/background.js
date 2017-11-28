@@ -7,7 +7,8 @@ import {
 
 import {
 	ISprite,
-	IVisuals
+	IVisuals,
+	IApp
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
@@ -50,5 +51,46 @@ export default class ParallaxBackground {
 
 	}
 
+
+}
+
+export class BackgroundController {
+
+	backgrounds:Array<ParallaxBackground> = [];
+	images:Array<ISprite> = [];
+	stats:dtoBatchDataValidation;
+
+	visuals:IVisuals;
+	app:IApp;
+
+	constructor(stats:dtoBatchDataValidation, visuals:IVisuals){
+
+		this.visuals = visuals;
+		this.app = this.visuals.app;
+
+		this.images = [
+			this.app.client.loader.getImageReference('./parallax-forest-back-trees'),
+			this.app.client.loader.getImageReference('./parallax-forest-lights'),
+			this.app.client.loader.getImageReference('./parallax-forest-middle-trees'),
+			this.app.client.loader.getImageReference('./parallax-forest-front-trees'),
+		];
+
+
+		this.stats = stats;
+		for(let i = 3; i >= 0; i--){
+
+			this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i));
+
+		}
+
+	}
+
+	/* Update all parallax backgrounds */
+
+	updateAll(){
+
+		this.backgrounds.forEach(background => background.updateAll());
+
+	}
 
 }
