@@ -14,7 +14,7 @@ import {
 	IVisuals,
 	IApp
 	// $FlowFixMe
-} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
+} from '../../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 /* Generic Spinner class for loading spinner graphic */
 
