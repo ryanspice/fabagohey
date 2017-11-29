@@ -1,33 +1,31 @@
 //@flow
 
-import debug from '../config';
-
-import utils from './utils.js';
-import _CHARMAP_ from './maps';
-
-import NewState from './newstate';
-
-import Background from './background';
-
 import {
 	State,
 	Sprite,
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
+/*
 import {
 	IState
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
-
-/* TODO: export properly from spicejs */
-
-declare var Vector;
+*/
 
 import Time from './time';
 import Player from './player';
 import Skeleton from './skeleton';
 import Letter from './letter';
+
+import utils from './utils';
+import debug from '../config';
+
+import _CHARMAP_ from './maps';
+
+/* TODO: export properly from spicejs */
+
+declare var Vector;
 
 //rename these
 let s = 1.125 + 0.2;
@@ -35,10 +33,12 @@ let xx = 0;
 let xxx = 0;
 
 const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
-	if (e.pState =='dead')
+	if (e.pState == 'dead')
 		return true;
-	if (e==e2)
+
+	if (e===e2)
 		return true;
+		
 	return false;
 }
 
