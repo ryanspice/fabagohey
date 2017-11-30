@@ -16,10 +16,14 @@ import type {
 	dtoBatchDataValidation
 } from './core/interfaces';
 
+/**/
+
 export default class ParallaxBackground {
 
 	sprites:Array<ISprite>;
 	speed:number = 0;
+
+	/**/
 
 	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals, speed:number){
 
@@ -34,7 +38,9 @@ export default class ParallaxBackground {
 
 	}
 
-	update(item:ISprite){
+	/**/
+
+	update(item:ISprite) {
 
 		item.xx+=0.05 + 0.05*this.speed;
 		if (item.xx>320/item.s){
@@ -45,14 +51,15 @@ export default class ParallaxBackground {
 
 	/**/
 
-	updateAll(){
+	updateAll():void {
 
 		this.sprites.forEach(sprite => this.update(sprite));
 
 	}
 
-
 }
+
+/**/
 
 export class BackgroundController {
 
@@ -62,6 +69,8 @@ export class BackgroundController {
 
 	visuals:IVisuals;
 	app:IApp;
+
+	/**/
 
 	constructor(stats:dtoBatchDataValidation, visuals:IVisuals){
 
@@ -79,7 +88,14 @@ export class BackgroundController {
 		this.stats = stats;
 		for(let i = 3; i >= 0; i--){
 
-			this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i));
+			let obj = new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i);
+
+//			obj.sprites[0].priority = 5;
+	//		obj.sprites[1].priority = 5;
+		//	obj.id = i;
+
+			this.backgrounds.push(obj);
+
 
 		}
 

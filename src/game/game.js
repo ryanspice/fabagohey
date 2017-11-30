@@ -21,7 +21,9 @@ import Letter from './letter';
 import utils from './utils';
 import debug from '../config';
 
-import _CHARMAP_ from './maps';
+//import _CHARMAP_ from './maps';
+
+let _CHARMAP_= [];
 
 /* TODO: export properly from spicejs */
 
@@ -38,15 +40,18 @@ const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
 
 	if (e===e2)
 		return true;
-		
+
 	return false;
 }
 
 let _SCORE_ = 0;
 let _LIVES_ = 0;
 
+/* Game state */
 
 class Game extends State {
+
+	/**/
 
 	constructor(){
 
@@ -54,7 +59,20 @@ class Game extends State {
 
 	}
 
-	static async init(){
+	/**/
+
+	static async init():Promise<void> {
+
+
+
+		const steve = require.ensure([],()=>{
+		   let s = require('./maps');
+		   console.log(s);
+		},'maps');
+
+		console.log(steve);
+
+
 
 		this.debug = debug.collision.masks;
 
@@ -103,6 +121,7 @@ class Game extends State {
 			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 			(this.bgItems3.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 		}
+		
 
 		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
 
@@ -118,6 +137,7 @@ class Game extends State {
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
 		for (var i = 11; i>=0;i--){
+
 			let count = 0;
 			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
 		    	count++;
@@ -136,6 +156,7 @@ class Game extends State {
 
 			},	100*i)
 			*/
+
 		}
 
 		this.visuals.bufferIndex = 0;
@@ -184,9 +205,9 @@ class Game extends State {
 			}
 
 			for (let i = 10;i>=0;i--){
-				let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
-				t.priority = 8;
-				t.type = '_image_part';
+				//let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
+				//t.priority = 8;
+				//t.type = '_image_part';
 			}
 
 			this.score = '000000';
@@ -265,7 +286,9 @@ class Game extends State {
 
 	}
 
-	static draw(){
+	/**/
+
+	static draw() {
 
 		//TODO: put this into spicejs state class
 		if (!this.ready)
@@ -274,13 +297,14 @@ class Game extends State {
 		this.drawBorders();
 		this.drawDebug();
 
-		let col = "#FFFFFF";
 		this.hits = [];
 
 		//debug TODO: move to player
-		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
+		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,"#FFFFFF")
 
 	}
+
+	/**/
 
 	static update() {
 

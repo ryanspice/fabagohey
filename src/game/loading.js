@@ -31,7 +31,7 @@ class Loading extends State {
 
 	/**/
 
-	static async init(){
+	static async init():Promise<void> {
 
 		this.spinner =  new Spinner(this.visuals,1);
 

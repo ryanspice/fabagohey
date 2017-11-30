@@ -18,6 +18,7 @@ import {
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
+/*
 import {
 	IVector,
 	IState,
@@ -25,6 +26,7 @@ import {
 	IStatsBuffer
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
+*/
 
 /*
 	handles all physics for moving characterlike objects
