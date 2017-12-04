@@ -23,7 +23,9 @@ import debug from '../config';
 
 //import _CHARMAP_ from './maps';
 
-let _CHARMAP_= [];
+let _CHARMAP_= require.ensure(['./maps'],()=>{
+   _CHARMAP_ = require('./maps').default;
+},'maps');
 
 /* TODO: export properly from spicejs */
 
@@ -63,14 +65,6 @@ class Game extends State {
 
 	static async init():Promise<void> {
 
-
-
-		const steve = require.ensure([],()=>{
-		   let s = require('./maps');
-		   console.log(s);
-		},'maps');
-
-		console.log(steve);
 
 
 
@@ -117,11 +111,11 @@ class Game extends State {
 
 		for(let i = 3; i>=0;i--) {
 			let item;
-			(this.bgItems2.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			(this.bgItems3.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			//(this.bgItems2.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			//(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			//(this.bgItems3.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
 		}
-		
+
 
 		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
 
@@ -176,9 +170,9 @@ class Game extends State {
 
 					let x = (this.characters.indexOf(string[i]));
 
-					let y = 0;
-					let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
-					l.priority = 27;
+					let y = 2;
+					let l = new Letter(this.font,xx+9*i*s,yy+y,s,1,0,0,0,9,9,this.visuals);
+					l.priority = 9;
 					l.characterNum = x;
 					arr.push(l);
 
@@ -205,9 +199,9 @@ class Game extends State {
 			}
 
 			for (let i = 10;i>=0;i--){
-				//let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
-				//t.priority = 8;
-				//t.type = '_image_part';
+				let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
+				t.priority = 8;
+				t.type = '_image_part';
 			}
 
 			this.score = '000000';
@@ -307,6 +301,7 @@ class Game extends State {
 	/**/
 
 	static update() {
+
 
 		//TODO: put this into spicejs state class
 		if (!this.ready)

@@ -17,11 +17,13 @@ import Spinner from './ui/spinner';
 
 import Game from './game';
 
+declare var require:any;
+
 /* Loading state */
 
 class Loading extends State {
 
-	/**/
+	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
 
@@ -29,52 +31,55 @@ class Loading extends State {
 
 	}
 
-	/**/
+	/* Initalize objects and load sprites */
 
 	static async init():Promise<void> {
-
-		this.spinner =  new Spinner(this.visuals,1);
-
-		//TODO: fix inside SpiceJS
-		this.app.client.loader.graphics = this.graphics;
-
-		//TODO: chain functions
-		this.app.client.loader.asyncLoadImage('./Cursive1_MyEdit','c1').then(()=>
-		this.app.client.loader.asyncLoadImage('./Untitled','ut').then(()=>
-		this.app.client.loader.asyncLoadImage('./parallax-forest-back-trees','s1').then(()=>
-		this.app.client.loader.asyncLoadImage('./parallax-forest-front-trees','s2').then(()=>
-		this.app.client.loader.asyncLoadImage('./parallax-forest-lights','s1').then(()=>
-		this.app.client.loader.asyncLoadImage('./parallax-forest-middle-trees','s1').then(()=>
-		this.app.client.loader.asyncLoadImage('./knight_3_improved_slash_animation_2','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./knight_walk_animation','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./knight_3_block','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./knight_3_idle','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Walk','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Hit','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Attack','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./Skeleton/Sprite Sheets/skeleton_parts','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Dead','s').then(()=>
-		this.app.client.loader.asyncLoadImage('./Skeleton/Sprite Sheets/Skeleton_Idle','s').then(()=>{
-
-			//Background Controller for parallaxing background
-			this.backgroundContoller = new BackgroundController(new StatsBuffer('',0,0,1.2,1,0,0,0,272,160),this.visuals);
-
-		}))))))))))))))));
 
 		//Set buffer index of the UI draw event TODO: ?
 		this.visuals.bufferIndex = 0;
 
+		this.asyncDoneLoading = false;
+
+		this.spinner =  new Spinner(this.visuals,1);
+
+		//TODO: fix inside SpiceJS
+		this.app.client.loader.graphics = await this.graphics;
+
+		//Load spritelist from data folder
+		this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
+
+			//Retrieve reference
+			this.spriteDataList = await require('../require/data').default.spriteDataList;
+
+			//Load sprites
+			for(let i = 0; i<=this.spriteDataList.length-1;i++){
+				await this.app.client.loader.asyncLoadImage(this.spriteDataList[i],String("spr"+i));
+			}
+
+		},'maps');
+
+		//Build BackgroundController
+		this.backgroundContoller = await new BackgroundController(new StatsBuffer('',0,0,1.2,1,0,0,0,272,160),this.visuals);
+
+		this.asyncDoneLoading = true;
+
 	}
 
-	/**/
+	/* Update objects */
 
 	static update(){
 
+		//TODO: fix bug with inital green
+		this.spinner.colour = this.asyncDoneLoading?"#33FF33":"#EE3333";
+
 		this.spinner.updateAll();
 
-		this.backgroundContoller.updateAll();
-
 		if (this.app.client.graphics.getErrors()===0) {
+
+			//TODO; no if? but sprite initalization error otherwise
+			if (this.backgroundContoller){
+				this.backgroundContoller.updateAll();
+			}
 
 			let gamepad =  this.visuals.app.input.gamepads;
 
@@ -95,7 +100,7 @@ class Loading extends State {
 
 	};
 
-	/**/
+	/* UI Overlay*/
 
 	static draw(){
 

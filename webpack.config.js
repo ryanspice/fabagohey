@@ -35,6 +35,7 @@ const source = {
 	      minChunks: Infinity,
 	      filename: 'vendor.js'
 	    }),
+
 	    new webpack.LoaderOptionsPlugin({
 	      minimize: true,
 	      debug: false

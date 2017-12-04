@@ -74,6 +74,7 @@ export class BackgroundController {
 
 	constructor(stats:dtoBatchDataValidation, visuals:IVisuals){
 
+		//Extract references
 		this.visuals = visuals;
 		this.app = this.visuals.app;
 
@@ -84,18 +85,18 @@ export class BackgroundController {
 			this.app.client.loader.getImageReference('./parallax-forest-front-trees'),
 		];
 
-
 		this.stats = stats;
-		for(let i = 3; i >= 0; i--){
+
+		let i = 3;
+		for(i; i >= 0; i--){
 
 			let obj = new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i);
 
-//			obj.sprites[0].priority = 5;
-	//		obj.sprites[1].priority = 5;
-		//	obj.id = i;
+			//obj.sprites[0].priority = 5;
+			//obj.sprites[1].priority = 5;
+			//obj.id = i;
 
 			this.backgrounds.push(obj);
-
 
 		}
 
@@ -105,8 +106,16 @@ export class BackgroundController {
 
 	updateAll(){
 
+		if (this.app.client.graphics.getErrors()===0)
 		this.backgrounds.forEach(background => background.updateAll());
 
 	}
 
+	/* Update all parallax backgrounds */
+
+	updatePositionBasedOnPlayer(player:any){
+
+		this.backgrounds.forEach(background => background.sprites.forEach(sprite => sprite.xx = player.x));
+
+	}
 }

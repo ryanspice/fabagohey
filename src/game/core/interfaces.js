@@ -6,6 +6,8 @@ export interface IState {
 
 }
 
+export type dtoSpriteDataList = string[];
+
 export type dtoDrawData = {
 	img:dtoBatchDataValidation,
 	x:number,
