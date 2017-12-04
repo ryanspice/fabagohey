@@ -415,24 +415,33 @@ class Game extends State {
 
 				//Check player facing direction
 				//TODO: not use enemy.DS
-				if (((diff.x>0)==(this.player.velocity.x<0))&&(this.player.isAttacking)){
+				if (((diff.x>0)===(this.player.velocity.x<0))&&(this.player.isAttacking)){
 
 					//Push a hit
-					if (this.player.getIndex()==5)
+					if (this.player.getIndex()===5)
 						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0,_SCORE_+=10);//this.hits.push(Enemy);
 
 					//Push a hit
-					if (this.player.getIndex()==8)
+					if (this.player.getIndex()===8)
 						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0,_SCORE_+=10);//this.hits.push(Enemy);
 
 				}
 
 			}
-			if (utils.Within(diff.x,-15,15))
+
+			//Set collision
+			if (utils.Within(diff.x,-15,15)){
+
 				Enemy.collision = 2;
-				else
-				if (utils.Within(diff.x,-25,25))
+
+			}else{
+
+				if (utils.Within(diff.x,-25,25)){
+
 					Enemy.collision = 1;
+				}
+
+			}
 
 		}
 
