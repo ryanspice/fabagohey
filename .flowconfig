@@ -4,6 +4,9 @@
 [ignore]
 .*/node_modules/*
 .*node_modules/.*
+./stats.json
+.*/stats.json
+.*stats.json
 
 [options]
 
