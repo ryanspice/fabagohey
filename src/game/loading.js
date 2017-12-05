@@ -42,10 +42,10 @@ class Loading extends State {
 
 		this.spinner =  new Spinner(this.visuals,1);
 
-		//TODO: fix inside SpiceJS
+		//TODO: fix inside SpiceJS (newstate)
 		this.app.client.loader.graphics = await this.graphics;
 
-		//Load spritelist from data folder
+		//Load spritelist from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
 		this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
 
 			//Retrieve reference
@@ -59,10 +59,12 @@ class Loading extends State {
 		},'maps');
 
 		//Build BackgroundController
-		this.backgroundContoller = await new BackgroundController(new StatsBuffer('',0,0,1.2,1,0,0,0,272,160),this.visuals);
+		this.BackgroundManager  = new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
+
 
 		this.asyncDoneLoading = true;
 
+		this.app.Loading = this;
 	}
 
 	/* Update objects */

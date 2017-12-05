@@ -115,7 +115,14 @@ export class BackgroundController {
 
 	updatePositionBasedOnPlayer(player:any){
 
-		this.backgrounds.forEach(background => background.sprites.forEach(sprite => sprite.xx = player.x));
+
+		//let px = player.position.x*0.25;
+
+		//let a = this.app.client.setWidth/2-px/(0+1);
+
+		let a = player.velocity.x*0.25;
+
+		this.backgrounds.forEach(background => background.sprites.forEach(sprite=>sprite.xx += a/(background.speed+1)));
 
 	}
 }

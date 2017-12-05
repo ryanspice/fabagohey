@@ -473,7 +473,8 @@ class Game extends State {
 			this.updateUI();
 		}
 
-
+		if (this.visuals.app.Loading)
+		this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
 
 		return;
 
