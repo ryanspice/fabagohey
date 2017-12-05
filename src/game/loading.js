@@ -59,7 +59,7 @@ class Loading extends State {
 		},'maps');
 
 		//Build BackgroundController
-		this.BackgroundManager  = new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
+		this.BackgroundManager  = new BackgroundController(new StatsBuffer('',0,0,0.8,1,0,0,0,272,160),this.visuals);
 
 
 		this.asyncDoneLoading = true;

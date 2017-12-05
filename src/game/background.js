@@ -122,7 +122,7 @@ export class BackgroundController {
 
 		let a = player.velocity.x*0.25;
 
-		this.backgrounds.forEach(background => background.sprites.forEach(sprite=>sprite.xx += a/(background.speed+1)));
+		this.backgrounds.forEach(background => background.sprites.forEach(sprite=>sprite.xx += a/(4-background.speed+1)));
 
 	}
 }
