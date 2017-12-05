@@ -105,7 +105,7 @@ class Game extends State {
 		})();
 
 		//Instantiate new player.
-		this.player = await new Player(this.sprKnight[0],-20,175,1,1,1,0,0,(167/4),46,this.visuals);
+		this.player = await new Player(this.sprKnight[0],-20,185,1,1,1,0,0,(167/4),46,this.visuals);
 
 		this.time = await new Time();
 
@@ -131,7 +131,7 @@ class Game extends State {
 			*/
 
 			//Create skeleton
-			let s = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),110 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
+			let s = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),130 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
 			s.priority = 5;
 			this.enemies.push(s);
 
