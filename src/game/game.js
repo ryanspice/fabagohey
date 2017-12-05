@@ -36,12 +36,11 @@ let _CHARMAP_= require.ensure(['./maps'],()=>{
 //let xx = 0;
 //let xxx = 0;
 
+//TODO: move into the respectable class
 const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
-	if (e.pState === 'dead'){
-		return true;
-	}
 
-	if (e===e2){
+	if (e.pState === 'dead' || e === e2){
+
 		return true;
 	}
 
@@ -55,7 +54,7 @@ let _SCORE_ = 0;
 
 class Game extends State {
 
-	/**/
+	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
 
@@ -67,96 +66,80 @@ class Game extends State {
 
 	static async init():Promise<void> {
 
-
-
+		this.enemies = [];
 
 		this.debug = debug.collision.masks;
+		this.loader = this.app.client.loader;
 
+		//Group all reference calls in an await: TODO: use own function
 		this.loadImages = await (()=>{
 
-			let loader = this.app.client.loader;
-			this.font = loader.getImageReference('./Cursive1_MyEdit');
+			this.font = this.loader.getImageReference('./Cursive1_MyEdit');
 
 			//TODO: donot use line, draw a rectangle lol
-			this.line = loader.getImageReference('./Untitled');
+			this.line = this.loader.getImageReference('./Untitled');
 
 			this.bg = [
-				loader.getImageReference('./parallax-forest-back-trees'),
-				loader.getImageReference('./parallax-forest-lights'),
-				loader.getImageReference('./parallax-forest-middle-trees'),
-				loader.getImageReference('./parallax-forest-front-trees'),
+				this.loader.getImageReference('./parallax-forest-back-trees'),
+				this.loader.getImageReference('./parallax-forest-lights'),
+				this.loader.getImageReference('./parallax-forest-middle-trees'),
+				this.loader.getImageReference('./parallax-forest-front-trees'),
 			];
 
 			this.sprSkeleton = [
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
 			];
 
 			this.sprKnight = [
-				loader.getImageReference('./knight_3_improved_slash_animation_2'),
-				loader.getImageReference('./knight_walk_animation'),
-				loader.getImageReference('./knight_3_block'),
-				loader.getImageReference('./knight_3_idle')
+				this.loader.getImageReference('./knight_3_improved_slash_animation_2'),
+				this.loader.getImageReference('./knight_walk_animation'),
+				this.loader.getImageReference('./knight_3_block'),
+				this.loader.getImageReference('./knight_3_idle')
 			];
 
 		})();
 
-		this.bgItems = [];
-		this.bgItems2 = [];
-		this.bgItems3 = [];
+		//Instantiate new player.
+		this.player = await new Player(this.sprKnight[0],-20,175,1,1,1,0,0,(167/4),46,this.visuals);
 
-		this.enemies = [];
+		this.time = await new Time();
 
-		// /for(let i = 3; i>=0;i--) {
-			//let item;
-			//(this.bgItems2.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			//(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			//(this.bgItems3.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-		//}
-
-
-		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
-
-		this.player.pState = 'walk';
-
+		//Set player sprites referencse
 		this.player.sprWalk = this.sprKnight[1];
 		this.player.sprBlock = this.sprKnight[2];
 		this.player.sprAttack = this.sprKnight[0];
 		this.player.sprIdle = this.sprKnight[3];
 
+		//Set skeleton sprite references
 		Skeleton.sprSkeleton = this.sprSkeleton;
 		Skeleton.sprIdle = this.sprSkeleton[0];
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
+		//Try to randomize skeleton placement
 		for (let i = 11; i>=0;i--){
 
+			/*
 			let count = 0;
 			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
 				count++;
 			}
-			let s = new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),110 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
+			*/
+
+			//Create skeleton
+			let s = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),110 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
 			s.priority = 5;
 			this.enemies.push(s);
-			/*
-			setTimeout(()=>{
-
-				let y = 160 + count;
-				y = 60;
-				let s = new Skeleton(this.sprSkeleton[0],300 + i*20*(y/100),y,-1,1,1,0,-3,(264/11),35,this.visuals);
-				s.priority = 5;
-				this.enemies.push(s);
-
-			},	100*i)
-			*/
 
 		}
 
 		this.visuals.bufferIndex = 0;
 
+		//Initalize UI functions and objects
 		this.initUI = await (()=>{
 
 			this.characters = _CHARMAP_;
@@ -201,8 +184,8 @@ class Game extends State {
 
 			}
 
-			for (let i = 10;i>=0;i--){
-				let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
+			for (let i = 0;i>=0;i--){
+				let t = new Sprite(this.line,0,0+i*3,12,0.5,0,0,0,320,1,this.visuals);
 				t.priority = 8;
 				t.type = '_image_part';
 			}
@@ -228,7 +211,7 @@ class Game extends State {
 
 		})();
 
-		this.time =	new Time();
+		//Helper functions
 
 		this.getTime = ()=>{
 
@@ -249,6 +232,8 @@ class Game extends State {
 
 		}
 
+		//Helper: Draw left and right borders
+
 		this.drawBorders = ()=>{
 
 			if (!debug.borders){
@@ -263,12 +248,12 @@ class Game extends State {
 				this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
 			}
 
-			this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
-			this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
+			//this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
+			//this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
 
 		}
 
-		//trigger the sprites debug draw event TODO: bring into SpiceJS
+		//Helper: trigger the sprites debug draw event TODO: bring into SpiceJS
 
 		this.drawDebug = ()=> {
 
@@ -284,6 +269,8 @@ class Game extends State {
 
 			return;
 		}
+
+		//Helper: update character lists
 
 		this.updateUI = ()=>{
 
@@ -340,6 +327,7 @@ class Game extends State {
 
 		let OffsetX = 0;
 
+		/*
 		for(let i = this.bgItems.length-1; i>=0;i--) {
 
 
@@ -361,6 +349,7 @@ class Game extends State {
 			a = -px/(i+1);
 			item.position.x = a;
 		}
+		*/
 
 		//for each enemy
 		let i = this.enemies.length-1;
@@ -473,8 +462,9 @@ class Game extends State {
 			this.updateUI();
 		}
 
-		if (this.visuals.app.Loading)
-		this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
+		if (this.visuals.app.Loading){
+			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
+		}
 
 		return;
 
