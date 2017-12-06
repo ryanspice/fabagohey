@@ -106,6 +106,7 @@ export class BackgroundController {
 
 	updateAll(){
 
+
 		if (this.app.client.graphics.getErrors()===0)
 		this.backgrounds.forEach(background => background.updateAll());
 

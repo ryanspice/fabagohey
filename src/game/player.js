@@ -11,7 +11,6 @@ import {
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 import type {
-	dtoDrawData,
 	dtoBatchDataValidation
 } from './core/interfaces';
 
@@ -45,7 +44,7 @@ export default class Player extends Knight {
 
 	/**/
 
-	get isAttacking():boolean {	return this.pState =="attack"; }
+	get isAttacking():boolean {	return this.pState === "attack"; }
 
 	/* TODO: move to spicejS input as generic output for input */
 
@@ -53,15 +52,17 @@ export default class Player extends Knight {
 
 		let input = this.visuals.app.input;
 		let keyboard = input.keyController;
+
 		//TODO: add gamepads to get in app.client in #TodoSpiceJS
+		this.gamepad =  this.visuals.app.input.gamepads;
 		let gamepad = this.gamepad;
 
 		return {
-			up:Number(gamepad.up||keyboard.keyboardCheck('uparrow')||keyboard.keyboardCheck('w')),
-			down:Number(gamepad.down||keyboard.keyboardCheck('downarrow')||keyboard.keyboardCheck('s')),
-			left:Number(gamepad.left||keyboard.keyboardCheck('leftarrow')||keyboard.keyboardCheck('a')),
-			right:Number(gamepad.right||keyboard.keyboardCheck('rightarrow')||keyboard.keyboardCheck('d')),
-			attack:Number(gamepad.y||keyboard.keyboardCheck('space')||keyboard.keyboardCheck('e')||input.pressed)
+			'up':Number(gamepad.up||keyboard.keyboardCheck('uparrow')||keyboard.keyboardCheck('w')),
+			'down':Number(gamepad.down||keyboard.keyboardCheck('downarrow')||keyboard.keyboardCheck('s')),
+			'left':Number(gamepad.left||keyboard.keyboardCheck('leftarrow')||keyboard.keyboardCheck('a')),
+			'right':Number(gamepad.right||keyboard.keyboardCheck('rightarrow')||keyboard.keyboardCheck('d')),
+			'attack':Number(gamepad.y||keyboard.keyboardCheck('space')||keyboard.keyboardCheck('e')||input.pressed)
 		}
 
 	}
@@ -74,31 +75,35 @@ export default class Player extends Knight {
 
 		let vel_x:number = this.agility/10 * (-input.left + input.right);
 
-		if (vel_x)
-			this.velocity.x = vel_x,this.pState = 'walk';
+		if (vel_x){
+			this.velocity.x = vel_x,this.pState = 'walk';}
 
 		this.dir = (vel_x>=0)?0.5:-0.5;
 
-		if (this.pState!='block')
-		if (this.pState!='attack')
-		if (input.attack){
+		if (this.pState!=='block'){
 
-			this.velocity.x /=10000;
-			this.pState = 'attack';
+			if (this.pState!=='attack'){
 
-			if (this.index<9){
+				if (input.attack){
 
-				this.index+=0.05;
+					this.velocity.x /=10000;
+					this.pState = 'attack';
 
-				if (vel_x)
-					this.index+=0.01;
+					if (this.index<9){
 
-			} else {
+						this.index+=0.05;
 
-				this.index = 0;
+						if (vel_x)
+							this.index+=0.01;
 
+					} else {
+
+						this.index = 0;
+
+					}
+
+				}
 			}
-
 		}
 
 	}
@@ -109,17 +114,19 @@ export default class Player extends Knight {
 
 		this.velocity.x *=0.9;
 
-		if (enemy.pState=="attack")
-		if (enemy.getIndex()==8){
+		if (enemy.pState==="attack"){
 
+			if (enemy.getIndex()==8){
 
-			if (enemy.getX()<=this.getX())
-				this.velocity.x += this.dir*1;
-			else
-				this.velocity.x -= this.dir*1;
+				if (enemy.getX()<=this.getX())
+					this.velocity.x += this.dir*1;
+				else
+					this.velocity.x -= this.dir*1;
 
-			this.pState = 'block';
-			this.index = 5;
+				this.pState = 'block';
+				this.index = 5;
+
+			}
 
 		}
 
