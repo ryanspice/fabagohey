@@ -50,33 +50,39 @@ const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
 let _SCORE_ = 0;
 //let _LIVES_ = 0;
 
+
 /* Game state */
 
 class Game extends State {
+
+	//Static game properties
+	static skeletonCount:Number = 12;
 
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
 
 		super(Game);
-
 	}
 
-	/**/
+	/* Asyncronous initilization of the state.
+	*	SpiceJS will wait to run update and draw until this is done.
+	*/
 
 	static async init():Promise<void> {
 
 		this.enemies = [];
 
+		//Assign object references.
 		this.debug = debug.collision.masks;
 		this.loader = this.app.client.loader;
 
-		//Group all reference calls in an await: TODO: use own function
-		this.loadImages = await (()=>{
+		//Assign image references: TODO: use own function
+		await (()=>{
 
 			this.font = this.loader.getImageReference('./Cursive1_MyEdit');
 
-			//TODO: donot use line, draw a rectangle lol
+			//TODO: do not use line, draw a rectangle lol
 			this.line = this.loader.getImageReference('./Untitled');
 
 			this.bg = [
@@ -121,19 +127,12 @@ class Game extends State {
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
 		//Try to randomize skeleton placement
-		for (let i = 11; i>=0;i--){
-
-			/*
-			let count = 0;
-			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
-				count++;
-			}
-			*/
+		for (let i = Game.skeletonCount; i>=0;i--){
 
 			//Create skeleton
-			let s = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),130 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
-			s.priority = 5;
-			this.enemies.push(s);
+			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),130 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
+			tempSkeleton.priority = 5;
+			this.enemies.push(tempSkeleton);
 
 		}
 

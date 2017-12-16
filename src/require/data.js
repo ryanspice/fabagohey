@@ -20,7 +20,8 @@ const spriteDataList:dtoSpriteDataList = [
    './Skeleton/Sprite Sheets/Skeleton_Attack',
    './Skeleton/Sprite Sheets/skeleton_parts',
    './Skeleton/Sprite Sheets/Skeleton_Dead',
-   './Skeleton/Sprite Sheets/Skeleton_Idle'
+   './Skeleton/Sprite Sheets/Skeleton_Idle',
+   './title',
 ];
 
 export default {

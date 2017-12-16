@@ -5,6 +5,8 @@ import {
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
+import NewState from './newstate.js';
+
 import {
 	StatsBuffer
 } from './utils';
@@ -19,10 +21,17 @@ import Game from './game';
 
 declare var require:any;
 
+let lastError = 0;
+
 /* Loading state */
 
-class Loading extends State {
+class Loading extends NewState {
 
+	static asyncDoneLoading:boolean = false;
+	static getErrors(){
+
+
+	}
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
@@ -35,70 +44,96 @@ class Loading extends State {
 
 	static async init():Promise<void> {
 
+		Loading.asyncDoneLoading = false;
+
 		//Set buffer index of the UI draw event TODO: ?
 		this.visuals.bufferIndex = 0;
 
 		this.asyncDoneLoading = false;
 
 		this.spinner =  new Spinner(this.visuals,1);
+		this.spinner.colour = this.spinner.getColour('Red');
 
-		//TODO: fix inside SpiceJS (newstate)
+		//TODO: fix inside SpiceJS
 		this.app.client.loader.graphics = await this.graphics;
 
-		//Load spritelist from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
-		this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
+		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
+		/*this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
 
-			//Retrieve reference
-			this.spriteDataList = await require('../require/data').default.spriteDataList;
-
-			//Load sprites
-			for(let i = 0; i<=this.spriteDataList.length-1;i++){
-				await this.app.client.loader.asyncLoadImage(this.spriteDataList[i],String("spr"+i));
-			}
-
+			return await require('../require/data').default.spriteDataList;
 		},'maps');
+		*/
+
+		this.spriteDataList = await require.ensure(['../require/data'],async ()=> await require('../require/data').default.spriteDataList,'maps');
+
+		//Load sprites
+		for(let i = 0; i<=this.spriteDataList.length-1;i++){
+			await this.app.client.loader.asyncLoadImage(this.spriteDataList[i],String("spr"+i));
+		}
 
 		//Build BackgroundController
-		this.BackgroundManager  = new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
-
+		this.BackgroundManager  = await new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
 
 		this.asyncDoneLoading = true;
+		Loading.asyncDoneLoading = true;
 
 		this.app.Loading = this;
+
+		this.gamepad =  this.visuals.app.input.gamepads;
+		console.log(this);
+
 	}
 
 	/* Update objects */
 
 	static update(){
 
-		//TODO: fix bug with inital green
-		this.spinner.colour = this.asyncDoneLoading?"#33FF33":"#EE3333";
-
 		this.spinner.updateAll();
 
-		if (this.app.client.graphics.getErrors()===0) {
+		//TODO: spicejs recognize that graphics.getErrors will return 0 before we request an object and there for while the async function is running
+		//			we need to check the error has changed
+		let _continue = false;
+		let _errors = this.app.client.graphics.getErrors();
+		//if no errors, continue is true
+		if (_errors===0) {
+			_continue = true;
+		}
+		//if errors equals last error, cease to continue
+		if (_errors===lastError) {
 
-			//TODO; no if? but sprite initalization error otherwise
-			if (this.backgroundContoller){
-				this.backgroundContoller.updateAll();
-			}
-
-			let gamepad =  this.visuals.app.input.gamepads;
-
-			if (gamepad){
-
-				if ((gamepad.left)||(gamepad.right)||(gamepad.x)||(gamepad.a)||(gamepad.y)||this.app.input.pressed) {
-
-					for(let i=8;i>=0;--i){
-						this.spinner.sprites[i].delete = true;
-					}
-
-					this.app.client.update.state = new State(Game);
-				}
-
+			if (!this.asyncDoneLoading) {
+				_continue = false;
 			}
 
 		}
+
+		lastError = _errors;
+
+		if (!_continue){
+
+			return;
+		}
+
+		this.spinner.colour = this.spinner.getColour('Green');
+
+		//TODO; no if? but sprite initalization error otherwise
+		if (this.backgroundContoller){
+			this.backgroundContoller.updateAll();
+		}
+
+		if (this.gamepad){
+
+			if ((this.gamepad.left)||(this.gamepad.right)||(this.gamepad.x)||(this.gamepad.a)||(this.gamepad.y)||this.app.input.pressed) {
+
+				for(let i=8;i>=0;--i){
+					this.spinner.sprites[i].delete = true;
+				}
+
+				this.app.client.update.state = new State(Game);
+			}
+
+		}
+
 
 	};
 
@@ -106,11 +141,11 @@ class Loading extends State {
 
 	static draw(){
 
-				document.title = 'Demo - ' + this.app.fps;
-		//this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#111111");
+		document.title = 'Demo - ' + this.app.fps;
 
 	};
 
 }
 
+window.Loading = Loading;
 export default new Loading();
