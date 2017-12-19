@@ -129,6 +129,7 @@ class Loading extends NewState {
 					this.spinner.sprites[i].delete = true;
 				}
 
+				this.spinner = null;
 				this.app.client.update.state = new State(Game);
 			}
 

@@ -56,7 +56,7 @@ let _SCORE_ = 0;
 class Game extends State {
 
 	//Static game properties
-	static skeletonCount:Number = 12;
+	static skeletonCount:Number = 6;
 
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
@@ -310,6 +310,7 @@ class Game extends State {
 	static update() {
 
 
+				document.title = 'Demo - ' + this.app.fps;
 		//TODO: put this into spicejs state class
 		if (!this.ready){
 
