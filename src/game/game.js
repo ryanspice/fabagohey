@@ -370,9 +370,12 @@ class Game extends State {
 			Enemy.s = diff.x>0?1:-1;
 
 			//reduce area of checking
-			if (!utils.Within(diff.y,-75,75))
-			if (!utils.Within(diff.x,-75,75))
+			let CollisionDetectionDistance = new Vector(-40,40);
+
+			if ((!utils.Within(diff.y,CollisionDetectionDistance.x,CollisionDetectionDistance.y))&&(!utils.Within(diff.x,CollisionDetectionDistance.x,CollisionDetectionDistance.y))){
+
 				continue;
+			}
 
 
 			//set warning colour
@@ -386,7 +389,9 @@ class Game extends State {
 
 			//move enemy (collision)
 			if (utils.Within(diff.x,-this.player.w/5,this.player.w/5)){
+
 				Enemy.position.offset(-1*Enemy.s,0);
+
 			} else {
 
 			}
@@ -395,31 +400,45 @@ class Game extends State {
 			if (utils.Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
 
 				//Check player facing direction
-				//TODO: not use enemy.DS
-				if (((diff.x>0)==(this.player.velocity.x<0))&&(this.player.isAttacking)){
+				if (((diff.x>0)===(this.player.velocity.x<0))&&(this.player.isAttacking)){
 
 					//Push a hit
-					if (this.player.getIndex()==5)
-						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0,_SCORE_+=10);//this.hits.push(Enemy);
-
-					//Push a hit
-					if (this.player.getIndex()==8)
-						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0,_SCORE_+=10);//this.hits.push(Enemy);
+					if (this.player.getIndex()===5||8) {
+						Enemy.hit=true;
+						Enemy.pState='hit';
+						Enemy.index=0;
+						_SCORE_+=10;
+						//this.hits.push(Enemy);
+					}
 
 				}
 
 			}
-			if (utils.Within(diff.x,-15,15))
+
+			//Set collision
+			if (utils.Within(diff.x,-15,15)){
+
 				Enemy.collision = 2;
-				else
-				if (utils.Within(diff.x,-25,25))
+
+			}else{
+
+				if (utils.Within(diff.x,-25,25)){
+
 					Enemy.collision = 1;
+				}
+
+			}
 
 		}
 
+		if (this.player.x>20){
+			this.updateUI();
+		}
 
-		if (this.player.x>20)
-		this.updateUI();
+		if (this.visuals.app.Loading){
+			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
+		}
+
 		return;
 
 	}
