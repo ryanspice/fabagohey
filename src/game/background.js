@@ -92,8 +92,8 @@ export class BackgroundController {
 
 			let obj = new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i);
 
-			//obj.sprites[0].priority = 5;
-			//obj.sprites[1].priority = 5;
+			obj.sprites[0].priority = 1;
+			obj.sprites[1].priority = 1;
 			//obj.id = i;
 
 			this.backgrounds.push(obj);

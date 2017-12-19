@@ -21,11 +21,16 @@ import Letter from './letter';
 import utils from './utils';
 import debug from '../config';
 
-import _CHARMAP_ from './maps';
-
 /* TODO: export properly from spicejs */
 
+declare var require;
 declare var Vector;
+
+//import _CHARMAP_ from './maps';
+
+let _CHARMAP_= require.ensure(['./maps'],()=>{
+   _CHARMAP_ = require('./maps').default;
+},'maps');
 
 //rename these
 let s = 1.125 + 0.2;
@@ -54,54 +59,58 @@ class Game extends State {
 
 	}
 
-	static async init(){
+	/* Asyncronous initilization of the state.
+	*	SpiceJS will wait to run update and draw until this is done.
+	*/
 
+	static async init():Promise<void> {
+
+		this.enemies = [];
+
+		//Assign object references.
 		this.debug = debug.collision.masks;
+		this.loader = this.app.client.loader;
 
-		this.loadImages = await (()=>{
+		//Assign image references: TODO: use own function
+		await (()=>{
 
-			let loader = this.app.client.loader;
-			this.font = loader.getImageReference('./Cursive1_MyEdit');
+			this.font = this.loader.getImageReference('./Cursive1_MyEdit');
 
-			//TODO: donot use line, draw a rectangle lol
-			this.line = loader.getImageReference('./Untitled');
+			//TODO: do not use line, draw a rectangle lol
+			this.line = this.loader.getImageReference('./Untitled');
 
 			this.bg = [
-				loader.getImageReference('./parallax-forest-back-trees'),
-				loader.getImageReference('./parallax-forest-lights'),
-				loader.getImageReference('./parallax-forest-middle-trees'),
-				loader.getImageReference('./parallax-forest-front-trees'),
+				this.loader.getImageReference('./parallax-forest-back-trees'),
+				this.loader.getImageReference('./parallax-forest-lights'),
+				this.loader.getImageReference('./parallax-forest-middle-trees'),
+				this.loader.getImageReference('./parallax-forest-front-trees'),
 			];
 
 			this.sprSkeleton = [
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
-				loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
+				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
 			];
 
 			this.sprKnight = [
-				loader.getImageReference('./knight_3_improved_slash_animation_2'),
-				loader.getImageReference('./knight_walk_animation'),
-				loader.getImageReference('./knight_3_block'),
-				loader.getImageReference('./knight_3_idle')
+				this.loader.getImageReference('./knight_3_improved_slash_animation_2'),
+				this.loader.getImageReference('./knight_walk_animation'),
+				this.loader.getImageReference('./knight_3_block'),
+				this.loader.getImageReference('./knight_3_idle')
 			];
 
 		})();
 
-		this.bgItems = [];
-		this.bgItems2 = [];
-		this.bgItems3 = [];
-
-		this.enemies = [];
-
 		for(let i = 3; i>=0;i--) {
 			let item;
-			(this.bgItems2.push(item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			(this.bgItems.push(item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
-			(this.bgItems3.push(item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,1,xx,0,0,xxx+272,160,-3+i)));
+			///WARNING: Memory Leak Occurs when not creating these objects....
+
+			((item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
+			((item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,0,xx,0,0,xxx+272,160,3+i)));
+			((item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
 		}
 
 		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
@@ -117,7 +126,7 @@ class Game extends State {
 		Skeleton.sprIdle = this.sprSkeleton[0];
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
-		for (var i = 11; i>=0;i--){
+		for (var i = 32; i>=0;i--){
 			let count = 0;
 			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
 		    	count++;
@@ -147,20 +156,18 @@ class Game extends State {
 			this.characterList=(string,xx,yy,s=1)=>{
 
 				let arr = [];
-
-				for (var i = string.length-1; i>=0;i--){
+				let i = string.length-1;
+				for (i; i>=0;i--){
 
 					if (string[i]==" ")
 						continue;
 
 					let x = (this.characters.indexOf(string[i]));
 
-					let y = 2;
+					let y = 0;
 					let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
 
 
-					///setting this to 9 fucks up
-					l.priority = 26;
 					l.characterNum = x;
 					arr.push(l);
 
@@ -188,7 +195,7 @@ class Game extends State {
 
 			for (let i = 0;i>=0;i--){
 				let t = new Sprite(this.line,0,0+i*3,12,0.5,0,0,0,320,1,this.visuals);
-				t.priority = 8;
+				t.priority = 2;
 				t.type = '_image_part';
 			}
 
@@ -264,12 +271,13 @@ class Game extends State {
 
 		}
 
+				await this.visuals.PrioirtySort().map(a=>console.log(a.priority));
 		this.ready = true;
 
 	}
 
 	static draw(){
-
+return;
 		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
@@ -286,8 +294,8 @@ class Game extends State {
 	}
 
 	static update() {
-
-			document.title = 'Demo - ' + this.app.fps;
+		document.title = 'Demo - ' + this.app.fps;
+return;
 		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
@@ -301,29 +309,29 @@ class Game extends State {
 		this.player.update();
 
 		let OffsetX = 0;
-/*
-		for(let i = this.bgItems.length-1; i>=0;i--) {
+		/*
+				for(let i = this.bgItems.length-1; i>=0;i--) {
 
 
-			let item = (this.bgItems[i]);
+					let item = (this.bgItems[i]);
 
-			let px = this.player.position.x*0.25;
+					let px = this.player.position.x*0.25;
 
-			let a = this.app.client.setWidth/2-px/(i+1);
-			OffsetX = a;
-			item.position.x = a;
+					let a = this.app.client.setWidth/2-px/(i+1);
+					OffsetX = a;
+					item.position.x = a;
 
-			item = (this.bgItems2[i]);
+					item = (this.bgItems2[i]);
 
-			a = -this.app.client.setWidth/2-px/(i+1);
-			item.position.x = a;
+					a = -this.app.client.setWidth/2-px/(i+1);
+					item.position.x = a;
 
-			item = (this.bgItems3[i]);
+					item = (this.bgItems3[i]);
 
-			a = -px/(i+1);
-			item.position.x = a;
-		}
-*/
+					a = -px/(i+1);
+					item.position.x = a;
+				}
+		*/
 		var i = this.enemies.length-1;
 
 		//for each enemy
@@ -440,7 +448,7 @@ class Game extends State {
 		}
 
 		if (this.visuals.app.Loading){
-			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
+			//this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
 		}
 
 		return;
