@@ -125,15 +125,29 @@ class Loading extends NewState {
 
 			if ((this.gamepad.left)||(this.gamepad.right)||(this.gamepad.x)||(this.gamepad.a)||(this.gamepad.y)||this.app.input.pressed) {
 
-				for(let i=8;i>=0;--i){
-					this.spinner.sprites[i].delete = true;
-				}
+								for(let i=8;i>=0;--i){
+									this.spinner.sprites[i].delete = true;
+								}
 
-				this.spinner = null;
-				this.app.client.update.state = new State(Game);
+								this.spinner = null;
+								this.app.client.update.state = new State(Game);
+			}
+
+		}else {
+
+			if (this.app.input.pressed){
+
+								for(let i=8;i>=0;--i){
+									this.spinner.sprites[i].delete = true;
+								}
+
+								this.spinner = null;
+								this.app.client.update.state = new State(Game);
+
 			}
 
 		}
+
 
 
 	};
