@@ -155,9 +155,12 @@ class Game extends State {
 
 					let x = (this.characters.indexOf(string[i]));
 
-					let y = 0;
+					let y = 2;
 					let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
-					l.priority = 27;
+
+
+					///setting this to 9 fucks up
+					l.priority = 26;
 					l.characterNum = x;
 					arr.push(l);
 
@@ -183,8 +186,8 @@ class Game extends State {
 
 			}
 
-			for (let i = 10;i>=0;i--){
-				let t = new Sprite(this.line,0,0+i,1,0.5,0,0,0,320,1,this.visuals);
+			for (let i = 0;i>=0;i--){
+				let t = new Sprite(this.line,0,0+i*3,12,0.5,0,0,0,320,1,this.visuals);
 				t.priority = 8;
 				t.type = '_image_part';
 			}
@@ -284,6 +287,7 @@ class Game extends State {
 
 	static update() {
 
+			document.title = 'Demo - ' + this.app.fps;
 		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
@@ -297,7 +301,7 @@ class Game extends State {
 		this.player.update();
 
 		let OffsetX = 0;
-
+/*
 		for(let i = this.bgItems.length-1; i>=0;i--) {
 
 
@@ -319,7 +323,7 @@ class Game extends State {
 			a = -px/(i+1);
 			item.position.x = a;
 		}
-
+*/
 		var i = this.enemies.length-1;
 
 		//for each enemy
