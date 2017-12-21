@@ -40,10 +40,12 @@ export default class Spinner {
 		'Red':'#EE3333',
 		'Green':'#33FF33',
 	};
+
 	getColour(col:StateColour){
 
 		return this.Colours[col];
 	};
+
 	colour:string;
 
 	/**/
@@ -66,7 +68,7 @@ export default class Spinner {
 
 			let obj = new Circle((x+Math.cos((this.shortx+i)*7)*this.width),visuals.app.client.height/1.5+Math.sin((this.shortx+i)*7)*this.width,this.radius,this.colour,1,visuals);
 
-			obj.priority = 5;
+			obj.priority = 0;
 			obj.id = i;
 			obj.colour = this.colour;
 

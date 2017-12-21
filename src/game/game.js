@@ -6,7 +6,7 @@ import {
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
-/* $FlowFixMe
+/*
 import {
 	IState
 	// $FlowFixMe
@@ -21,8 +21,9 @@ import Letter from './letter';
 import utils from './utils';
 import debug from '../config';
 
-declare var require;
 /* TODO: export properly from spicejs */
+
+declare var require;
 declare var Vector;
 
 //import _CHARMAP_ from './maps';
@@ -32,9 +33,9 @@ let _CHARMAP_= require.ensure(['./maps'],()=>{
 },'maps');
 
 //rename these
-//let s = 1.125 + 0.2;
-//let xx = 0;
-//let xxx = 0;
+let s = 1.125 + 0.2;
+let xx = 0;
+let xxx = 0;
 
 //TODO: move into the respectable class
 const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
@@ -56,7 +57,7 @@ let _SCORE_ = 0;
 class Game extends State {
 
 	//Static game properties
-	static skeletonCount:Number = 6;
+	static skeletonCount:number = 32;
 
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
@@ -71,9 +72,9 @@ class Game extends State {
 
 	static async init():Promise<void> {
 
-		this.enemies = [];
 
 		//Assign object references.
+		this.enemies = [];
 		this.debug = debug.collision.masks;
 		this.loader = this.app.client.loader;
 
@@ -116,6 +117,18 @@ class Game extends State {
 		this.time = await new Time();
 
 		//Set player sprites referencse
+
+		for(let i = 3; i>=0;i--) {
+			let item;
+			///WARNING: Memory Leak Occurs when not creating these objects....
+
+			((item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
+			((item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,0,xx,0,0,xxx+272,160,3+i)));
+			((item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
+		}
+
+		this.player.pState = 'walk';
+
 		this.player.sprWalk = this.sprKnight[1];
 		this.player.sprBlock = this.sprKnight[2];
 		this.player.sprAttack = this.sprKnight[0];
@@ -146,8 +159,8 @@ class Game extends State {
 			this.characterList=(string,xx,yy,s=1)=>{
 
 				let arr = [];
-
-				for (let i = string.length-1; i>=0;i--){
+				let i = string.length-1;
+				for (i; i>=0;i--){
 
 					if (string[i]===" "){
 						continue;
@@ -155,9 +168,10 @@ class Game extends State {
 
 					let x = (this.characters.indexOf(string[i]));
 
-					let y = 2;
-					let l = new Letter(this.font,xx+9*i*s,yy+y,s,1,0,0,0,9,9,this.visuals);
+					let y = 0;
+					let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
 					l.priority = 9;
+
 					l.characterNum = x;
 					arr.push(l);
 
@@ -166,12 +180,12 @@ class Game extends State {
 				return arr;
 			};
 
-			this.updateCharacterList=(list,string/*, xx, yy*/)=>{
+			this.updateCharacterList=(list,string, xx,yy)=>{
 
-				for (let i = list.length-1;i>=0;i--){
+				for (var i = list.length-1;i>=0;i--){
 						list[i].characterNum = String(this.characters.indexOf('0'));
 				}
-				for (let ii = 0;ii<string.length;ii++){
+				for (var ii = 0;ii<string.length;ii++){
 
 					let x = (this.characters.indexOf(string[ii]));
 
@@ -185,7 +199,7 @@ class Game extends State {
 
 			for (let i = 0;i>=0;i--){
 				let t = new Sprite(this.line,0,0+i*3,12,0.5,0,0,0,320,1,this.visuals);
-				t.priority = 8;
+				t.priority = 2;
 				t.type = '_image_part';
 			}
 
@@ -201,6 +215,7 @@ class Game extends State {
 				yourbest= '0' + yourbest;
 			}
 
+
 			this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
 			this.UI_Multiplier = this.characterList((this.multiplier),0,10,0.5);
 			this.UI_Time = this.characterList('60',320/2-(8*2),5);
@@ -215,61 +230,45 @@ class Game extends State {
 		this.getTime = ()=>{
 
 			let time = this.time.seconds;	//this.time.minutes;// +""+ (this.time.seconds);
-
 			if (this.time.seconds<10){
-
 				time = "0" + this.time.seconds;
 			}
-
 			if (Number(time)<60){
-
 				return String(Number(60-Number(time)));
-			} else {
-
+			}
+				else{
 				return "XX";
 			}
 
 		}
 
-		//Helper: Draw left and right borders
-
 		this.drawBorders = ()=>{
 
-			if (!debug.borders){
-
+			if (!debug.borders)
 				return;
-			}
 
-			if (this.app.client.graphics.getErrors()!==0){
+			if (this.app.client.graphics.getErrors()!==0)
 				this.visuals.rect_free(0,0,window.innerWidth,window.innerHeight,1,1,0,"#000000");
-			}else{
-				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000");
-				this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
-			}
-
+				else
+				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
+			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
 			//this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
 			//this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
 
 		}
 
-		//Helper: trigger the sprites debug draw event TODO: bring into SpiceJS
+		//trigger the sprites debug draw event TODO: bring into SpiceJS
 
 		this.drawDebug = ()=> {
 
-			if (!this.debug){
-
+			if (!this.debug)
 				return;
-			}
 
-			for (let i = this.enemies.length-1; i>=0;i--){
-
+			for (let i = this.enemies.length-1; i>=0;i--)
 				this.enemies[i].drawDebug();
-			}
 
 			return;
 		}
-
-		//Helper: update character lists
 
 		this.updateUI = ()=>{
 
@@ -283,34 +282,32 @@ class Game extends State {
 
 		this.ready = true;
 
+		//TODO: bring into SpiceJS
+		await this.visuals.PrioirtySort();
+		await this.visuals.PriorityRegistry.reverse();
 	}
 
-	/**/
-
-	static draw() {
+	static draw(){
 
 		//TODO: put this into spicejs state class
-		if (!this.ready){
-
+		if (!this.ready)
 			return;
-		}
 
 		this.drawBorders();
 		this.drawDebug();
 
+		let col = "#FFFFFF";
 		this.hits = [];
 
 		//debug TODO: move to player
-		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,"#FFFFFF")
+		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
 
 	}
 
-	/**/
-
 	static update() {
 
+		document.title = 'Demo - ' + this.app.fps;
 
-				document.title = 'Demo - ' + this.app.fps;
 		//TODO: put this into spicejs state class
 		if (!this.ready){
 
@@ -326,48 +323,46 @@ class Game extends State {
 		this.player.update();
 
 		let OffsetX = 0;
-
 		/*
-		for(let i = this.bgItems.length-1; i>=0;i--) {
+				for(let i = this.bgItems.length-1; i>=0;i--) {
 
 
-			let item = (this.bgItems[i]);
+					let item = (this.bgItems[i]);
 
-			let px = this.player.position.x*0.25;
+					let px = this.player.position.x*0.25;
 
-			let a = this.app.client.setWidth/2-px/(i+1);
-			OffsetX = a;
-			item.position.x = a;
+					let a = this.app.client.setWidth/2-px/(i+1);
+					OffsetX = a;
+					item.position.x = a;
 
-			item = (this.bgItems2[i]);
+					item = (this.bgItems2[i]);
 
-			a = -this.app.client.setWidth/2-px/(i+1);
-			item.position.x = a;
+					a = -this.app.client.setWidth/2-px/(i+1);
+					item.position.x = a;
 
-			item = (this.bgItems3[i]);
+					item = (this.bgItems3[i]);
 
-			a = -px/(i+1);
-			item.position.x = a;
-		}
+					a = -px/(i+1);
+					item.position.x = a;
+				}
 		*/
+		var i = this.enemies.length-1;
 
 		//for each enemy
-		let i = this.enemies.length-1;
 		for (i; i>=0;i--){
 
 			//enemy in enemies
 			let Enemy:Sprite = this.enemies[i];
 
-			if (!Enemy.player){
+			if (!Enemy.player)
 				Enemy.player = this.player;
-			}
-
 			Enemy.off.x = OffsetX;
-
 			//validate enemy for collision
-			if (checkEnemy(Enemy, null)){
+			if (checkEnemy(Enemy, null))
 				continue;
-			}
+
+			//this collide with any other?
+			var collision = false;
 
 			//compare enemy to enemies
 			for (let i2 = this.enemies.length-1; i2>=0;i2--){
@@ -379,13 +374,11 @@ class Game extends State {
 				let compare_difference = Vector.Difference(Enemy.getPosition(), compare_enemy.getPosition());
 
 				//validate compared enemy for collision
-				if (checkEnemy(compare_enemy,Enemy)){
+				if (checkEnemy(compare_enemy,Enemy))
 					continue;
-				}
 
-				if (utils.Within(compare_difference.x,-20,20)){
-					compare_enemy.position.x-=compare_difference.x/100 - Math.random()*1/100;//compare_enemy.velocity.x+=Enemy.dir/1.5,collision = true; //TODO tweak
-				}
+				if (utils.Within(compare_difference.x,-20,20))
+					collision = true, compare_enemy.position.x-=compare_difference.x/100 - Math.random()*1/100;//compare_enemy.velocity.x+=Enemy.dir/1.5,collision = true; //TODO tweak
 					//(compare_difference.x-Enemy.dir/1.5)*(Math.random()*-1+0.5)
 			}
 
@@ -403,10 +396,12 @@ class Game extends State {
 			Enemy.s = diff.x>0?1:-1;
 
 			//reduce area of checking
-			if (!utils.Within(diff.y,-75,75)){
-			if (!utils.Within(diff.x,-75,75)){
+			let CollisionDetectionDistance = new Vector(-40,40);
+
+			if ((!utils.Within(diff.y,CollisionDetectionDistance.x,CollisionDetectionDistance.y))&&(!utils.Within(diff.x,CollisionDetectionDistance.x,CollisionDetectionDistance.y))){
+
 				continue;
-			}}
+			}
 
 
 			//set warning colour
@@ -420,7 +415,9 @@ class Game extends State {
 
 			//move enemy (collision)
 			if (utils.Within(diff.x,-this.player.w/5,this.player.w/5)){
+
 				Enemy.position.offset(-1*Enemy.s,0);
+
 			} else {
 
 			}
@@ -429,12 +426,15 @@ class Game extends State {
 			if (utils.Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
 
 				//Check player facing direction
-				//TODO: not use enemy.DS
 				if (((diff.x>0)===(this.player.velocity.x<0))&&(this.player.isAttacking)){
 
 					//Push a hit
-					if (this.player.getIndex()===5||8){
-						(Enemy.hit=true,Enemy.pState='hit',Enemy.index=0,_SCORE_+=10);//this.hits.push(Enemy);
+					if (this.player.getIndex()===5||8) {
+						Enemy.hit=true;
+						Enemy.pState='hit';
+						Enemy.index=0;
+						_SCORE_+=10;
+						//this.hits.push(Enemy);
 					}
 
 				}
@@ -457,13 +457,12 @@ class Game extends State {
 
 		}
 
-
 		if (this.player.x>20){
 			this.updateUI();
 		}
 
 		if (this.visuals.app.Loading){
-			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
+			//this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
 		}
 
 		return;

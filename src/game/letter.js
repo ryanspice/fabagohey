@@ -21,6 +21,8 @@ export default class Letter extends Sprite {
 	off:IVector = new Vector(2,0);
 	character:string;
 	characterNum:number;
+	///WARNING possible priority sorting bug!			setting this to 9 fucks up royally
+	priority:number = 26;
 
 	/**/
 

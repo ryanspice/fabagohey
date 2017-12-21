@@ -69,6 +69,8 @@ export default class Skeleton extends RagPhysics {
 
 		let t = new Date().getTime();
 		let z = 0;
+
+
 		switch(this.pState){
 
 			case 'idle':
@@ -253,6 +255,13 @@ export default class Skeleton extends RagPhysics {
 	draw(){
 
 		this.update();
+
+
+		if (this.getX()>320)
+			return;
+
+		if (this.getX()<0)
+			return;
 
 		if (this.pState == 'dead'){
 			if (this.dS<0)

@@ -44,7 +44,24 @@ class Loading extends NewState {
 
 	static async init():Promise<void> {
 
-		Loading.asyncDoneLoading = false;
+		oading.asyncDoneLoading = false;
+		this.asyncDoneLoading = false;
+
+		//Set buffer index of the UI draw event TODO: ?
+		this.visuals.bufferIndex = 0;
+
+		//region Override Visuals
+
+		//TODO: bring to SpiceJS.... overrides sort method specifically for priority
+		this.visuals.sortPriorityRegistry =	function():void {
+
+			if (this.PriorityRegistryFlags.sort === true) {
+				this.PriorityRegistry.radixSort(); // = sortBy(this.PriorityRegistry,(o)=>{return -o.priority;});
+				this.PriorityRegistryFlags.sort = false;
+			}
+
+		};
+
 
 		//Set buffer index of the UI draw event TODO: ?
 		this.visuals.bufferIndex = 0;
@@ -55,6 +72,21 @@ class Loading extends NewState {
 		this.spinner.colour = this.spinner.getColour('Red');
 
 		//TODO: fix inside SpiceJS
+		this.app.client.loader.graphics = await this.graphics;
+
+		this.visuals.appendNew = function(toRegister:any){
+				return this.PriorityRegistry.push(toRegister);
+		}
+
+		this.visuals.PrioirtySort = function(){
+			let t = this.PriorityRegistry.radixSort();
+			console.log(this.PriorityRegistry);
+			return this.PriorityRegistry;
+		}
+
+		//endregion
+
+		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
 		this.app.client.loader.graphics = await this.graphics;
 
 		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
@@ -75,12 +107,12 @@ class Loading extends NewState {
 		this.BackgroundManager  = await new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
 
 		this.asyncDoneLoading = true;
-		Loading.asyncDoneLoading = true;
+		Loading.asyncDoneLoaing = true;
 
 		this.app.Loading = this;
 
 		this.gamepad =  this.visuals.app.input.gamepads;
-
+		console.log(this);
 		this.gotoGame = ()=>{
 
 			for(let i=8;i>=0;--i){
@@ -93,7 +125,11 @@ class Loading extends NewState {
 		}
 
 
-		console.log(this);
+		consol.log(this);
+
+		await this.visuals.PrioirtySort();
+
+
 
 	}
 
@@ -130,18 +166,33 @@ class Loading extends NewState {
 		this.spinner.colour = this.spinner.getColour('Green');
 
 		//TODO; no if? but sprite initalization error otherwise
-		if (this.backgroundContoller){
-			this.backgroundContoller.updateAll();
+		if (this.backgroundContoller){All();
+		if (this.backgroundManager){
+			this.backgroundManager.updateAll();
+		}
+
 		}
 
 		if (this.gamepad){
 
 			if ((this.gamepad.left)||(this.gamepad.right)||(this.gamepad.x)||(this.gamepad.a)||(this.gamepad.y)||this.app.input.pressed) {
 
+								for(let i=8;i>=0;--i){
+									this.spinner.sprites[i].delete = true;
+								}
+
+				this.spinner = null;
+								this.spinner = null;
+								this.visuals.PriorityRegistry.reverse();
+								this.app.client.update.state = new State(Game);
+
+			if ((this.gamepad.left)||(this.gamepad.right)||(this.gamepad.x)||(this.gamepad.a)||(this.gamepad.y)||this.app.input.pressed) {
+
+				for(let i=8;ner.sprites[i].delete = true;
 				this.gotoGame();
 			}
 
-		}else {
+			}else {
 
 			if (this.app.input.pressed){
 
@@ -149,8 +200,22 @@ class Loading extends NewState {
 
 			}
 
+		}else {
+
+			if (this.app.input.pressed){
+
+								for(let i=8;i>=0;--i){
+									this.spinner.sprites[i].delete = true;
 		}
 
+								this.spinner = null;
+								this.app.client.update.state = new State(Game);
+
+			}
+
+		}
+
+		document.title = 'Demo - ' + this.app.fps;
 
 	};
 
@@ -158,8 +223,7 @@ class Loading extends NewState {
 
 	static draw(){
 
-		document.title = 'Demo - ' + this.app.fps;
-
+		document.title = 'Demo - ' + this.app
 	};
 
 }
