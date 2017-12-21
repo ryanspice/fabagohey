@@ -60,9 +60,9 @@ export default class Player extends Knight {
 		return {
 			'up':Number(gamepad.up||keyboard.keyboardCheck('uparrow')||keyboard.keyboardCheck('w')),
 			'down':Number(gamepad.down||keyboard.keyboardCheck('downarrow')||keyboard.keyboardCheck('s')),
-			'left':Number(gamepad.left||keyboard.keyboardCheck('leftarrow')||keyboard.keyboardCheck('a')),
-			'right':Number(gamepad.right||keyboard.keyboardCheck('rightarrow')||keyboard.keyboardCheck('d')),
-			'attack':Number(gamepad.y||keyboard.keyboardCheck('space')||keyboard.keyboardCheck('e')||input.pressed)
+			'left':Number(input.dist.x<0||gamepad.left||keyboard.keyboardCheck('leftarrow')||keyboard.keyboardCheck('a')),
+			'right':Number(input.dist.x>0||gamepad.right||keyboard.keyboardCheck('rightarrow')||keyboard.keyboardCheck('d')),
+			'attack':Number(gamepad.y||keyboard.keyboardCheck('space')||keyboard.keyboardCheck('e')||(input.pressed&&input.dist.x<0.75&&input.dist.x>-0.75))
 		}
 
 	}
