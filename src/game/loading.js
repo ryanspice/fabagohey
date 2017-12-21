@@ -44,7 +44,6 @@ class Loading extends NewState {
 
 	static async init():Promise<void> {
 
-		oading.asyncDoneLoading = false;
 		this.asyncDoneLoading = false;
 
 		//Set buffer index of the UI draw event TODO: ?
@@ -61,10 +60,6 @@ class Loading extends NewState {
 			}
 
 		};
-
-
-		//Set buffer index of the UI draw event TODO: ?
-		this.visuals.bufferIndex = 0;
 
 		this.asyncDoneLoading = false;
 
@@ -87,9 +82,6 @@ class Loading extends NewState {
 		//endregion
 
 		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
-		this.app.client.loader.graphics = await this.graphics;
-
-		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
 		/*this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
 
 			return await require('../require/data').default.spriteDataList;
@@ -107,30 +99,12 @@ class Loading extends NewState {
 		this.BackgroundManager  = await new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
 
 		this.asyncDoneLoading = true;
-		Loading.asyncDoneLoaing = true;
 
 		this.app.Loading = this;
 
 		this.gamepad =  this.visuals.app.input.gamepads;
-		console.log(this);
-		this.gotoGame = ()=>{
-
-			for(let i=8;i>=0;--i){
-				this.spinner.sprites[i].delete = true;
-			}
-
-			this.spinner = null;
-			this.app.client.update.state = new State(Game);
-
-		}
-
-
-		consol.log(this);
 
 		await this.visuals.PrioirtySort();
-
-
-
 	}
 
 	/* Update objects */
@@ -166,56 +140,27 @@ class Loading extends NewState {
 		this.spinner.colour = this.spinner.getColour('Green');
 
 		//TODO; no if? but sprite initalization error otherwise
-		if (this.backgroundContoller){All();
 		if (this.backgroundManager){
 			this.backgroundManager.updateAll();
-		}
-
 		}
 
 		if (this.gamepad){
 
 			if ((this.gamepad.left)||(this.gamepad.right)||(this.gamepad.x)||(this.gamepad.a)||(this.gamepad.y)||this.app.input.pressed) {
 
-								for(let i=8;i>=0;--i){
-									this.spinner.sprites[i].delete = true;
-								}
-
-				this.spinner = null;
-								this.spinner = null;
-								this.visuals.PriorityRegistry.reverse();
-								this.app.client.update.state = new State(Game);
-
-			if ((this.gamepad.left)||(this.gamepad.right)||(this.gamepad.x)||(this.gamepad.a)||(this.gamepad.y)||this.app.input.pressed) {
-
-				for(let i=8;ner.sprites[i].delete = true;
 				this.gotoGame();
-			}
-
-			}else {
-
-			if (this.app.input.pressed){
-
-				this.gotoGame();
-
 			}
 
 		}else {
 
 			if (this.app.input.pressed){
 
-								for(let i=8;i>=0;--i){
-									this.spinner.sprites[i].delete = true;
-		}
-
-								this.spinner = null;
-								this.app.client.update.state = new State(Game);
+				this.gotoGame();
 
 			}
 
 		}
 
-		document.title = 'Demo - ' + this.app.fps;
 
 	};
 
@@ -223,7 +168,8 @@ class Loading extends NewState {
 
 	static draw(){
 
-		document.title = 'Demo - ' + this.app
+		document.title = 'Demo - ' + this.app.fps;
+
 	};
 
 }
