@@ -26,7 +26,7 @@ export default class Knight extends RagPhysics {
 		this.dir = 1;
 		this.diry = 1;
 		this.agility = 7;
-		this.priority = 6;
+		//this.priority = 6;
 		this.thyme = new Date();
 		this.off.y = -2;
 		this.vel.y = 1;
