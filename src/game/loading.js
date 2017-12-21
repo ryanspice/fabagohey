@@ -102,6 +102,18 @@ class Loading extends NewState {
 
 		this.app.Loading = this;
 
+		this.gotoGame = ()=>{
+
+			for(let i=8;i>=0;--i){
+				this.spinner.sprites[i].delete = true;
+			}
+
+			this.spinner = null;
+			this.visuals.PriorityRegistry.reverse();
+			this.app.client.update.state = new State(Game);
+
+		}
+
 		this.gamepad =  this.visuals.app.input.gamepads;
 
 		await this.visuals.PrioirtySort();

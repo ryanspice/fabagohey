@@ -462,7 +462,7 @@ class Game extends State {
 		}
 
 		if (this.visuals.app.Loading){
-			//this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
+			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
 		}
 
 		return;
