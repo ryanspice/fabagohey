@@ -1,6 +1,8 @@
 
 import SpiceJS from "ryanspice2016-spicejs";
 
+import "./radix.js";
+
 import Loading from './game/loading';
 
 const Application = SpiceJS.create();

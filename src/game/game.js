@@ -37,26 +37,33 @@ let s = 1.125 + 0.2;
 let xx = 0;
 let xxx = 0;
 
+//TODO: move into the respectable class
 const checkEnemy = (e:Sprite,e2:Sprite|null)=>{
-	if (e.pState == 'dead')
-		return true;
 
-	if (e===e2)
+	if (e.pState === 'dead' || e === e2){
+
 		return true;
+	}
 
 	return false;
 }
 
 let _SCORE_ = 0;
-let _LIVES_ = 0;
+//let _LIVES_ = 0;
 
+
+/* Game state */
 
 class Game extends State {
+
+	//Static game properties
+	static skeletonCount:number = 32;
+
+	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
 
 		super(Game);
-
 	}
 
 	/* Asyncronous initilization of the state.
@@ -65,9 +72,9 @@ class Game extends State {
 
 	static async init():Promise<void> {
 
-		this.enemies = [];
 
 		//Assign object references.
+		this.enemies = [];
 		this.debug = debug.collision.masks;
 		this.loader = this.app.client.loader;
 
@@ -104,6 +111,13 @@ class Game extends State {
 
 		})();
 
+		//Instantiate new player.
+		this.player = await new Player(this.sprKnight[0],-20,185,1,1,1,0,0,(167/4),46,this.visuals);
+
+		this.time = await new Time();
+
+		//Set player sprites referencse
+
 		for(let i = 3; i>=0;i--) {
 			let item;
 			///WARNING: Memory Leak Occurs when not creating these objects....
@@ -113,8 +127,6 @@ class Game extends State {
 			((item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
 		}
 
-		this.player = new Player(this.sprKnight[0],-20,165,1,1,1,0,0,(167/4),46,this.visuals)
-
 		this.player.pState = 'walk';
 
 		this.player.sprWalk = this.sprKnight[1];
@@ -122,33 +134,24 @@ class Game extends State {
 		this.player.sprAttack = this.sprKnight[0];
 		this.player.sprIdle = this.sprKnight[3];
 
+		//Set skeleton sprite references
 		Skeleton.sprSkeleton = this.sprSkeleton;
 		Skeleton.sprIdle = this.sprSkeleton[0];
 		Skeleton.sprWalk = this.sprSkeleton[1];
 
-		for (var i = 32; i>=0;i--){
-			let count = 0;
-			for (let j = 0; j < Math.floor(Math.random() * 70); j++) {
-		    	count++;
-			}
-			let s = new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),110 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
-			s.priority = 5;
-			this.enemies.push(s);
-			/*
-			setTimeout(()=>{
+		//Try to randomize skeleton placement
+		for (let i = Game.skeletonCount; i>=0;i--){
 
-				let y = 160 + count;
-				y = 60;
-				let s = new Skeleton(this.sprSkeleton[0],300 + i*20*(y/100),y,-1,1,1,0,-3,(264/11),35,this.visuals);
-				s.priority = 5;
-				this.enemies.push(s);
+			//Create skeleton
+			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),130 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
+			tempSkeleton.priority = 5;
+			this.enemies.push(tempSkeleton);
 
-			},	100*i)
-			*/
 		}
 
 		this.visuals.bufferIndex = 0;
 
+		//Initalize UI functions and objects
 		this.initUI = await (()=>{
 
 			this.characters = _CHARMAP_;
@@ -159,14 +162,15 @@ class Game extends State {
 				let i = string.length-1;
 				for (i; i>=0;i--){
 
-					if (string[i]==" ")
+					if (string[i]===" "){
 						continue;
+					}
 
 					let x = (this.characters.indexOf(string[i]));
 
 					let y = 0;
 					let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
-
+					l.priority = 9;
 
 					l.characterNum = x;
 					arr.push(l);
@@ -204,10 +208,12 @@ class Game extends State {
 
 			let best = '012345';
 			let yourbest = (Number(this.score)||Number('001234'));
-			if (yourbest<10000)
+			if (yourbest<10000){
 				yourbest = '0' + yourbest;
-			if (Number(yourbest)<100000)
+			}
+			if (Number(yourbest)<100000){
 				yourbest= '0' + yourbest;
+			}
 
 
 			this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
@@ -219,17 +225,20 @@ class Game extends State {
 
 		})();
 
-		this.time =	new Time();
+		//Helper functions
 
 		this.getTime = ()=>{
 
 			let time = this.time.seconds;	//this.time.minutes;// +""+ (this.time.seconds);
-			if (this.time.seconds<10)
+			if (this.time.seconds<10){
 				time = "0" + this.time.seconds;
-			if (Number(time)<60)
-			return String(Number(60-time));
-			else
-			return "XX";
+			}
+			if (Number(time)<60){
+				return String(Number(60-Number(time)));
+			}
+				else{
+				return "XX";
+			}
 
 		}
 
@@ -243,8 +252,8 @@ class Game extends State {
 				else
 				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
 			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
-			this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
-			this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
+			//this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
+			//this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
 
 		}
 
@@ -271,13 +280,15 @@ class Game extends State {
 
 		}
 
-				await this.visuals.PrioirtySort().map(a=>console.log(a.priority));
 		this.ready = true;
 
+		//TODO: bring into SpiceJS
+		await this.visuals.PrioirtySort();
+		await this.visuals.PriorityRegistry.reverse();
 	}
 
 	static draw(){
-return;
+
 		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
@@ -294,11 +305,14 @@ return;
 	}
 
 	static update() {
+
 		document.title = 'Demo - ' + this.app.fps;
-return;
+
 		//TODO: put this into spicejs state class
-		if (!this.ready)
+		if (!this.ready){
+
 			return;
+		}
 
 		if (this.app.client.graphics.getErrors()!==0) {
 

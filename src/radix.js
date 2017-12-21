@@ -26,11 +26,13 @@ Array.prototype.countingSort = function (k, exp) {
     let C = Array.apply(null, new Array(k)).map(() => 0);
     let B = [];
 
-    for (let i = 0; i < LENGTH; i++)
+    for (let i = 0; i < LENGTH; i++){
         C[index(i)]++;
+	}
 
-    for (let i = 1; i < k; i++)
+    for (let i = 1; i < k; i++){
         C[i] += C[i - 1];
+	}
 
     for (let i = LENGTH - 1; i >= 0; i--) {
         B[--C[index(i)]] = this[i].priority;

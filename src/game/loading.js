@@ -44,15 +44,17 @@ class Loading extends NewState {
 
 	static async init():Promise<void> {
 
-		Loading.asyncDoneLoading = false;
+		this.asyncDoneLoading = false;
 
 		//Set buffer index of the UI draw event TODO: ?
 		this.visuals.bufferIndex = 0;
 
+		//region Override Visuals
+
 		//TODO: bring to SpiceJS.... overrides sort method specifically for priority
 		this.visuals.sortPriorityRegistry =	function():void {
+
 			if (this.PriorityRegistryFlags.sort === true) {
-				console.log('eh')
 				this.PriorityRegistry.radixSort(); // = sortBy(this.PriorityRegistry,(o)=>{return -o.priority;});
 				this.PriorityRegistryFlags.sort = false;
 			}
@@ -67,17 +69,17 @@ class Loading extends NewState {
 		//TODO: fix inside SpiceJS
 		this.app.client.loader.graphics = await this.graphics;
 
-//		this.visuals.appendNew = function(toRegister:any){
-	//		return this.PriorityRegistry.push(toRegister);
-		//}
+		this.visuals.appendNew = function(toRegister:any){
+				return this.PriorityRegistry.push(toRegister);
+		}
 
 		this.visuals.PrioirtySort = function(){
 			let t = this.PriorityRegistry.radixSort();
-			this.PriorityRegistry.reverse();
 			console.log(this.PriorityRegistry);
 			return this.PriorityRegistry;
 		}
 
+		//endregion
 
 		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
 		/*this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
@@ -97,13 +99,13 @@ class Loading extends NewState {
 		this.BackgroundManager  = await new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
 
 		this.asyncDoneLoading = true;
-		Loading.asyncDoneLoading = true;
 
 		this.app.Loading = this;
 
 		this.gamepad =  this.visuals.app.input.gamepads;
-		console.log(this);
-				await this.visuals.PrioirtySort().map(a=>console.log(a.priority));
+
+		await this.visuals.PrioirtySort();
+
 
 	}
 
@@ -140,8 +142,8 @@ class Loading extends NewState {
 		this.spinner.colour = this.spinner.getColour('Green');
 
 		//TODO; no if? but sprite initalization error otherwise
-		if (this.backgroundContoller){
-			this.backgroundContoller.updateAll();
+		if (this.backgroundManager){
+			this.backgroundManager.updateAll();
 		}
 
 		if (this.gamepad){
@@ -153,6 +155,7 @@ class Loading extends NewState {
 								}
 
 								this.spinner = null;
+								this.visuals.PriorityRegistry.reverse();
 								this.app.client.update.state = new State(Game);
 			}
 
