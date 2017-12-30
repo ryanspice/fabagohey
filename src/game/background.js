@@ -16,35 +16,42 @@ import type {
 	dtoBatchDataValidation
 } from './core/interfaces';
 
-/**/
+/* Parallaxing Multilayer Background (X and Y) */
 
 export default class ParallaxBackground {
 
 	sprites:Array<ISprite>;
+	spritesSize:number = 1;
 	speed:number = 0;
 
-	/**/
+	xx:number;
+	s:number;
+
+	/* Create References */
 
 	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals, speed:number){
 
+		//References
 		this.speed = speed;
-
 		this.sprites = [
 			new Sprite(data,x,y,s,a,c,xx,yy,w,h,visuals),
 			new Sprite(data,x,y,s,a,c,xx-320/s,yy,w,h,visuals)
 		];
 
-		this.sprites.forEach(sprite => sprite.type='_image_part');
-		
+		//Assign sprite-types to the sprites
+		for(let i = this.spritesSize; i>=0; i--){
+			this.sprites[i].type = '_image_part';
+		}
+
 	}
 
 	/**/
 
-	update(item:ISprite) {
+	update() {
 
-		item.xx+=0.05 + 0.05*this.speed;
-		if (item.xx>320/item.s){
-			item.xx = -320/item.s;
+		this.xx+=0.05 + 0.05*this.speed;
+		if (this.xx>320/this.s){
+			this.xx = -320/this.s;
 		}
 
 	}
@@ -53,31 +60,35 @@ export default class ParallaxBackground {
 
 	updateAll():void {
 
-		this.sprites.forEach(sprite => this.update(sprite));
+		for(let i = this.spritesSize; i>=0; i--){
+			this.sprites[i].update();
+		}
 
 	}
 
 }
 
-/**/
+/* Background Object Controller */
 
 export class BackgroundController {
 
 	backgrounds:Array<ParallaxBackground> = [];
+	backgroundsSize:number = 3;
+
 	images:Array<ISprite> = [];
 	stats:dtoBatchDataValidation;
 
 	visuals:IVisuals;
 	app:IApp;
 
-	/**/
+	/* Create References */
 
 	constructor(stats:dtoBatchDataValidation, visuals:IVisuals){
 
 		//Extract references
 		this.visuals = visuals;
 		this.app = this.visuals.app;
-
+		this.stats = stats;
 		this.images = [
 			this.app.client.loader.getImageReference('./parallax-forest-back-trees'),
 			this.app.client.loader.getImageReference('./parallax-forest-lights'),
@@ -85,19 +96,10 @@ export class BackgroundController {
 			this.app.client.loader.getImageReference('./parallax-forest-front-trees'),
 		];
 
-		this.stats = stats;
-
-		let i = 3;
+		//Create parallax backgrounds
+		let i = this.backgroundsSize;
 		for(i; i >= 0; i--){
-
-			let obj = new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i);
-
-			//obj.sprites[0].priority = 0;
-			//obj.sprites[1].priority = 0;
-			//obj.id = i;
-
-			this.backgrounds.push(obj);
-
+			this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i));
 		}
 
 	}
@@ -106,9 +108,15 @@ export class BackgroundController {
 
 	updateAll(){
 
+		if (!this.app.client.graphics.getErrors()===0){
 
-		if (this.app.client.graphics.getErrors()===0)
-		this.backgrounds.forEach(background => background.updateAll());
+			return;
+		}
+
+		let background = this.backgroundsSize;
+		for(background;background>=0;background--){
+			this.backgrounds[background].updateAll();
+		}
 
 	}
 
@@ -116,14 +124,22 @@ export class BackgroundController {
 
 	updatePositionBasedOnPlayer(player:any){
 
-
-		//let px = player.position.x*0.25;
-
-		//let a = this.app.client.setWidth/2-px/(0+1);
-
+		//Background offsets
 		let a = player.velocity.x*0.25;
+		let b = -(player.velocity.y)*0.8;
 
-		this.backgrounds.forEach(background => background.sprites.forEach(sprite=>sprite.xx += a/(4-background.speed+1)));
+		let background = this.backgroundsSize;
+		for(background;background>=0;background--){
+
+			let bg = this.backgrounds[background];
+			let sprites = bg.sprites;
+			sprites[0].yy += b/(4-bg.speed+1);
+			sprites[0].xx += a/(4-bg.speed+1);
+			sprites[1].yy += b/(4-bg.speed+1);
+			sprites[1].xx += a/(4-bg.speed+1);
+
+		}
 
 	}
+
 }

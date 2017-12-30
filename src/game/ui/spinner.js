@@ -81,36 +81,24 @@ export default class Spinner {
 		this.asyncDoneLoading = true;
 	}
 
-	/**/
+	/* Update a Circle Item */
 
-	update(item:ISprite){
-
-		/*
-		if (this.app.client.graphics.getErrors()!==0) {
-
-			this.shortx = this.x/1080;
-			this.colour = "#EE3333";
-
-		} else {
-
-			//this.colour = "#33FF33";
-
-		}
-		*/
+	updateCircle(item:ISprite){
 
 		item.a = 0.5-Math.sin(((this.shortx+item.id)*(1*7))+360*(-Math.sin(this.x/1080)*0.1))*0.5;
 		item.position = new Vector((-7+this.app.client.setWidth/2+Math.cos((this.shortx+item.id)*7)*this.width),this.app.client.setHeight/1.5+Math.sin((this.shortx+item.id)*7)*this.width);
 		item.col = this.colour;
 
-
 	}
 
-	/**/
+	/* Update position and Circles*/
 
 	updateAll(){
 
 		this.x+=this.speed;
-		this.sprites.forEach(sprite => this.update(sprite));
+		for(let i = 8; i>=0; i--){
+			this.updateCircle(this.sprites[i]);
+		}
 
 	}
 

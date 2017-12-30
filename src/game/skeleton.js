@@ -52,8 +52,10 @@ export default class Skeleton extends RagPhysics {
 
 	respawn(){
 
-		if (this.tick.next())
+		if (this.tick.next()){
+
 			return;
+		}
 
 		this.hits = 0;
 		this.index = 0;
@@ -70,6 +72,12 @@ export default class Skeleton extends RagPhysics {
 		let t = new Date().getTime();
 		let z = 0;
 
+						if (this.player){
+		//let b = (this.player.velocity.y)*0.25;
+
+		let b = (this.player.velocity.y)*0.4;
+
+		this.position.y += b;}
 
 		switch(this.pState){
 
@@ -140,10 +148,10 @@ export default class Skeleton extends RagPhysics {
 				if (this.getX()>this.player.getX())
 				this.s = -1,velX -= Math.sin(this.index/360) * this.agility;
 
-			if (this.getY()>this.player.getY()-25)
-				velY += Math.sin(this.index/360) * -1;
-				else
-				velY += Math.sin(this.index/360) * 1;
+				if (this.getY()>this.player.getY()-25)
+					velY += Math.sin(this.index/360) * -1;
+					else
+					velY += Math.sin(this.index/360) * 1;
 
 
 				this.move(new Vector(velX,velY))

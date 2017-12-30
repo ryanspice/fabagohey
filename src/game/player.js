@@ -32,6 +32,8 @@ export default class Player extends Knight {
 
 	gamepad:any;
 
+	health:any = 4;
+
 	/**/
 
 	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals){
@@ -71,12 +73,19 @@ export default class Player extends Knight {
 
 	controls(){
 
+		this.velocity.x *=0.9;
+		this.velocity.y *=0.9;
 		let input:IGeneralControls = this.inputControls;
 
 		let vel_x:number = this.agility/10 * (-input.left + input.right);
+		let vel_y:number = this.agility/10 * (-input.up + input.down);
 
 		if (vel_x){
 			this.velocity.x = vel_x,this.pState = 'walk';}
+
+		if (vel_y){
+			this.velocity.y = vel_y,this.pState = 'walk';
+			}
 
 		this.dir = (vel_x>=0)?0.5:-0.5;
 
@@ -108,20 +117,20 @@ export default class Player extends Knight {
 
 	}
 
-	/**/
+	/* Handle collision with enemy */
 
 	collideWithEnemy(enemy:ISprite){
 
-		this.velocity.x *=0.9;
 
 		if (enemy.pState==="attack"){
 
-			if (enemy.getIndex()==8){
+			if (Number(enemy.getIndex())===8){
 
-				if (enemy.getX()<=this.getX())
+				if (enemy.getX()<=this.getX()){
 					this.velocity.x += this.dir*1;
-				else
+				}else{
 					this.velocity.x -= this.dir*1;
+				}
 
 				this.pState = 'block';
 				this.index = 5;
@@ -131,69 +140,6 @@ export default class Player extends Knight {
 		}
 
 	}
-
-	//region unused
-
-	/* UNUSED
-
-	gamepadControls(){
-
-		let gamepad = this.gamepad;// = this.visuals.app.input.gamepads;
-
-		if (!gamepad)
-			return;
-
-
-		if (gamepad.a)
-			this.dir=this.dir/1000,this.diry=this.diry/10000,this.pState = 'block',this.index+=0.1;
-
-
-		if ((gamepad.left)||(gamepad.right))
-		if (gamepad.x)
-			this.position.x+=this.dir, this.index+=0.1;
-
-		if (gamepad.left)
-			this.position.x+=this.dir,this.pState = 'walk', this.dir = -0.5;
-		if (gamepad.right)
-			this.position.x+=this.dir,this.pState = 'walk', this.dir = 0.5;
-
-
-		if (gamepad.up)
-			this.position.y+=this.diry,this.pState = 'walk', this.diry = -0.5;
-		if (gamepad.down)
-			this.position.y+=this.diry,this.pState = 'walk', this.diry = 0.5;
-
-		if (gamepad.a)
-			this.pState = 'block',this.index+=0.1;
-
-
-		if (gamepad.y){
-
-			this.dir = this.dir/10000, this.diry = this.diry/10000, this.pState = 'attack';
-
-		}
-
-	}
-	*/
-
-	/* UNUSED
-
-	keyboardControls(){
-
-		if ((this.visuals.app.input.keyController.keyboardCheck('space'))||(this.visuals.app.input.pressed))
-			this.pState = 'attack';
-
-		if (this.visuals.app.input.keyController.keyboardCheck('a'))
-			this.pState = 'walk',this.velocity.x=-this.agility/10;//,this.position.x+=this.dir;
-
-		if (this.visuals.app.input.keyController.keyboardCheck('d'))
-			this.pState = 'walk',this.velocity.x=this.agility/10;//,this.position.x+=this.dir;
-
-	}
-
-	*/
-
-	//endregion unused
 
 }
 
