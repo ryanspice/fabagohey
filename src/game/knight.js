@@ -10,7 +10,7 @@ export default class Knight extends RagPhysics {
 	agility:number;
 	priority:number;
 	thyme:Date;
-	yLimiter:IVector = new Vector(168,200);
+	yLimiter:IVector = new Vector(128,180);
 
 	/**/
 
@@ -102,7 +102,7 @@ export default class Knight extends RagPhysics {
 			this.velocity.y=-0.1,this.index-=0.005,this.pState = 'walk';
 		}
 
-		if (this.y<this.yLimiter.x){
+		if (this.y-5<this.yLimiter.x){
 			this.velocity.y=0.1,this.index+=0.005,this.pState = 'walk';
 		}
 

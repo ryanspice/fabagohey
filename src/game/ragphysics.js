@@ -30,8 +30,8 @@ export default class RagPhysics extends NewSprite {
 
 		this.velocity.x*=0.94;
 
-		if (this.position.y<130)
-			this.position.y=130, this.diry = 0;
+		//if (this.position.y<130)
+//			this.position.y=130, this.diry = 0;
 
 		/*
 		if (this.position.y>175)

@@ -149,9 +149,9 @@ export default class Skeleton extends RagPhysics {
 				this.s = -1,velX -= Math.sin(this.index/360) * this.agility;
 
 				if (this.getY()>this.player.getY()-25)
-					velY += Math.sin(this.index/360) * -1;
+					velY += Math.sin(this.index/360) * (-1+Math.random()*0.5);
 					else
-					velY += Math.sin(this.index/360) * 1;
+					velY += Math.sin(this.index/360) *( 1+Math.random()*0.5);
 
 
 				this.move(new Vector(velX,velY))

@@ -34,8 +34,8 @@ export default class ParallaxBackground {
 		//References
 		this.speed = speed;
 		this.sprites = [
-			new Sprite(data,x,y,s,a,c,xx,yy,w,h,visuals),
-			new Sprite(data,x,y,s,a,c,xx-320/s,yy,w,h,visuals)
+			new Sprite(data,x,y,s,a,c,xx,yy+20,w,h,visuals),
+			new Sprite(data,x,y,s,a,c,xx-320/s,yy+20,w,h,visuals)
 		];
 
 		//Assign sprite-types to the sprites
@@ -99,7 +99,14 @@ export class BackgroundController {
 		//Create parallax backgrounds
 		let i = this.backgroundsSize;
 		for(i; i >= 0; i--){
-			this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i));
+
+			if (i===2){
+				this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,176,this.visuals,i));
+			}
+			else{
+				this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i));
+			}
+
 		}
 
 	}

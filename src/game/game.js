@@ -76,6 +76,8 @@ class Game extends State {
 		//Assign object references.
 		this.enemies = [];
 		this.debug = debug.collision.masks;
+		this.debugAlpha = debug.collision.maskAlpha;
+		this.debugColour = '#FFFFFF'
 		this.loader = this.app.client.loader;
 
 		//Assign image references: TODO: use own function
@@ -197,11 +199,13 @@ class Game extends State {
 
 			}
 
+			/*
 			for (let i = 0;i>=0;i--){
 				let t = new Sprite(this.line,0,0+i*3,12,0.5,0,0,0,320,1,this.visuals);
 				t.priority = 2;
 				t.type = '_image_part';
 			}
+			*/
 
 			this.score = '000000';
 			this.multiplier = 'xxx';
@@ -253,7 +257,10 @@ class Game extends State {
 				this.visuals.rect(0,0,-600/this.app.scale,400,"#000000"),
 			this.visuals.rect(this.app.client.setWidth,0,600/this.app.scale,400,"#000000");
 			//this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
-			//this.visuals.rect(0,this.app.client.setHeight,this.app.client.setWidth,50,"#000000");
+
+
+			this.visuals.rect(-1,0,this.app.client.setWidth+2,15,"#000000");
+			this.visuals.rect(-1,this.app.client.setHeight-15,this.app.client.setWidth+2,15,"#000000");
 
 		}
 
@@ -300,7 +307,8 @@ class Game extends State {
 		this.hits = [];
 
 		//debug TODO: move to player
-		//this.visuals.rect_ext(Player.position.x,Player.position.y,this.player.w/1.25,25,1,a,1,col)
+		//if (this.debug)
+		this.visuals.rect_ext(this.player.getX(), this.player.getY(),this.player.w/1.25,25,1, this.debugAlpha ,1,col)
 
 	}
 
@@ -320,7 +328,6 @@ class Game extends State {
 			console.log('loading'+this.app.client.graphics.getErrors());
 		}
 
-		this.player.update();
 
 		let OffsetX = 0;
 		/*
@@ -457,6 +464,7 @@ class Game extends State {
 
 		}
 
+		this.player.update();
 		if (this.player.x>20){
 			this.updateUI();
 		}
