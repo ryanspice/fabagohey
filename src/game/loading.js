@@ -152,8 +152,8 @@ class Loading extends NewState {
 		this.spinner.colour = this.spinner.getColour('Green');
 
 		//TODO; no if? but sprite initalization error otherwise
-		if (this.backgroundManager){
-			this.backgroundManager.updateAll();
+		if (this.BackgroundManager){
+			this.BackgroundManager.updateAll();
 		}
 
 		if (this.gamepad){

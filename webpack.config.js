@@ -35,6 +35,13 @@ const source = {
 	      minChunks: Infinity,
 	      filename: 'vendor.js'
 	    }),
+      /*,
+  		new webpack.optimize.CommonsChunkPlugin({
+  	      name: 'test',
+  	      minChunks: Infinity,
+  	      filename: 'test.js'
+  	    }),
+        */
 
 	    new webpack.LoaderOptionsPlugin({
 	      minimize: true,

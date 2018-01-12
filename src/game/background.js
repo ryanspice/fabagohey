@@ -45,23 +45,33 @@ export default class ParallaxBackground {
 
 	}
 
-	/**/
+	/* Update sprite item */
 
-	update() {
+	update(item:ISprite) {
 
-		this.xx+=0.05 + 0.05*this.speed;
-		if (this.xx>320/this.s){
-			this.xx = -320/this.s;
-		}
+		item.xx+=0.05 + 0.05*this.speed;
+
+		if (item.xx>272)
+			item.xx = -272+25;
+
+
+		//if (item.xx>0/this.s){
+//			item.xx = -320/this.s;
+	//	}
+		//console.log(item.xx);
 
 	}
 
 	/**/
 
 	updateAll():void {
+		//console.log(this.sprites)
+		let i = this.spritesSize;
+		for(i; i>=0; i--){
 
-		for(let i = this.spritesSize; i>=0; i--){
-			this.sprites[i].update();
+			//this.sprites[i].xx+=0.1;
+			this.update(this.sprites[i]);
+
 		}
 
 	}
@@ -115,7 +125,8 @@ export class BackgroundController {
 
 	updateAll(){
 
-		if (!this.app.client.graphics.getErrors()===0){
+		//console.log(this.sprites,this.backgrounds)
+		if ((!this.app.client.graphics.getErrors()===0)){
 
 			return;
 		}

@@ -57,7 +57,8 @@ let _SCORE_ = 0;
 class Game extends State {
 
 	//Static game properties
-	static skeletonCount:number = 32;
+	//static skeletonCount:number = 32;
+	static skeletonCount:number = 2;
 
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
@@ -71,7 +72,6 @@ class Game extends State {
 	*/
 
 	static async init():Promise<void> {
-
 
 		//Assign object references.
 		this.enemies = [];
@@ -220,12 +220,12 @@ class Game extends State {
 			}
 
 
-			this.UI_ScoreNumbers = this.characterList(String(this.score),0,5,0.5);
-			this.UI_Multiplier = this.characterList((this.multiplier),0,10,0.5);
-			this.UI_Time = this.characterList('60',320/2-(8*2),5);
+			this.UI_ScoreNumbers = this.characterList(String(this.score),0,20,0.5);
+			this.UI_Multiplier = this.characterList((this.multiplier),0,25,0.5);
+			this.UI_Time = this.characterList('60',320/2-(8*2),20);
 
-			this.UI_Best = this.characterList('Best '+best,378-108	,5,0.5);
-			this.UI_Your = this.characterList('You '+yourbest,378-103.5	,10,0.5);
+			this.UI_Best = this.characterList('Best '+best,378-108	,25,0.5);
+			this.UI_Your = this.characterList('You '+yourbest,378-103.25	,10,0.5);
 
 		})();
 
@@ -271,8 +271,10 @@ class Game extends State {
 			if (!this.debug)
 				return;
 
-			for (let i = this.enemies.length-1; i>=0;i--)
+			let i = this.enemies.length-1
+			for (i; i>=0;i--){
 				this.enemies[i].drawDebug();
+			}
 
 			return;
 		}
@@ -353,6 +355,8 @@ class Game extends State {
 					item.position.x = a;
 				}
 		*/
+
+		//region Collision
 		var i = this.enemies.length-1;
 
 		//for each enemy
@@ -403,9 +407,10 @@ class Game extends State {
 			Enemy.s = diff.x>0?1:-1;
 
 			//reduce area of checking
-			let CollisionDetectionDistance = new Vector(-40,40);
+			let HCollisionDetectionDistance = new Vector(-40,40);
+			let VCollisionDetectionDistance = new Vector(-1,1);
 
-			if ((!utils.Within(diff.y,CollisionDetectionDistance.x,CollisionDetectionDistance.y))&&(!utils.Within(diff.x,CollisionDetectionDistance.x,CollisionDetectionDistance.y))){
+			if ((!utils.Within(diff.y,HCollisionDetectionDistance.x,HCollisionDetectionDistance.y))&&(!utils.Within(diff.x,HCollisionDetectionDistance.x,HCollisionDetectionDistance.y))){
 
 				continue;
 			}
@@ -463,6 +468,9 @@ class Game extends State {
 			}
 
 		}
+		//endregion collision
+
+
 
 		this.player.update();
 		if (this.player.x>20){

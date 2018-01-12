@@ -21,14 +21,14 @@ interface ISettingsBorder {
 
 const collision:ISettingsCollision = {
 
-	masks:false,
-	maskAlpha:0.15
+	'masks':true,
+	'maskAlpha':0.15
 
 }
 
 const borders:ISettingsBorder = {
 
-	tryToFillEdges:true
+	'tryToFillEdges':true
 
 }
 
