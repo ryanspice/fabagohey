@@ -23,6 +23,17 @@ declare var require:any;
 
 let lastError = 0;
 
+Array.prototype.clean = function(deleteValue) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] == deleteValue) {
+      this.splice(i, 1);
+      i--;
+    }
+  }
+  return this;
+};
+
+
 /* Loading state */
 
 class Loading extends NewState {
@@ -52,6 +63,10 @@ class Loading extends NewState {
 		//region Override Visuals
 
 		//TODO: bring to SpiceJS.... overrides sort method specifically for priority
+		this.visuals.PriorityRegistryAttempt = 64;
+		this.visuals.PriorityRegistryAttemptCount = 0;
+		this.visuals.PriorityRegistry = new Array(64);
+
 		this.visuals.sortPriorityRegistry =	function():void {
 
 			if (this.PriorityRegistryFlags.sort === true) {
@@ -63,24 +78,41 @@ class Loading extends NewState {
 
 		this.asyncDoneLoading = false;
 
-		this.spinner =  new Spinner(this.visuals,1);
-		this.spinner.colour = this.spinner.getColour('Red');
-
 		//TODO: fix inside SpiceJS
 		this.app.client.loader.graphics = await this.graphics;
 
 		this.visuals.appendNew = function(toRegister:any){
-				return this.PriorityRegistry.push(toRegister);
+
+			if (!this.PriorityRegistry){
+
+				this.PriorityRegistry = new Array(this.PriorityRegistryAttempt);
+
+			}
+
+				//if (this.PriorityRegistryAttemptCount>64)
+				//return this.PriorityRegistry.push(toRegister);
+				//else {
+
+					this.PriorityRegistry[this.PriorityRegistryAttemptCount] = toRegister;
+					this.PriorityRegistryAttemptCount++;
+					this.PriorityRegistry = this.PriorityRegistry.clean(undefined);
+					return true;
+				//}
+
+
 		}
 
 		this.visuals.PrioirtySort = function(){
-			let t = this.PriorityRegistry.radixSort();
-			console.log(this.PriorityRegistry);
+			//let t = this.PriorityRegistry.radixSort();
+			//console.log(this.PriorityRegistry);
 			return this.PriorityRegistry;
 		}
 
 		//endregion
 
+
+		this.spinner =  new Spinner(this.visuals,1);
+		this.spinner.colour = this.spinner.getColour('Red');
 		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
 		/*this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
 
