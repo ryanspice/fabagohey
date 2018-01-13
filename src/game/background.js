@@ -16,82 +16,26 @@ import type {
 	dtoBatchDataValidation
 } from './core/interfaces';
 
-/* Parallaxing Multilayer Background (X and Y) */
-
-export default class ParallaxBackground {
-
-	sprites:Array<ISprite>;
-	spritesSize:number = 1;
-	speed:number = 0;
-
-	xx:number;
-	s:number;
-
-	/* Create References */
-
-	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals, speed:number){
-
-		//References
-		this.speed = speed;
-		this.sprites = [
-			new Sprite(data,x,y,s,a,c,xx,yy+20,w,h,visuals),
-			new Sprite(data,x,y,s,a,c,xx-320/s,yy+20,w,h,visuals)
-		];
-
-		//Assign sprite-types to the sprites
-		for(let i = this.spritesSize; i>=0; i--){
-			this.sprites[i].type = '_image_part';
-		}
-
-	}
-
-	/* Update sprite item */
-
-	update(item:ISprite) {
-
-		item.xx+=0.05 + 0.05*this.speed;
-
-		if (item.xx>272)
-			item.xx = -272+25;
-
-
-		//if (item.xx>0/this.s){
-//			item.xx = -320/this.s;
-	//	}
-		//console.log(item.xx);
-
-	}
-
-	/**/
-
-	updateAll():void {
-		//console.log(this.sprites)
-		let i = this.spritesSize;
-		for(i; i>=0; i--){
-
-			//this.sprites[i].xx+=0.1;
-			this.update(this.sprites[i]);
-
-		}
-
-	}
-
-}
+import ParallaxBackground from './background/parallax';
+export default ParallaxBackground;
 
 /* Background Object Controller */
 
 export class BackgroundController {
 
-	backgrounds:Array<ParallaxBackground> = [];
-	backgroundsSize:number = 3;
-
-	images:Array<ISprite> = [];
-	stats:dtoBatchDataValidation;
-
+	//References
 	visuals:IVisuals;
 	app:IApp;
 
-	/* Create References */
+	//Data passed to images
+	stats:dtoBatchDataValidation;
+
+	//Pre-Allocate Arrays
+	images:Array<ISprite> = new Array(4);
+	backgrounds:Array<ParallaxBackground> = new Array(4);
+	backgroundsSize:number;
+
+	//
 
 	constructor(stats:dtoBatchDataValidation, visuals:IVisuals){
 
@@ -99,25 +43,24 @@ export class BackgroundController {
 		this.visuals = visuals;
 		this.app = this.visuals.app;
 		this.stats = stats;
-		this.images = [
-			this.app.client.loader.getImageReference('./parallax-forest-back-trees'),
-			this.app.client.loader.getImageReference('./parallax-forest-lights'),
-			this.app.client.loader.getImageReference('./parallax-forest-middle-trees'),
-			this.app.client.loader.getImageReference('./parallax-forest-front-trees'),
-		];
 
-		//Create parallax backgrounds
-		let i = this.backgroundsSize;
-		for(i; i >= 0; i--){
+			//Image references
+			this.images[0] = this.app.client.loader.getImageReference('./parallax-forest-back-trees');
+			this.images[1] = this.app.client.loader.getImageReference('./parallax-forest-lights');
+			this.images[2] = this.app.client.loader.getImageReference('./parallax-forest-middle-trees');
+			this.images[3] = this.app.client.loader.getImageReference('./parallax-forest-front-trees');
 
-			if (i===2){
-				this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,176,this.visuals,i));
+			//Create parallax backgrounds
+			let i = this.backgroundsSize = this.backgrounds.length-1;
+			for(i; i >= 0; i--){
+
+				if (i===2){
+					this.backgrounds[i] = (new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,176,this.visuals,i));
+				}else{
+					this.backgrounds[i] = (new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i));
+				}
+
 			}
-			else{
-				this.backgrounds.push(new ParallaxBackground(this.images[i],0,0,1.2,1,0,0,0,272,160,this.visuals,i));
-			}
-
-		}
 
 	}
 
@@ -133,7 +76,18 @@ export class BackgroundController {
 
 		let background = this.backgroundsSize;
 		for(background;background>=0;background--){
-			this.backgrounds[background].updateAll();
+
+			let image = this.backgrounds[background];
+
+			if (image){
+
+				image.updateAll();
+
+			} else {
+
+
+			}
+
 		}
 
 	}
