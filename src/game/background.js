@@ -1,11 +1,6 @@
 //@flow
 
 import {
-	Sprite
-	// $FlowFixMe
-} from 'ryanspice2016-spicejs';
-
-import {
 	ISprite,
 	IVisuals,
 	IApp
@@ -17,7 +12,7 @@ import type {
 } from './core/interfaces';
 
 import ParallaxBackground from './background/parallax';
-export default ParallaxBackground;
+export default ParallaxBackground; //TODO: remove this export
 
 /* Background Object Controller */
 
@@ -34,8 +29,6 @@ export class BackgroundController {
 	images:Array<ISprite> = new Array(4);
 	backgrounds:Array<ParallaxBackground> = new Array(4);
 	backgroundsSize:number;
-
-	//
 
 	constructor(stats:dtoBatchDataValidation, visuals:IVisuals){
 
@@ -92,7 +85,7 @@ export class BackgroundController {
 
 	}
 
-	/* Update all parallax backgrounds */
+	/* Update all parallax backgrounds based on player position */
 
 	updatePositionBasedOnPlayer(player:any){
 
