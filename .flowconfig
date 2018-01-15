@@ -1,6 +1,6 @@
 [libs]
 .*/node_modules/ryanspice2016-spicejs
-
+./src/game/core/flow.js
 [ignore]
 .*/node_modules/*
 .*node_modules/.*
@@ -18,6 +18,5 @@ esproposal.decorators=warn
 
 esproposal.export_star_as=enable
 
-unsafe.enable_getters_and_setters=true
 
 module.system=haste
