@@ -34,6 +34,7 @@ import Player from './player';
 
 export default class NewSprite extends Sprite {
 
+	delete:boolean = false;
 	off:Vector = new Vector();
 	vel:Vector = new Vector();
 

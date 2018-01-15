@@ -6,7 +6,7 @@ import type {
 
 const spriteDataList:dtoSpriteDataList = [
    './Cursive1_MyEdit',
-   './Untitled',
+   //'./Untitled',
    './parallax-forest-back-trees',
    './parallax-forest-front-trees',
    './parallax-forest-lights',
