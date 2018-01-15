@@ -28,8 +28,8 @@ declare var Vector;
 
 //import _CHARMAP_ from './maps';
 
-let _CHARMAP_= require.ensure(['./maps'],()=>{
-   _CHARMAP_ = require('./maps').default;
+let _CHARMAP_= require.ensure(['../require/maps'],()=>{
+   _CHARMAP_ = require('../require/maps').default;
 },'maps');
 
 //rename these
