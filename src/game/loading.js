@@ -1,10 +1,7 @@
 //@flow
 
-//declare var require:any;
-
 import {
 	State
-	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
 import Game from './game';
@@ -19,11 +16,23 @@ import {
 	BackgroundController
 } from './background';
 
+// for Loading Loading Handler
 let lastError = 0;
 
 /* Loading state */
 
 class Loading extends NewState {
+
+	static app:any;
+	static graphics:any;
+	static visuals:any;
+	static gamepad:any;
+
+	static spinner:Spinner;
+	static BackgroundManager:BackgroundController;
+
+	static gotoGame:any;
+	static spriteDataList:any;
 
 	static asyncDoneLoading:boolean = false;
 
@@ -122,7 +131,7 @@ class Loading extends NewState {
 				this.spinner.sprites[i].delete = true;
 			}
 
-			this.spinner = null;
+			//this.spinner = null;
 			this.visuals.PriorityRegistry.reverse(); //TODO: mitigate this
 			this.app.client.update.state = new State(Game);
 
