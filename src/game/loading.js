@@ -14,7 +14,7 @@ import {
 
 import {
 	BackgroundController
-} from './background';
+} from './background/background';
 
 // for Loading Loading Handler
 let lastError = 0;
