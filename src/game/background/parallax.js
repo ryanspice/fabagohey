@@ -46,8 +46,8 @@ export default class ParallaxBackground {
 
 		item.xx += 0.05 + 0.05*this.speed;
 
-		if (item.xx>272){
-			item.xx = -272+55;
+		if (item.xx>272-5){
+			item.xx = -272+1;
 		}
 
 	}
