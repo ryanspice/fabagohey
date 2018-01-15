@@ -15,4 +15,9 @@ declare module "ryanspice2016-spicejs" {
 	declare export class State{
 		constructor:any
 	}
+
+	declare export class Sprite{
+		constructor:any
+	}
+
 }

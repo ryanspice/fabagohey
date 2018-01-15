@@ -1,6 +1,12 @@
 //@flow
 
-Array.prototype.clean = function(deleteValue) {
+import type {
+	dtoBatchDataValidation
+} from './core/interfaces';
+
+/* Implement (array).clean */
+
+((Array.prototype):any).clean = function(deleteValue) {
   for (var i = 0; i < this.length; i++) {
     if (this[i] == deleteValue) {
       this.splice(i, 1);
@@ -10,9 +16,7 @@ Array.prototype.clean = function(deleteValue) {
   return this;
 };
 
-import type {
-	dtoBatchDataValidation
-} from './core/interfaces';
+/* Timer simply counts up to max */
 
 export class Timer {
 
