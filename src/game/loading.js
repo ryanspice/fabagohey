@@ -1,10 +1,14 @@
 //@flow
 
+//declare var require:any;
+
 import {
 	State
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
+import Game from './game';
+import Spinner from './ui/spinner';
 import NewState from './newstate.js';
 
 import {
@@ -14,12 +18,6 @@ import {
 import {
 	BackgroundController
 } from './background';
-
-import Spinner from './ui/spinner';
-
-import Game from './game';
-
-declare var require:any;
 
 let lastError = 0;
 
@@ -110,29 +108,14 @@ class Loading extends NewState {
 		//
 		//endregion
 
+		//region Build/Get References
+		//
+		//
+
 		this.spinner =  new Spinner(this.visuals);
 		this.spinner.colour = this.spinner.getColour('Red');
 
-		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
-		/*this.spriteDataList = await require.ensure(['../require/data'],async ()=>{
-
-			return await require('../require/data').default.spriteDataList;
-		},'maps');
-		*/
-		this.spriteDataList = await require.ensure(['../require/data'],async ()=> await require('../require/data').default.spriteDataList,'maps');
-
-		//Load sprites
-		let i = this.spriteDataList.length-1;
-		for(i; i>=0;i--){
-
-			//let s = ;
-			await this.app.client.loader.asyncLoadImage(this.spriteDataList[i],String("spr"+i));
-		}
-
-		//Build BackgroundController
-		this.BackgroundManager  = await new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
-
-
+		//Build gotoGame Function (lol)
 		this.gotoGame = ()=>{
 
 			for(let i=8;i>=0;--i){
@@ -140,18 +123,36 @@ class Loading extends NewState {
 			}
 
 			this.spinner = null;
-			this.visuals.PriorityRegistry.reverse();
+			this.visuals.PriorityRegistry.reverse(); //TODO: mitigate this
 			this.app.client.update.state = new State(Game);
 
 		}
 
-		this.gamepad =  this.visuals.app.input.gamepads;
+		//Load gamepad reference
+		this.gamepad =  await this.visuals.app.input.gamepads;
 
-		this.asyncDoneLoading = true;
+		//Load spriteDataList from data folder TODO: add to SpiceJS as API - look into dynamic? nawh
+		this.spriteDataList = await require.ensure(['../require/data'],async ()=> await require('../require/data').default.spriteDataList,'maps');
+
+		//Load sprites
+		let i = this.spriteDataList.length-1;
+		for(i; i>=0;i--){
+			await this.app.client.loader.asyncLoadImage(this.spriteDataList[i],String("spr"+i));
+		}
+
+		//Build BackgroundController
+		this.BackgroundManager  = await new BackgroundController(new StatsBuffer('',0,0,1,1,0,0,0,272,160),this.visuals);
+
+		//
+		//
+		//endregion Build/Get References
+
 		this.app.Loading = this;
 
 		//TODO: move to spicejs
 		await this.visuals.PrioirtySort();
+
+		this.asyncDoneLoading = true;
 	}
 
 	/* Update objects */
@@ -160,8 +161,12 @@ class Loading extends NewState {
 
 		this.spinner.updateAll();
 
-		//TODO: spicejs recognize that graphics.getErrors will return 0 before we request an object and there for while the async function is running
-		//			we need to check the error has changed
+		//region Loading Error Handling
+		//TODO: move to SpiceJS
+		// recognize that graphics.getErrors will return 0 before we request an object and there for while the async function is running
+		//	we need to check the error has changed
+		//
+
 		let _continue = false;
 		let _errors = this.app.client.graphics.getErrors();
 
@@ -186,12 +191,17 @@ class Loading extends NewState {
 		//	return;
 		}
 
+		if (!this.asyncDoneLoading) {
+			return;
+		}
+
 		this.spinner.colour = this.spinner.getColour('Green');
 
-		//TODO; no if? but sprite initalization error otherwise
-		if (this.BackgroundManager){
-			this.BackgroundManager.updateAll();
-		}
+		//
+		//endregion Loading Error Handling
+
+		//region Input Handling
+		//
 
 		if (this.gamepad){
 
@@ -210,6 +220,11 @@ class Loading extends NewState {
 
 		}
 
+		//
+		//endregion
+
+		this.BackgroundManager.updateAll();
+
 	};
 
 	/* UI Overlay*/
@@ -222,5 +237,4 @@ class Loading extends NewState {
 
 }
 
-window.Loading = Loading;
 export default new Loading();
