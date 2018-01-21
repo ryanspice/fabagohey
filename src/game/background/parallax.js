@@ -35,8 +35,10 @@ export default class ParallaxBackground {
 		//References
 		this.sprites[0] = new Sprite(data,x,y,s,a,c,xx,yy+20,w,h,visuals);
 		this.sprites[0].type = '_image_part';
+		this.sprites[0].priority = 0;
 		this.sprites[1] = new Sprite(data,x,y,s,a,c,xx-320/s,yy+20,w,h,visuals);
 		this.sprites[1].type = '_image_part';
+		this.sprites[1].priority = 0;
 
 	}
 

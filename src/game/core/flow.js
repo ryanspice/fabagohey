@@ -7,16 +7,18 @@ declare var require: {
 
 declare module "ryanspice2016-spicejs" {
 
-	declare class SJS{
-
-	}
+	declare class SJS {}
 	declare export default typeof SJS;
 
-	declare export class State{
+	declare export class State {
 		constructor:any
 	}
 
-	declare export class Sprite{
+	declare export class Sprite {
+		constructor:any
+	}
+
+	declare export class Vector {
 		constructor:any
 	}
 

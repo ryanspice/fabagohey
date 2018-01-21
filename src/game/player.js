@@ -30,9 +30,13 @@ interface IGeneralControls {
 
 export default class Player extends Knight {
 
+	static offset:any;
+
 	gamepad:any;
 
 	health:any = 4;
+
+
 
 	/**/
 

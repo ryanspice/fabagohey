@@ -4,9 +4,17 @@ import {
 	State
 } from 'ryanspice2016-spicejs';
 
+import {
+	IApp,
+	IGraphics,
+	IVisuals,
+	IState
+	// $FlowFixMe
+} from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
+
 import Game from './game';
 import Spinner from './ui/spinner';
-import NewState from './newstate.js';
+import NewState from './core/newstate.js';
 
 import {
 	StatsBuffer
@@ -23,10 +31,10 @@ let lastError = 0;
 
 class Loading extends NewState {
 
-	static app:any;
-	static graphics:any;
-	static visuals:any;
-	static gamepad:any;
+	static app:?IApp;
+	static graphics:?IGraphics;
+	static visuals:?IVisuals;
+	static gamepad:?IGamepad;
 
 	static spinner:Spinner;
 	static BackgroundManager:BackgroundController;
@@ -50,11 +58,10 @@ class Loading extends NewState {
 
 		//TODO: build into SpiceJS
 		this.asyncDoneLoading = false;
-
-		//TODO: build into SpiceJS
 		this.app.client.loader.graphics = await this.graphics;
 
 		//region Override Visuals
+
 		//TODO: bring to SpiceJS.... overrides sort method specifically for priority
 		//	visuals.PriorityRegistryAttempt - size of array on initial load
 		//	visuals.PriorityRegistryAttemptCount - count of time accessed array

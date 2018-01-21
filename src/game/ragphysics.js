@@ -5,7 +5,7 @@ import {
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
-import NewSprite from './newsprite';
+import NewSprite from './core/newsprite';
 
 declare var Vector;
 
@@ -15,12 +15,13 @@ declare var Vector;
 
 export default class RagPhysics extends NewSprite {
 
+	hit:boolean = false;
+	collision:boolean = false;
+
 	constructor(...args:Array<any>){
 
 		super(...args);
 
-		this.collision = false;
-		this.hit = false;
 		this.index = 0;
 
 		this.velocity = new Vector();

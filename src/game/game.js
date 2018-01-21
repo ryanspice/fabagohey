@@ -6,17 +6,19 @@ import {
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
 
-/*
+
 import {
 	IState
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
-*/
+
 
 import Time from './time';
 import Player from './player';
 import Skeleton from './skeleton';
 import Letter from './letter';
+
+import UI from './ui/ui';
 
 import utils from './utils';
 import debug from '../config';
@@ -60,6 +62,26 @@ class Game extends State {
 	//static skeletonCount:number = 32;
 	static skeletonCount:number = 2;
 
+	static enemies:Array<any>;
+	static debug:boolean;
+	static debugAlpha:number;
+	static debugColour:string;
+
+	static app:any;
+	static loader:any;
+	static visuals:any;
+
+	static player:any;
+	static font:any;
+	static line:any;
+	static bg:Array<any>;
+
+	static time:any;
+	static sprSkeleton:Array<any>;
+	static sprKnight:Array<any>;
+
+	static UI:UI;
+
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
@@ -81,53 +103,51 @@ class Game extends State {
 		this.loader = this.app.client.loader;
 
 		//Assign image references: TODO: use own function
-		await (()=>{
+		this.font = this.loader.getImageReference('./Cursive1_MyEdit');
 
-			this.font = this.loader.getImageReference('./Cursive1_MyEdit');
+		//TODO: do not use line, draw a rectangle lol
+		//this.line = this.loader.getImageReference('./Untitled');
 
-			//TODO: do not use line, draw a rectangle lol
-			this.line = this.loader.getImageReference('./Untitled');
+		this.sprSkeleton = new Array(6);
+		this.sprSkeleton = [
+			this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
+			this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
+			this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
+			this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
+			this.loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
+			this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
+		];
 
-			this.bg = [
-				this.loader.getImageReference('./parallax-forest-back-trees'),
-				this.loader.getImageReference('./parallax-forest-lights'),
-				this.loader.getImageReference('./parallax-forest-middle-trees'),
-				this.loader.getImageReference('./parallax-forest-front-trees'),
-			];
-
-			this.sprSkeleton = [
-				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Idle'),
-				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Walk'),
-				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Attack'),
-				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Hit'),
-				this.loader.getImageReference('./Skeleton/Sprite Sheets/skeleton_parts'),
-				this.loader.getImageReference('./Skeleton/Sprite Sheets/Skeleton_Dead')
-			];
-
-			this.sprKnight = [
-				this.loader.getImageReference('./knight_3_improved_slash_animation_2'),
-				this.loader.getImageReference('./knight_walk_animation'),
-				this.loader.getImageReference('./knight_3_block'),
-				this.loader.getImageReference('./knight_3_idle')
-			];
-
-		})();
+		this.sprKnight = new Array(4);
+		this.sprKnight = [
+			this.loader.getImageReference('./knight_3_improved_slash_animation_2'),
+			this.loader.getImageReference('./knight_walk_animation'),
+			this.loader.getImageReference('./knight_3_block'),
+			this.loader.getImageReference('./knight_3_idle')
+		];
 
 		//Instantiate new player.
 		this.player = await new Player(this.sprKnight[0],-20,185,1,1,1,0,0,(167/4),46,this.visuals);
 
-		this.time = await new Time();
 
-		//Set player sprites referencse
 
+		/*
+		this.bg = new Array(4);
+		this.bg = [
+			this.loader.getImageReference('./parallax-forest-back-trees'),
+			this.loader.getImageReference('./parallax-forest-lights'),
+			this.loader.getImageReference('./parallax-forest-middle-trees'),
+			this.loader.getImageReference('./parallax-forest-front-trees'),
+		];
 		for(let i = 3; i>=0;i--) {
 			let item;
-			///WARNING: Memory Leak Occurs when not creating these objects....
+			///WARNING: Memory Leak Occurs when not creating these objects.... ???
 
 			((item = this.visuals.createMapObject('Tile',this.bg[i],-this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
 			((item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,0,xx,0,0,xxx+272,160,3+i)));
 			((item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
 		}
+		*/
 
 		this.player.pState = 'walk';
 
@@ -153,98 +173,7 @@ class Game extends State {
 
 		this.visuals.bufferIndex = 0;
 
-		//Initalize UI functions and objects
-		this.initUI = await (()=>{
-
-			this.characters = _CHARMAP_;
-
-			this.characterList=(string,xx,yy,s=1)=>{
-
-				let arr = [];
-				let i = string.length-1;
-				for (i; i>=0;i--){
-
-					if (string[i]===" "){
-						continue;
-					}
-
-					let x = (this.characters.indexOf(string[i]));
-
-					let y = 0;
-					let l = new Letter(this.font,xx+9*i*s,yy,s,1,0,0,0,9,9,this.visuals);
-					l.priority = 9;
-
-					l.characterNum = x;
-					arr.push(l);
-
-				}
-
-				return arr;
-			};
-
-			this.updateCharacterList=(list,string, xx,yy)=>{
-
-				for (var i = list.length-1;i>=0;i--){
-						list[i].characterNum = String(this.characters.indexOf('0'));
-				}
-				for (var ii = 0;ii<string.length;ii++){
-
-					let x = (this.characters.indexOf(string[ii]));
-
-					list[ii].character = string[ii];
-					list[ii].characterNum = String(x);
-					//for (var i = list.length-1; i>=0;i--){
-					//}
-				}
-
-			}
-
-			/*
-			for (let i = 0;i>=0;i--){
-				let t = new Sprite(this.line,0,0+i*3,12,0.5,0,0,0,320,1,this.visuals);
-				t.priority = 2;
-				t.type = '_image_part';
-			}
-			*/
-
-			this.score = '000000';
-			this.multiplier = 'xxx';
-
-			let best = '012345';
-			let yourbest = (Number(this.score)||Number('001234'));
-			if (yourbest<10000){
-				yourbest = '0' + yourbest;
-			}
-			if (Number(yourbest)<100000){
-				yourbest= '0' + yourbest;
-			}
-
-
-			this.UI_ScoreNumbers = this.characterList(String(this.score),0,20,0.5);
-			this.UI_Multiplier = this.characterList((this.multiplier),0,25,0.5);
-			this.UI_Time = this.characterList('60',320/2-(8*2),20);
-
-			this.UI_Best = this.characterList('Best '+best,378-108	,25,0.5);
-			this.UI_Your = this.characterList('You '+yourbest,378-103.25	,10,0.5);
-
-		})();
-
-		//Helper functions
-
-		this.getTime = ()=>{
-
-			let time = this.time.seconds;	//this.time.minutes;// +""+ (this.time.seconds);
-			if (this.time.seconds<10){
-				time = "0" + this.time.seconds;
-			}
-			if (Number(time)<60){
-				return String(Number(60-Number(time)));
-			}
-				else{
-				return "XX";
-			}
-
-		}
+		this.UI = new UI(this.loader.getImageReference('./Cursive1_MyEdit'),this.visuals);
 
 		this.drawBorders = ()=>{
 
@@ -259,8 +188,8 @@ class Game extends State {
 			//this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
 
 
-			this.visuals.rect(-1,0,this.app.client.setWidth+2,15,"#000000");
-			this.visuals.rect(-1,this.app.client.setHeight-15,this.app.client.setWidth+2,15,"#000000");
+//			this.visuals.rect(-1,0,this.app.client.setWidth+2,15,"#000000");
+	//		this.visuals.rect(-1,this.app.client.setHeight-15,this.app.client.setWidth+2,15,"#000000");
 
 		}
 
@@ -279,15 +208,6 @@ class Game extends State {
 			return;
 		}
 
-		this.updateUI = ()=>{
-
-			this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
-			this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
-
-			this.score = _SCORE_ || 0;
-			this.score = String(this.score);
-
-		}
 
 		this.ready = true;
 
@@ -316,8 +236,6 @@ class Game extends State {
 
 	static update() {
 
-		document.title = 'Demo - ' + this.app.fps;
-
 		//TODO: put this into spicejs state class
 		if (!this.ready){
 
@@ -332,29 +250,6 @@ class Game extends State {
 
 
 		let OffsetX = 0;
-		/*
-				for(let i = this.bgItems.length-1; i>=0;i--) {
-
-
-					let item = (this.bgItems[i]);
-
-					let px = this.player.position.x*0.25;
-
-					let a = this.app.client.setWidth/2-px/(i+1);
-					OffsetX = a;
-					item.position.x = a;
-
-					item = (this.bgItems2[i]);
-
-					a = -this.app.client.setWidth/2-px/(i+1);
-					item.position.x = a;
-
-					item = (this.bgItems3[i]);
-
-					a = -px/(i+1);
-					item.position.x = a;
-				}
-		*/
 
 		//region Collision
 		var i = this.enemies.length-1;
@@ -474,7 +369,7 @@ class Game extends State {
 
 		this.player.update();
 		if (this.player.x>20){
-			this.updateUI();
+			this.UI.update();
 		}
 
 		if (this.visuals.app.Loading){
@@ -486,5 +381,5 @@ class Game extends State {
 	}
 
 }
-
+export {_SCORE_};
 export default new Game();

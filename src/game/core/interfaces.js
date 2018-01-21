@@ -7,8 +7,9 @@ export interface IState {
 }
 
 export type dtoSpriteDataList = string[];
-export type dtoBatchData = dtoDrawData|Image;
 export type dtoBatchDataValidation = dtoBatchData|HTMLImageElement|number|string;
+export type dtoBatchData = dtoDrawData|Image;
+export type dtoBatch = Array<dtoDrawData>;
 
 export type dtoDrawData = {
 	img:dtoBatchDataValidation,
