@@ -32,6 +32,19 @@ export default class Skeleton extends RagPhysics {
 
 	tick:Timer = new Timer(120);
 
+	pState:string;
+	dS:number;
+	timeoutmax:number;
+	timeout:number;
+
+	hits:number;
+	agility:number;
+
+	off:Vector = new Vector(0,0);
+
+
+	game:any;
+
 	/**/
 
 	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals){
@@ -61,7 +74,7 @@ export default class Skeleton extends RagPhysics {
 		this.index = 0;
 		this.pState = 'idle';
 		this.agility+=Math.random()*_AgilityIncrease_;
-		this.position.x = (Player.position.x + ( (Math.random() < 0.5 ? -0.25 : 1)*380) ) - this.off.x;
+		this.position.x = (this.game.player.position.x + ( (Math.random() < 0.5 ? -0.25 : 1)*380) ) - this.off.x;
 
 	}
 
@@ -71,11 +84,11 @@ export default class Skeleton extends RagPhysics {
 
 		let t = new Date().getTime();
 		let z = 0;
+		
+						if (this.game.player){
+		//let b = (this.game.player.velocity.y)*0.25;
 
-						if (this.player){
-		//let b = (this.player.velocity.y)*0.25;
-
-		let b = (this.player.velocity.y)*0.4;
+		let b = (this.game.player.velocity.y)*0.4;
 
 		this.position.y += b;}
 
@@ -96,11 +109,11 @@ export default class Skeleton extends RagPhysics {
 					return;
 				}
 
-				if (!this.player)
+				if (!this.game.player)
 					return;
 
-				if (this.getX()>this.player.getX())
-				if (this.getX()<this.player.getX()){
+				if (this.getX()>this.game.player.getX())
+				if (this.getX()<this.game.player.getX()){
 
 
 						this.pState = 'idle';
@@ -117,7 +130,7 @@ export default class Skeleton extends RagPhysics {
 
 			case 'walk':
 
-				if (!this.player){
+				if (!this.game.player){
 
 					this.pState = 'idle';
 					return;
@@ -142,13 +155,13 @@ export default class Skeleton extends RagPhysics {
 
 				let velX = 0;
 				let velY = 0;
-				if (this.getX()<this.player.getX())
+				if (this.getX()<this.game.player.getX())
 				this.s = 1,velX += Math.sin(this.index/360) * this.agility;
 				else
-				if (this.getX()>this.player.getX())
+				if (this.getX()>this.game.player.getX())
 				this.s = -1,velX -= Math.sin(this.index/360) * this.agility;
 
-				if (this.getY()>this.player.getY()-25)
+				if (this.getY()>this.game.player.getY()-25)
 					velY += Math.sin(this.index/360) * (-1+Math.random()*0.5);
 					else
 					velY += Math.sin(this.index/360) *( 1+Math.random()*0.5);

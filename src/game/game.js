@@ -102,9 +102,6 @@ class Game extends State {
 		this.debugColour = '#FFFFFF'
 		this.loader = this.app.client.loader;
 
-		//Assign image references: TODO: use own function
-		this.font = this.loader.getImageReference('./Cursive1_MyEdit');
-
 		//TODO: do not use line, draw a rectangle lol
 		//this.line = this.loader.getImageReference('./Untitled');
 
@@ -131,7 +128,6 @@ class Game extends State {
 
 
 
-		/*
 		this.bg = new Array(4);
 		this.bg = [
 			this.loader.getImageReference('./parallax-forest-back-trees'),
@@ -147,7 +143,6 @@ class Game extends State {
 			((item = this.visuals.createMapObject('Tile',this.bg[i],0,-30,s,0,xx,0,0,xxx+272,160,3+i)));
 			((item = this.visuals.createMapObject('Tile',this.bg[i],this.bg[i].width*s,-30,s,0,xx,0,0,xxx+272,160,3+i)));
 		}
-		*/
 
 		this.player.pState = 'walk';
 
@@ -167,13 +162,14 @@ class Game extends State {
 			//Create skeleton
 			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),130 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
 			tempSkeleton.priority = 5;
+			tempSkeleton.game = this;
 			this.enemies.push(tempSkeleton);
 
 		}
-
 		this.visuals.bufferIndex = 0;
 
 		this.UI = new UI(this.loader.getImageReference('./Cursive1_MyEdit'),this.visuals);
+
 
 		this.drawBorders = ()=>{
 
@@ -188,8 +184,8 @@ class Game extends State {
 			//this.visuals.rect(0,-50,this.app.client.setWidth,50,"#000000");
 
 
-//			this.visuals.rect(-1,0,this.app.client.setWidth+2,15,"#000000");
-	//		this.visuals.rect(-1,this.app.client.setHeight-15,this.app.client.setWidth+2,15,"#000000");
+			//			this.visuals.rect(-1,0,this.app.client.setWidth+2,15,"#000000");
+			//		this.visuals.rect(-1,this.app.client.setHeight-15,this.app.client.setWidth+2,15,"#000000");
 
 		}
 
@@ -214,10 +210,12 @@ class Game extends State {
 		//TODO: bring into SpiceJS
 		await this.visuals.PrioirtySort();
 		await this.visuals.PriorityRegistry.reverse();
+
 	}
 
 	static draw(){
 
+				document.title = 'Demo - ' + this.visuals.app.fps;
 		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
@@ -230,7 +228,7 @@ class Game extends State {
 
 		//debug TODO: move to player
 		//if (this.debug)
-		this.visuals.rect_ext(this.player.getX(), this.player.getY(),this.player.w/1.25,25,1, this.debugAlpha ,1,col)
+		//this.visuals.rect_ext(this.player.getX(), this.player.getY()-25,this.player.w/1.25,25,1, this.debugAlpha ,1,col)
 
 	}
 
@@ -252,6 +250,7 @@ class Game extends State {
 		let OffsetX = 0;
 
 		//region Collision
+		/*
 		var i = this.enemies.length-1;
 
 		//for each enemy
@@ -363,6 +362,7 @@ class Game extends State {
 			}
 
 		}
+		*/
 		//endregion collision
 
 
