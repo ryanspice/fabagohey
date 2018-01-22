@@ -112,8 +112,8 @@ export default class UI {
 		this.updateCharacterList(this.UI_ScoreNumbers,utils.reverseString(this.score),0,15);
 		this.updateCharacterList(this.UI_Time,utils.reverseString(this.getTime()),0,15);
 
-		this.score = _SCORE_ || '0';
-		this.score = String(this.score);
+		this.score = String( _SCORE_ || '0');
+		//this.score = (this.score);
 
 		document.title = 'Demo - ' + this.visuals.app.fps;
 
