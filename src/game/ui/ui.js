@@ -13,12 +13,13 @@ let _CHARMAP_= require.ensure(['../../require/maps'],()=>{
 
 export default class UI {
 
-	characters:Array<string>;
 	font:HTMLImageElement;
+	characters:Array<string>;
 
-	time:any;
-	score:any  = '000000';
+	score:string  = '000000';
 	multiplier:string = 'xxx';
+
+	time:Time;
 
 	visuals:any; //
 
