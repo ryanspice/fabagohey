@@ -82,6 +82,11 @@ class Game extends State {
 
 	static UI:UI;
 
+
+	static EnemyToCompareDifference:Vector;
+	static HCollisionDetectionDistance:Vector;
+	static VCollisionDetectionDistance:Vector;
+
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
@@ -163,6 +168,7 @@ class Game extends State {
 			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),130 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
 			tempSkeleton.priority = 5;
 			tempSkeleton.game = this;
+			tempSkeleton.off.x = 0;
 			this.enemies.push(tempSkeleton);
 
 		}
@@ -211,6 +217,9 @@ class Game extends State {
 		await this.visuals.PrioirtySort();
 		await this.visuals.PriorityRegistry.reverse();
 
+		this.EnemyToCompareDifference = new Vector(0,0);
+		this.HCollisionDetectionDistance = new Vector(0,0);
+		this.VCollisionDetectionDistance = new Vector(0,0);
 	}
 
 	static draw(){
@@ -250,61 +259,62 @@ class Game extends State {
 		let OffsetX = 0;
 
 		//region Collision
-		/*
+
 		var i = this.enemies.length-1;
+		var i2 = i;
+		let Enemy:Vector|null;
+		let	EnemyToCompare:Vector|null;
 
 		//for each enemy
 		for (i; i>=0;i--){
 
-			//enemy in enemies
-			let Enemy:Sprite = this.enemies[i];
+			Enemy = this.enemies[i].checkActive(null);
+			if (Enemy==null){
 
-			if (!Enemy.player)
-				Enemy.player = this.player;
-			Enemy.off.x = OffsetX;
-			//validate enemy for collision
-			if (checkEnemy(Enemy, null))
 				continue;
-
-			//this collide with any other?
-			var collision = false;
-
-			//compare enemy to enemies
-			for (let i2 = this.enemies.length-1; i2>=0;i2--){
-
-				//compared enemy in enemies
-				let compare_enemy = this.enemies[i2];
-
-				//get vector difference
-				let compare_difference = Vector.Difference(Enemy.getPosition(), compare_enemy.getPosition());
-
-				//validate compared enemy for collision
-				if (checkEnemy(compare_enemy,Enemy))
-					continue;
-
-				if (utils.Within(compare_difference.x,-20,20))
-					collision = true, compare_enemy.position.x-=compare_difference.x/100 - Math.random()*1/100;//compare_enemy.velocity.x+=Enemy.dir/1.5,collision = true; //TODO tweak
-					//(compare_difference.x-Enemy.dir/1.5)*(Math.random()*-1+0.5)
 			}
 
-			//if collision with enemy
-			//if (collision)
-			//				Enemy.position.offset(1*Enemy.s,0);
+			//compare enemy to enemies
+			for (i2; i2>=0;i2--){
+
+				EnemyToCompare = this.enemies[i2].checkActive(Enemy);
+				if (EnemyToCompare==null){
+
+					//reset compare
+					this.EnemyToCompareDifference.x = 0;
+					this.EnemyToCompareDifference.y = 0;
+					continue;
+				}
+
+				//get difference
+				this.EnemyToCompareDifference = Vector.Difference(Enemy, EnemyToCompare);
+				if (utils.Within(this.EnemyToCompareDifference.x,-20,20)){
+					EnemyToCompare.move(new Vector(-this.EnemyToCompareDifference.x/100,0))
+					// - Math.random()*1/100;//compare_enemy.velocity.x+=Enemy.dir/1.5,collision = true;
+				}else{
+
+					if (this.EnemyToCompareDifference.x>-0.5)
+					if (this.EnemyToCompareDifference.x<0.5)
+						EnemyToCompare.move(new Vector(1,0))
+
+				}
+
+			}
 
 			//Collision with PLAYER
-			let diff = Vector.Difference(this.player.getPosition(), Enemy.getPosition());
+			let diff = Vector.Difference(this.player, Enemy);
 
 			//reset enemy collision state
 			Enemy.collision = 0;
 
 			//set enemy s based on diff.x
-			Enemy.s = diff.x>0?1:-1;
+			//Enemy.s = diff.x>0?1:-1;
 
 			//reduce area of checking
-			let HCollisionDetectionDistance = new Vector(-40,40);
-			let VCollisionDetectionDistance = new Vector(-1,1);
+			this.HCollisionDetectionDistance = new Vector(-30,30);
+			this.VCollisionDetectionDistance = new Vector(-1,1);
 
-			if ((!utils.Within(diff.y,HCollisionDetectionDistance.x,HCollisionDetectionDistance.y))&&(!utils.Within(diff.x,HCollisionDetectionDistance.x,HCollisionDetectionDistance.y))){
+			if ((!utils.Within(diff.y,this.HCollisionDetectionDistance.x,this.HCollisionDetectionDistance.y))&&(!utils.Within(diff.x,this.HCollisionDetectionDistance.x,this.HCollisionDetectionDistance.y))){
 
 				continue;
 			}
@@ -362,7 +372,7 @@ class Game extends State {
 			}
 
 		}
-		*/
+
 		//endregion collision
 
 

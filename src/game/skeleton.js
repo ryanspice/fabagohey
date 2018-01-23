@@ -84,7 +84,7 @@ export default class Skeleton extends RagPhysics {
 
 		let t = new Date().getTime();
 		let z = 0;
-		
+
 						if (this.game.player){
 		//let b = (this.game.player.velocity.y)*0.25;
 
@@ -269,6 +269,18 @@ export default class Skeleton extends RagPhysics {
 				return;
 		}
 
+	}
+
+	/**/
+
+	checkActive(e2:ISprite|null){
+
+		if (this.pState === 'dead' || this === e2){
+
+			return null;
+		}
+
+		return this;
 	}
 
 	/**/
