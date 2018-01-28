@@ -23,6 +23,9 @@ import UI from './ui/ui';
 import utils from './utils';
 import debug from '../config';
 
+import Rectangle from "./core/rectangle";
+import QuadTree from './core/quadtree';
+
 /* TODO: export properly from spicejs */
 
 declare var require;
@@ -60,7 +63,8 @@ class Game extends State {
 
 	//Static game properties
 	//static skeletonCount:number = 32;
-	static skeletonCount:number = 2;
+	//static skeletonCount:number = 512;
+	static skeletonCount:number = 512;
 
 	static enemies:Array<any>;
 	static debug:boolean;
@@ -81,6 +85,8 @@ class Game extends State {
 	static sprKnight:Array<any>;
 
 	static UI:UI;
+	static hits:any;
+	static quad:any;
 
 
 	static EnemyToCompareDifference:Vector;
@@ -216,6 +222,7 @@ class Game extends State {
 		//TODO: bring into SpiceJS
 		await this.visuals.PrioirtySort();
 		await this.visuals.PriorityRegistry.reverse();
+		this.quad = new QuadTree(0,new Rectangle(0,0,320,160));
 
 		this.EnemyToCompareDifference = new Vector(0,0);
 		this.HCollisionDetectionDistance = new Vector(0,0);
@@ -255,19 +262,50 @@ class Game extends State {
 			console.log('loading'+this.app.client.graphics.getErrors());
 		}
 
+		//Players
+
+		this.player.update();
+		if (this.player.x>20){
+			this.UI.update();
+		}
 
 		let OffsetX = 0;
 
 		//region Collision
 
+
+		//region quad
+		this.quad.clear();
+		for (let i = 0; i < this.enemies.length-1; i++) {
+
+
+		  this.quad.insert(this.enemies[i]);
+		}
+
+		let allObjects = this.enemies;
+		let returnObjects = [];
+
+		for (let i = 0; i < allObjects.length-1; i++) {
+		  returnObjects = [];
+		  this.quad.retrieve(returnObjects, allObjects[i]);
+		  //window.RO = returnObjects;
+		  for (let x = 0; x < returnObjects.length-1; x++) {
+			  	//console.log(returnObjects[x]);
+		    // Run collision detection algorithm between objects
+		  }
+		}
+		//endregion quad
+
+return;
 		var i = this.enemies.length-1;
 		var i2 = i;
 		let Enemy:Vector|null;
 		let	EnemyToCompare:Vector|null;
+		let diff;
 
 		//for each enemy
 		for (i; i>=0;i--){
-
+			continue;
 			Enemy = this.enemies[i].checkActive(null);
 			if (Enemy==null){
 
@@ -288,11 +326,12 @@ class Game extends State {
 
 				//get difference
 				this.EnemyToCompareDifference = Vector.Difference(Enemy, EnemyToCompare);
-				if (utils.Within(this.EnemyToCompareDifference.x,-20,20)){
+				if (EnemyToCompare.intersects1d(this.EnemyToCompareDifference.x,-20,20)){
 					EnemyToCompare.move(new Vector(-this.EnemyToCompareDifference.x/100,0))
 					// - Math.random()*1/100;//compare_enemy.velocity.x+=Enemy.dir/1.5,collision = true;
 				}else{
 
+					//If overlapping
 					if (this.EnemyToCompareDifference.x>-0.5)
 					if (this.EnemyToCompareDifference.x<0.5)
 						EnemyToCompare.move(new Vector(1,0))
@@ -302,7 +341,7 @@ class Game extends State {
 			}
 
 			//Collision with PLAYER
-			let diff = Vector.Difference(this.player, Enemy);
+			diff = Vector.Difference(this.player, Enemy);
 
 			//reset enemy collision state
 			Enemy.collision = 0;
@@ -314,14 +353,14 @@ class Game extends State {
 			this.HCollisionDetectionDistance = new Vector(-30,30);
 			this.VCollisionDetectionDistance = new Vector(-1,1);
 
-			if ((!utils.Within(diff.y,this.HCollisionDetectionDistance.x,this.HCollisionDetectionDistance.y))&&(!utils.Within(diff.x,this.HCollisionDetectionDistance.x,this.HCollisionDetectionDistance.y))){
+			if ((!EnemyToCompare.intersects1d(diff.y,this.HCollisionDetectionDistance.x,this.HCollisionDetectionDistance.y))&&(!EnemyToCompare.intersects1d(diff.x,this.HCollisionDetectionDistance.x,this.HCollisionDetectionDistance.y))){
 
 				continue;
 			}
 
 
 			//set warning colour
-			if (utils.Within(diff.x,-this.player.w/1.25,this.player.w/1.25)){
+			if (EnemyToCompare.intersects1d(diff.x,-this.player.w/1.25,this.player.w/1.25)){
 				//col = "#FFFF00";
 				//trigger player collision event
 				this.player.collideWithEnemy(Enemy);
@@ -330,7 +369,7 @@ class Game extends State {
 			}
 
 			//move enemy (collision)
-			if (utils.Within(diff.x,-this.player.w/5,this.player.w/5)){
+			if (EnemyToCompare.intersects1d(diff.x,-this.player.w/5,this.player.w/5)){
 
 				Enemy.position.offset(-1*Enemy.s,0);
 
@@ -339,7 +378,7 @@ class Game extends State {
 			}
 
 			//check attacking then enemy (collision)
-			if (utils.Within(diff.x,-this.player.w/1.95,this.player.w/1.95)){
+			if (EnemyToCompare.intersects1d(diff.x,-this.player.w/1.95,this.player.w/1.95)){
 
 				//Check player facing direction
 				if (((diff.x>0)===(this.player.velocity.x<0))&&(this.player.isAttacking)){
@@ -358,13 +397,13 @@ class Game extends State {
 			}
 
 			//Set collision
-			if (utils.Within(diff.x,-15,15)){
+			if (EnemyToCompare.intersects1d(diff.x,-15,15)){
 
 				Enemy.collision = 2;
 
 			}else{
 
-				if (utils.Within(diff.x,-25,25)){
+				if (EnemyToCompare.intersects1d(diff.x,-25,25)){
 
 					Enemy.collision = 1;
 				}
@@ -376,11 +415,6 @@ class Game extends State {
 		//endregion collision
 
 
-
-		this.player.update();
-		if (this.player.x>20){
-			this.UI.update();
-		}
 
 		if (this.visuals.app.Loading){
 			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);

@@ -72,7 +72,7 @@ class Loading extends NewState {
 		//	visuals.PrioritySort - now uses radixSort
 		//
 
-		this.visuals.PriorityRegistryAttempt = 96;
+		this.visuals.PriorityRegistryAttempt = 512;
 		this.visuals.PriorityRegistryAttemptCount = 0;
 		this.visuals.PriorityRegistry = new Array(this.visuals.PriorityRegistryAttempt);
 

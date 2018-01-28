@@ -58,6 +58,7 @@ export default class NewSprite extends Sprite {
 		} else {
 
 			let vas:dtoDrawData = args[0];
+
 			let img:dtoBatchDataValidation = vas.img;
 			let x:number = vas.x;
 			let y:number = vas.y;
@@ -129,12 +130,27 @@ export default class NewSprite extends Sprite {
 		return new Vector(this.getX(),this.getY());
 	}
 
+
+	/**/
+
+	getWidth(){
+
+		return (this.img.width*.75);
+	}
+
 	/**/
 
 	getIndex(){
 
 		return this.index.toFixed(0);
 	}
+
+	/**/
+
+	intersects1d(a:number,b:number,c:number){
+		return (a>b&&a<c);
+	}
+
 
 	/**/
 
