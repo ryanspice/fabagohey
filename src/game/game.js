@@ -64,7 +64,7 @@ class Game extends State {
 	//Static game properties
 	//static skeletonCount:number = 32;
 	//static skeletonCount:number = 512;
-	static skeletonCount:number = 512;
+	static skeletonCount:number = 1024;
 
 	static enemies:Array<any>;
 	static debug:boolean;
@@ -171,7 +171,7 @@ class Game extends State {
 		for (let i = Game.skeletonCount; i>=0;i--){
 
 			//Create skeleton
-			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),130 + Math.random()*45,-1,1,1,0,-3,(264/11),35,this.visuals);
+			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),110 + Math.random()*75,-1,1,1,0,-3,(264/11),35,this.visuals);
 			tempSkeleton.priority = 5;
 			tempSkeleton.game = this;
 			tempSkeleton.off.x = 0;
@@ -222,7 +222,7 @@ class Game extends State {
 		//TODO: bring into SpiceJS
 		await this.visuals.PrioirtySort();
 		await this.visuals.PriorityRegistry.reverse();
-		this.quad = new QuadTree(0,new Rectangle(0,0,320,160));
+		this.quad = new QuadTree(0,new Rectangle(0,80,320,160));
 
 		this.EnemyToCompareDifference = new Vector(0,0);
 		this.HCollisionDetectionDistance = new Vector(0,0);
@@ -275,17 +275,25 @@ class Game extends State {
 
 
 		//region quad
+
+
+		let allObjects = this.enemies;
+		let allObjectsLength = allObjects.length-1;
+		var i2 = i;
+		let Enemy:Vector|null;
+		let	EnemyToCompare:Vector|null;
+		let diff;
+
 		this.quad.clear();
-		for (let i = 0; i < this.enemies.length-1; i++) {
 
-
+		let i = allObjectsLength;
+		for (i; i>0; i--) {
 		  this.quad.insert(this.enemies[i]);
 		}
 
-		let allObjects = this.enemies;
 		let returnObjects = [];
-
-		for (let i = 0; i < allObjects.length-1; i++) {
+		i = allObjectsLength;
+		for (i; i>0; i--) {
 		  returnObjects = [];
 		  this.quad.retrieve(returnObjects, allObjects[i]);
 		  //window.RO = returnObjects;
@@ -297,11 +305,6 @@ class Game extends State {
 		//endregion quad
 
 return;
-		var i = this.enemies.length-1;
-		var i2 = i;
-		let Enemy:Vector|null;
-		let	EnemyToCompare:Vector|null;
-		let diff;
 
 		//for each enemy
 		for (i; i>=0;i--){

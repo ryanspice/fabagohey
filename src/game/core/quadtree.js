@@ -4,11 +4,65 @@
 declare var Vector;
 import Rectangle from "./rectangle";
 
+class QuadController {
+
+	static MAX_OBJECTS:number = 10;//10;
+	static MAX_LEVELS:number = 3;
+	static QUAD_LIST:Array<any> = new Array(256);
+	static QUAD_LIST_COUNT:number = 0;
+
+	static FIND_EMPTY_QUAD(level:number, rect:any){
+
+		let quad;
+		let i = QuadController.QUAD_LIST_COUNT-1;
+
+		for(i;i>=0;i--){
+			let quadinlist = QuadController.QUAD_LIST[i];
+			//if (quad==null){
+				//quad = quadinlist;
+				//break;
+			//} else {
+
+					if (quadinlist)
+					if (quadinlist.reuse){
+						console.log('reused')
+						quad = quadinlist;
+						quad.reuse = false;
+						quad.level = level;
+						quad.bounds = rect;
+						return quad;
+
+					}
+
+		//}
+		}
+		if (!quad)
+			console.warn(':: No Quad Found', + QuadController.QUAD_LIST_COUNT++);
+			else
+			console.warn(':: Quad Found', + QuadController.QUAD_LIST_COUNT++);
+
+		return -1;
+	}
+
+}
+
+let list = QuadController.QUAD_LIST;
+let listLength = list.length-1;
+for(let i = listLength;i>=0;i--){
+
+	setTimeout(()=>{list[i] = new QuadTree(0,new Rectangle(0,0,1,1));
+		list[i].reuse = true;
+	});
+
+}
+
 export default class QuadTree {
 
+	id:number;
+	reuse:boolean = false;
 
-	MAX_OBJECTS:number = 25;
-	MAX_LEVELS:number = 5;
+	MAX_OBJECTS:number = QuadController.MAX_OBJECTS;
+	MAX_LEVELS:number = QuadController.MAX_LEVELS;
 
 	level:number;
 	objects:Array<any>;
@@ -23,12 +77,20 @@ export default class QuadTree {
 		this.bounds = rect;
 		this.nodes = [];
 
+		this.id = QuadController.QUAD_LIST_COUNT;
+		QuadController.QUAD_LIST[QuadController.QUAD_LIST_COUNT++] = this;
+
+
+		window.QuadController = QuadController;
+
+
 	}
 
 	clear(){
 
 		this.objects = [];
-		for(let i = 0; i < this.nodes.length; i++){
+		let i = this.nodes.length-1;
+		for (i; i>0; i--) {
 
 			if (this.nodes[i]!=null){
 				this.nodes[i].clear();
@@ -46,6 +108,9 @@ export default class QuadTree {
 
 		let x = this.bounds.left;
 		let y = this.bounds.top;
+
+		let q = QuadController.FIND_EMPTY_QUAD(this.level+1, new Rectangle(x + subWidth, y, subWidth, subHeight));
+
 	   this.nodes[0] = new QuadTree(this.level+1, new Rectangle(x + subWidth, y, subWidth, subHeight));
 	   this.nodes[1] = new QuadTree(this.level+1, new Rectangle(x, y, subWidth, subHeight));
 	   this.nodes[2] = new QuadTree(this.level+1, new Rectangle(x, y + subHeight, subWidth, subHeight));
@@ -102,25 +167,28 @@ export default class QuadTree {
 
 	insert(pRect:any){
 
+		let length = this.objects.length-1;
+		let index:number = -1;
+
 	   if (this.nodes[0] != null) {
-	     let index = this.getIndex(pRect);
+	     index = this.getIndex(pRect);
 
 	     if (index != -1) {
 			   	//console.log(this.nodes[index]);
-	       this.nodes[index].insert(pRect);
+	       	this.nodes[index].insert(pRect);
 
 	       return;
 	     }
 	   }
 
 	   this.objects.push(pRect);
-	   if (((this.objects.length-1) > this.MAX_OBJECTS) && (this.level < this.MAX_LEVELS)) {
+	   if (((length) > this.MAX_OBJECTS) && (this.level < this.MAX_LEVELS)) {
 	      if (this.nodes[0] == null) {
 	         this.split();
 	      }
 
-	     let i = 0;
-		 for(i;i<this.objects.length-1;i++){
+	     let i = length;
+ 		for (i; i>0; i--) {
 
 		   let index = this.getIndex(this.objects[i]);
 		   if (index != -1) {
