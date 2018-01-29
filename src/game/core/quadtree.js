@@ -7,7 +7,7 @@ import Rectangle from "./rectangle";
 class QuadController {
 
 	static MAX_OBJECTS:number = 10;//10;
-	static MAX_LEVELS:number = 3;
+	static MAX_LEVELS:number = 5;
 	static QUAD_LIST:Array<any> = new Array(256);
 	static QUAD_LIST_COUNT:number = 0;
 
@@ -23,16 +23,20 @@ class QuadController {
 				//break;
 			//} else {
 
-					if (quadinlist)
-					if (quadinlist.reuse){
-						console.log('reused')
-						quad = quadinlist;
-						quad.reuse = false;
-						quad.level = level;
-						quad.bounds = rect;
-						return quad;
+			if (quadinlist){
 
-					}
+				if (quadinlist.reuse){
+
+					console.log('reused')
+					quad = quadinlist;
+					quad.reuse = false;
+					quad.level = level;
+					quad.bounds = rect;
+
+					return quad;
+				}
+
+			}
 
 		//}
 		}
@@ -55,6 +59,7 @@ for(let i = listLength;i>=0;i--){
 	});
 
 }
+
 
 export default class QuadTree {
 
@@ -81,7 +86,6 @@ export default class QuadTree {
 		QuadController.QUAD_LIST[QuadController.QUAD_LIST_COUNT++] = this;
 
 
-		window.QuadController = QuadController;
 
 
 	}
@@ -109,12 +113,19 @@ export default class QuadTree {
 		let x = this.bounds.left;
 		let y = this.bounds.top;
 
-		let q = QuadController.FIND_EMPTY_QUAD(this.level+1, new Rectangle(x + subWidth, y, subWidth, subHeight));
+		this.nodes[0] = QuadController.FIND_EMPTY_QUAD(this.level+1, new Rectangle(x + subWidth, y, subWidth, subHeight));
+		this.nodes[1] = QuadController.FIND_EMPTY_QUAD(this.level+1, new Rectangle(x, y, subWidth, subHeight));
+		this.nodes[2] = QuadController.FIND_EMPTY_QUAD(this.level+1, new Rectangle(x, y + subHeight, subWidth, subHeight));
+		this.nodes[3] = QuadController.FIND_EMPTY_QUAD(this.level+1, new Rectangle(x + subWidth, y + subHeight, subWidth, subHeight));
 
+		/*
 	   this.nodes[0] = new QuadTree(this.level+1, new Rectangle(x + subWidth, y, subWidth, subHeight));
 	   this.nodes[1] = new QuadTree(this.level+1, new Rectangle(x, y, subWidth, subHeight));
 	   this.nodes[2] = new QuadTree(this.level+1, new Rectangle(x, y + subHeight, subWidth, subHeight));
 	   this.nodes[3] = new QuadTree(this.level+1, new Rectangle(x + subWidth, y + subHeight, subWidth, subHeight));
+	   */
+
+
 
 	}
 
