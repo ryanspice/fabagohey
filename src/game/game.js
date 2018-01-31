@@ -223,7 +223,7 @@ class Game extends State {
 		//TODO: bring into SpiceJS
 		await this.visuals.PrioirtySort();
 		await this.visuals.PriorityRegistry.reverse();
-		this.quad = new QuadTree(0,new Rectangle(0,80,320,160));
+		//this.quad = new QuadTree(0,new Rectangle(0,80,320,160));
 
 		this.quad = window.QuadController.FIND_EMPTY_QUAD(0, new Rectangle(0,80,320,160));
 

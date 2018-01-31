@@ -112,6 +112,7 @@ for(let i = listLength;i>=0;i--){
 
 }
 
+window.QuadController = QuadController;
 
 export default class QuadTree {
 

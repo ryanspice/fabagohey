@@ -21,7 +21,7 @@ interface ISettingsBorder {
 
 const collision:ISettingsCollision = {
 
-	'masks':true,
+	'masks':false,
 	'maskAlpha':0.15
 
 }
