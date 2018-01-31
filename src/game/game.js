@@ -24,7 +24,7 @@ import utils from './utils';
 import debug from '../config';
 
 import Rectangle from "./core/rectangle";
-import QuadTree from './core/quadtree';
+//import QuadTree from './core/quadtree';
 import RTree from './core/rtree';
 
 /* TODO: export properly from spicejs */
@@ -226,9 +226,9 @@ class Game extends State {
 		await this.visuals.PriorityRegistry.reverse();
 		//this.quad = new QuadTree(0,new Rectangle(0,80,320,160));
 
-		this.quad = window.QuadController.FIND_EMPTY_QUAD(0, new Rectangle(0,80,320,160));
+		//this.quad = window.QuadController.FIND_EMPTY_QUAD(0, new Rectangle(0,80,320,160));
 
-		this.rtree = new RTree();
+		this.rtree = new RTree(3);
 
 		this.EnemyToCompareDifference = new Vector(0,0);
 		this.HCollisionDetectionDistance = new Vector(0,0);
@@ -283,7 +283,20 @@ class Game extends State {
 		//region quad
 
 
-		let allObjects = this.enemies.filter((item)=>{return !item.delete&&item.getX()<320?true:false;});
+		//let allObjects = this.enemies.filter((item)=>{return !item.delete&&item.getX()<320&&item.getX()>0?true:false;});
+		let allObjects = new Array(this.enemies.length-1);
+		//console.log(allObjects);
+		for(let i = this.enemies.length-1; i>=0; i--){
+			let item = this.enemies[i];
+			if (((item:any).delete==false)&&(item.getX()<320)&&(item.getX()>0)) {
+				allObjects[i] = item;
+			}
+
+		}
+		allObjects = (allObjects:any).clean();
+		//console.log(allObjects);
+
+
 		let allObjectsLength = allObjects.length-1;
 
 		//var i2 = i;
@@ -298,8 +311,8 @@ class Game extends State {
 		//let cC = {minX:0,minY:0, maxX:320, maxY:320};
 		let cC = this.player;
 		let pC = this.rtree.collides(cC);
-		//console.log(pC);
 		if (pC) {
+			console.log(this.rtree.search(cC));
 
 			//console.log(this.rtree.collides(cC));
 

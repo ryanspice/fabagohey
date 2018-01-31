@@ -38,6 +38,8 @@ export default class Player extends Knight {
 
 
 
+	_boundingBoxWidth:number = 25;
+	_boundingBoxHeight:number = 30;
 	/**/
 
 	constructor(data:dtoBatchDataValidation,x:number,y:number,s:number,a:number,c:number,xx:number,yy:number,w:number,h:number,visuals:IVisuals){

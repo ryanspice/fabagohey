@@ -55,31 +55,49 @@ export default class RagPhysics extends NewSprite {
 
 	}
 
+
+	_boundingBoxWidth:number;
+	_boundingBoxHeight:number;
+
+	/**/
+
+	getBoundingBoxWidth(){
+
+		return this._boundingBoxWidth || this.getWidth();
+	}
+
+	/**/
+
+	getBoundingBoxHeight(){
+
+		return this._boundingBoxHeight || this.getHeight();
+	}
+
 	/**/
 
 	get minX(){
 
-				return this.getX()-this.getWidth();
+				return this.getX()-this.getBoundingBoxWidth();
 	}
 
 	/**/
 
 	get minY(){
 
-				return this.getY()-this.getHeight();
+				return this.getY()-this.getBoundingBoxHeight();
 	}
 	/**/
 
 	get maxX(){
 
-		return this.getX()+this.getWidth();
+		return this.getX()+this.getBoundingBoxWidth();
 	}
 
 	/**/
 
 	get maxY(){
 
-		return this.getY()+this.getHeight();
+		return this.getY()+this.getBoundingBoxHeight();
 	}
 
 }

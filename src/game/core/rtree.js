@@ -1,6 +1,56 @@
 //@flow
 'use strict';
 
+
+class NodeController {
+
+	static NODE_LIST:Array<any> = new Array(256);
+	static NODE_LIST_COUNT:number = 0;
+
+	static FIND_EMPTY(left, top, width, height){
+
+		let node;
+		let i = NodeController.NODE_LIST_COUNT-1;
+
+		for(i;i>=0;i--){
+			let nodeinlist = NodeController.NODE_LIST[i];
+			//if (quad==null){
+				//quad = quadinlist;
+				//break;
+			//} else {
+
+			if (node){
+
+				if (node.reuse){
+
+					console.log('reused')
+					node = nodeinlist;
+					node.reuse = false;
+					node.set(left, top, width, height);
+
+					return node;
+				}
+
+			}
+
+		//}
+		}
+		if (!node)
+			console.warn(':: No Node Found', + NodeController.NODE_LIST_COUNT++);
+			else
+			console.warn(':: Node Found', + NodeController.NODE_LIST_COUNT++);
+
+		return -1;
+	}
+
+}
+
+
+
+
+
+
+
 export default class RTree {
 
 	_maxEntries:number;
@@ -83,10 +133,12 @@ export default class RTree {
     }
 
     load(data) {
+
         if (!(data && data.length)) return this;
 
         if (data.length < this._minEntries) {
             for (var i = 0, len = data.length; i < len; i++) {
+
                 this.insert(data[i]);
             }
             return this;
@@ -471,7 +523,7 @@ function calcBBox(node, toBBox) {
     distBBox(node, 0, node.children.length, toBBox, node);
 }
 
-// min bounding rectangle of node children from k to p-1
+// min bounding nodeangle of node children from k to p-1
 function distBBox(node, k, p, toBBox, destNode) {
     if (!destNode) destNode = createNode(null);
     destNode.minX = Infinity;

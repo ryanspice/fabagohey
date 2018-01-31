@@ -42,6 +42,8 @@ export default class Skeleton extends RagPhysics {
 
 	off:Vector = new Vector(0,0);
 
+	_boundingBoxWidth:number = 25;
+	_boundingBoxHeight:number = 30;
 
 	game:any;
 
