@@ -4,12 +4,17 @@
 declare var Vector;
 import Rectangle from "./rectangle";
 
+
+
 class QuadController {
 
 	static MAX_OBJECTS:number = 10;//10;
 	static MAX_LEVELS:number = 5;
 	static QUAD_LIST:Array<any> = new Array(256);
 	static QUAD_LIST_COUNT:number = 0;
+
+	static RECT_LIST:Array<any> = new Array(256);
+	static RECT_LIST_COUNT:number = 0;
 
 	static FIND_EMPTY_QUAD(level:number, rect:any){
 
@@ -48,13 +53,60 @@ class QuadController {
 		return -1;
 	}
 
+	static FIND_EMPTY_RECT(left, top, width, height){
+
+		let rect;
+		let i = QuadController.RECT_LIST_COUNT-1;
+
+		for(i;i>=0;i--){
+			let rectinlist = QuadController.RECT_LIST[i];
+			//if (quad==null){
+				//quad = quadinlist;
+				//break;
+			//} else {
+
+			if (rect){
+
+				if (rect.reuse){
+
+					console.log('reused')
+					rect = rectinlist;
+					rect.reuse = false;
+					rect.set(left, top, width, height);
+
+					return rect;
+				}
+
+			}
+
+		//}
+		}
+		if (!rect)
+			console.warn(':: No Rect Found', + QuadController.RECT_LIST_COUNT++);
+			else
+			console.warn(':: Rect Found', + QuadController.RECT_LIST_COUNT++);
+
+		return -1;
+	}
+
 }
 
-let list = QuadController.QUAD_LIST;
+let list = QuadController.RECT_LIST;
 let listLength = list.length-1;
 for(let i = listLength;i>=0;i--){
 
-	setTimeout(()=>{list[i] = new QuadTree(0,new Rectangle(0,0,1,1));
+	setTimeout(()=>{
+		list[i] = new Rectangle(0,0,1,1);
+		list[i].reuse = true;
+	});
+
+}
+
+list = QuadController.QUAD_LIST;
+listLength = list.length-1;
+for(let i = listLength;i>=0;i--){
+
+	setTimeout(()=>{list[i] = new QuadTree(0,QuadController.FIND_EMPTY_RECT(0,0,1,1));
 		list[i].reuse = true;
 	});
 
@@ -230,7 +282,7 @@ export default class QuadTree {
 	   }
 	}
 
-	retrieve(returnObjects:Array<any>, pRect) {
+	retrieve(returnObjects:Array<Rectangle>, pRect) {
 
 		let index = this.getIndex(pRect);
 		if (index != -1 && this.nodes[0] != null) {
@@ -238,7 +290,8 @@ export default class QuadTree {
 		}
 
 		//		returnObjects.concat(this.objects);
-		return [...returnObjects, ...this.objects];
+		//return [...returnObjects, ...this.objects];
+		return (returnObjects:any).extend(this.objects);
 	}
 
 }
