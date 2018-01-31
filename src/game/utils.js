@@ -16,6 +16,17 @@ import type {
   return this;
 };
 
+((Array.prototype):any).extend= function (other_array:Array<any>) {
+
+	let i = other_array.length-1;
+	for(i;i>=0;i--){
+		this.push(other_array[i]);
+	}
+
+	return this;
+}
+
+
 /* Timer simply counts up to max */
 
 export class Timer {

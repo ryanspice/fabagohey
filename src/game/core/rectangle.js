@@ -2,6 +2,8 @@
 */
 export default class Rectangle {
 
+	reuse:boolean = false;
+
     static _top = 0;
     static _left = 0;
     static _right = 0;
@@ -56,6 +58,8 @@ export default class Rectangle {
     }
 
 	constructor(left, top, width, height){
+
+		console.trace(this);
 
         let right = left + width;
         let bottom = top + height;

@@ -25,6 +25,7 @@ import debug from '../config';
 
 import Rectangle from "./core/rectangle";
 import QuadTree from './core/quadtree';
+import RTree from './core/rtree';
 
 /* TODO: export properly from spicejs */
 
@@ -64,7 +65,7 @@ class Game extends State {
 	//Static game properties
 	//static skeletonCount:number = 32;
 	//static skeletonCount:number = 512;
-	static skeletonCount:number = 1024;
+	static skeletonCount:number = 512;
 
 	static enemies:Array<any>;
 	static debug:boolean;
@@ -223,6 +224,8 @@ class Game extends State {
 		await this.visuals.PrioirtySort();
 		await this.visuals.PriorityRegistry.reverse();
 		this.quad = new QuadTree(0,new Rectangle(0,80,320,160));
+
+		this.quad = window.QuadController.FIND_EMPTY_QUAD(0, new Rectangle(0,80,320,160));
 
 		this.EnemyToCompareDifference = new Vector(0,0);
 		this.HCollisionDetectionDistance = new Vector(0,0);
