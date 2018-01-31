@@ -55,5 +55,31 @@ export default class RagPhysics extends NewSprite {
 
 	}
 
+	/**/
+
+	get minX(){
+
+				return this.getX()-this.getWidth();
+	}
+
+	/**/
+
+	get minY(){
+
+				return this.getY()-this.getHeight();
+	}
+	/**/
+
+	get maxX(){
+
+		return this.getX()+this.getWidth();
+	}
+
+	/**/
+
+	get maxY(){
+
+		return this.getY()+this.getHeight();
+	}
 
 }

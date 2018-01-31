@@ -88,6 +88,7 @@ class Game extends State {
 	static UI:UI;
 	static hits:any;
 	static quad:any;
+	static rtree:any;
 
 
 	static EnemyToCompareDifference:Vector;
@@ -227,6 +228,8 @@ class Game extends State {
 
 		this.quad = window.QuadController.FIND_EMPTY_QUAD(0, new Rectangle(0,80,320,160));
 
+		this.rtree = new RTree();
+
 		this.EnemyToCompareDifference = new Vector(0,0);
 		this.HCollisionDetectionDistance = new Vector(0,0);
 		this.VCollisionDetectionDistance = new Vector(0,0);
@@ -266,8 +269,8 @@ class Game extends State {
 		}
 
 		//Players
-
 		this.player.update();
+
 		if (this.player.x>20){
 			this.UI.update();
 		}
@@ -280,13 +283,32 @@ class Game extends State {
 		//region quad
 
 
-		let allObjects = this.enemies;
+		let allObjects = this.enemies.filter((item)=>{return !item.delete&&item.getX()<320?true:false;});
 		let allObjectsLength = allObjects.length-1;
-		var i2 = i;
+
+		//var i2 = i;
 		let Enemy:Vector|null;
 		let	EnemyToCompare:Vector|null;
 		let diff;
+		//region rtree
 
+		this.rtree.clear();
+		this.rtree.load(allObjects);
+
+		//let cC = {minX:0,minY:0, maxX:320, maxY:320};
+		let cC = this.player;
+		let pC = this.rtree.collides(cC);
+		//console.log(pC);
+		if (pC) {
+
+			//console.log(this.rtree.collides(cC));
+
+		}
+
+
+		//endregion rtree
+
+/*
 		this.quad.clear();
 
 		let i = allObjectsLength;
@@ -305,6 +327,7 @@ class Game extends State {
 		    // Run collision detection algorithm between objects
 		  }
 		}
+		*/
 		//endregion quad
 
 return;

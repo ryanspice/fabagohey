@@ -1,11 +1,13 @@
 //@flow
 'use strict';
-class RTree {
+
+export default class RTree {
 
 	_maxEntries:number;
 	_minEntries:number;
+	data:any;
 
-	constructor(maxEntries:number, format:any){
+	constructor(maxEntries:?number, format:?any){
 
 		// max entries in a node is 9 by default; min node fill is 40% for best performance
 		this._maxEntries = Math.max(4, maxEntries || 9);
@@ -24,15 +26,15 @@ class RTree {
         return this._all(this.data, []);
 	}
 
-	search(){
+	search(bbox:any){
 
-        let node = this.data,
+        var node = this.data,
             result = [],
             toBBox = this.toBBox;
 
         if (!intersects(bbox, node)) return result;
 
-        let nodesToSearch = [],
+        var nodesToSearch = [],
             i, len, child, childBBox;
 
         while (node) {
@@ -343,7 +345,7 @@ class RTree {
         calcBBox(this.data, this.toBBox);
     }
 
-    _chooseSplitIndex(node, m, M) {
+    _chooseSplitIndex(node, m, M){
 
         var i, bbox1, bbox2, overlap, area, minOverlap, minArea, index;
 

@@ -123,6 +123,8 @@ export default class NewSprite extends Sprite {
 		return this.position.y+Player.offset.y+this.off.y;
 	}
 
+
+
 	/**/
 
 	getPosition(){
@@ -136,6 +138,14 @@ export default class NewSprite extends Sprite {
 	getWidth(){
 
 		return (this.img.width*.75);
+	}
+
+
+	/**/
+
+	getHeight(){
+
+		return (this.img.height*.75);
 	}
 
 	/**/
