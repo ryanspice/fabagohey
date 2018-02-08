@@ -144,6 +144,13 @@ export default class Rectangle {
 		return this.left === r.left && this.top === r.top && this.right === r.right && this.bottom === r.bottom;
 	}
 
+
+	get mins(){
+
+		return  {minX:this.left,minY:this.top, maxX:this.width(), maxY:this.height()};
+
+	}
+
 }
 
 window.Rect = Rect;

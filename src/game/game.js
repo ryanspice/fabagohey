@@ -1,7 +1,8 @@
 //@flow
 
+import NewState from "./core/newstate";
 import {
-	State,
+	//State,
 	Sprite,
 	// $FlowFixMe
 } from 'ryanspice2016-spicejs';
@@ -24,6 +25,7 @@ import utils from './utils';
 import debug from '../config';
 
 import Rectangle from "./core/rectangle";
+
 //import QuadTree from './core/quadtree';
 import RTree from './core/rtree';
 
@@ -60,7 +62,7 @@ let _SCORE_ = 0;
 
 /* Game state */
 
-class Game extends State {
+class Game extends NewState {
 
 	//Static game properties
 	//static skeletonCount:number = 32;
@@ -89,7 +91,6 @@ class Game extends State {
 	static hits:any;
 	static quad:any;
 	static rtree:any;
-
 
 	static EnemyToCompareDifference:Vector;
 	static HCollisionDetectionDistance:Vector;
@@ -139,8 +140,6 @@ class Game extends State {
 		//Instantiate new player.
 		this.player = await new Player(this.sprKnight[0],-20,185,1,1,1,0,0,(167/4),46,this.visuals);
 
-
-
 		this.bg = new Array(4);
 		this.bg = [
 			this.loader.getImageReference('./parallax-forest-back-trees'),
@@ -173,8 +172,8 @@ class Game extends State {
 		for (let i = Game.skeletonCount; i>=0;i--){
 
 			//Create skeleton
-			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),110 + Math.random()*75,-1,1,1,0,-3,(264/11),35,this.visuals);
-			tempSkeleton.priority = 5;
+			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*225),120 + Math.random()*55,-1,1,1,0,-3,(264/11),35,this.visuals);
+			tempSkeleton.priority = 1000;
 			tempSkeleton.game = this;
 			tempSkeleton.off.x = 0;
 			this.enemies.push(tempSkeleton);
@@ -228,16 +227,25 @@ class Game extends State {
 
 		//this.quad = window.QuadController.FIND_EMPTY_QUAD(0, new Rectangle(0,80,320,160));
 
-		this.rtree = new RTree(3);
+		this.rtree = new RTree(15);
 
 		this.EnemyToCompareDifference = new Vector(0,0);
 		this.HCollisionDetectionDistance = new Vector(0,0);
 		this.VCollisionDetectionDistance = new Vector(0,0);
+
+
+		this.allObjects = new Array(32);
+		this.camera = new Rectangle((0),(0), (320),(180));
+		console.log(this.camera);
 	}
+
+	static camera:any;
+
 
 	static draw(){
 
-				document.title = 'Demo - ' + this.visuals.app.fps;
+		document.title = 'Demo - ' + this.visuals.app.fps;
+
 		//TODO: put this into spicejs state class
 		if (!this.ready)
 			return;
@@ -245,8 +253,8 @@ class Game extends State {
 		this.drawBorders();
 		this.drawDebug();
 
-		let col = "#FFFFFF";
-		this.hits = [];
+		//let col = "#FFFFFF";
+		//this.hits = [];
 
 		//debug TODO: move to player
 		//if (this.debug)
@@ -254,18 +262,19 @@ class Game extends State {
 
 	}
 
+	static allObjects:Array<any>;
+	static rtreeGroupA:Array<any>;
+	static rtreeGroupB:Array<any>;
+
 	static update() {
 
 		//TODO: put this into spicejs state class
-		if (!this.ready){
-
+		if (!this.ready)
 			return;
-		}
 
-		if (this.app.client.graphics.getErrors()!==0) {
-
-			//TODO: logg in SpiceJS. Test.
-			console.log('loading'+this.app.client.graphics.getErrors());
+		//Background
+		if (this.visuals.app.Loading){
+			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
 		}
 
 		//Players
@@ -279,45 +288,155 @@ class Game extends State {
 
 		//region Collision
 
+		// Task here is to filter and retrieve all objects from the enemies queue such that:
+		//		is alive
+		//		is in view
 
-		//region quad
+		this.allObjects = new Array(this.enemies.length-1);
+		this.allObjects[this.enemies.length] = this.player;
 
 
-		//let allObjects = this.enemies.filter((item)=>{return !item.delete&&item.getX()<320&&item.getX()>0?true:false;});
-		let allObjects = new Array(this.enemies.length-1);
-		//console.log(allObjects);
-		for(let i = this.enemies.length-1; i>=0; i--){
+		let i = this.enemies.length-1;
+		for(i; i>=0; i--){
+
 			let item = this.enemies[i];
-			if (((item:any).delete==false)&&(item.getX()<320)&&(item.getX()>0)) {
-				allObjects[i] = item;
+			if (item.checkActive(null)==null){
+				continue;
+			}
+			item.update();
+
+			if (((item:any).delete==false)&&(item.x<320)&&(item.x>0)) {
+				this.allObjects[i] = item;
 			}
 
 		}
-		allObjects = (allObjects:any).clean();
-		//console.log(allObjects);
 
-
-		let allObjectsLength = allObjects.length-1;
+		//TODO: properly extend array types
+		this.allObjects = (this.allObjects:any).clean();
 
 		//var i2 = i;
 		let Enemy:Vector|null;
 		let	EnemyToCompare:Vector|null;
+		let	EnemyToCompareDifference:Vector|null;
 		let diff;
-		//region rtree
+		/*
+ 		let isEmpty = (list, position) => {
+
+			let item;
+			for(let i = 0; i<= list.length-1;i++){
+
+				item = list[i];
+
+				if (position.x>item.x-item.width)
+				if (position.x<item.x+item.width)
+				if (position.y<item.y+item.width)
+				if (position.y>item.y-item.width) {
+
+					return true;
+
+				}
+
+			}
+
+			return false;
+		};
+		*/
+		function sortByPosition(a, b){
+		  if (a.y == b.y) return a.x - b.x;
+		  return a.y - b.y;
+		}
 
 		this.rtree.clear();
-		this.rtree.load(allObjects);
+		this.rtree.load(this.allObjects);
+		if (this.rtree.collides(this.camera.mins)) {
 
-		//let cC = {minX:0,minY:0, maxX:320, maxY:320};
-		let cC = this.player;
-		let pC = this.rtree.collides(cC);
-		if (pC) {
-			console.log(this.rtree.search(cC));
+			this.rtreeGroupA = this.rtree.search(this.camera.mins);
+			let i = this.rtreeGroupA.length-1;
 
-			//console.log(this.rtree.collides(cC));
+			for(i; i>=0;i--){
+
+				this.rtreeGroupA[i].collision = 0;
+				//this.rtreeGroupA[i].priority = 1000 - this.rtreeGroupA[i].position.x/this.rtreeGroupA[i].position.y;
+
+				this.rtreeGroupA[i].priority = 100 - Math.floor(-this.rtreeGroupA[i].getY()/100);
+
+
+
+				if (this.rtreeGroupA[i]){
+
+					this.rtreeGroupB = this.rtree.search(this.rtreeGroupA[i]);
+
+					for(let i = 0; i<= this.rtreeGroupB.length-1;i++){
+
+						this.rtreeGroupB[i].collision = 0.2;
+
+						EnemyToCompareDifference = Vector.Difference(this.rtreeGroupA[i], this.rtreeGroupB[i]);
+
+						let d = this.rtreeGroupA[i]._boundingBoxWidth+(this.rtreeGroupA[i]._boundingBoxWidth/1000);
+						let d2 = this.rtreeGroupA[i]._boundingBoxHeight+(this.rtreeGroupA[i]._boundingBoxHeight/1000);
+
+						if (EnemyToCompareDifference.x<d)
+						if (EnemyToCompareDifference.x>-d)
+						if (EnemyToCompareDifference.y<d2)
+						if (EnemyToCompareDifference.y>-d2){
+
+							this.rtreeGroupB[i].move(new Vector((EnemyToCompareDifference.x)/-75 ,(EnemyToCompareDifference.y)/-200));
+							this.rtreeGroupA[i].move(new Vector((EnemyToCompareDifference.x)/75 ,(EnemyToCompareDifference.y)/200));
+
+							this.rtreeGroupB[i].collision = 0.3;
+							this.rtreeGroupA[i].collision = 0.3;
+
+							//this.rtreeGroupB[i].priority = 1000 + this.rtreeGroupB[i].y/this.rtreeGroupB[i].x;
+							//this.rtreeGroupA[i].priority = 1000 + this.rtreeGroupA[i].y/this.rtreeGroupA[i].x;
+						}
+						d /=2;
+						if (EnemyToCompareDifference.x<d)
+						if (EnemyToCompareDifference.x>-d)
+						if (EnemyToCompareDifference.y<d)
+						if (EnemyToCompareDifference.y>-d){
+
+							this.rtreeGroupB[i].collision = 0.4;
+							this.rtreeGroupA[i].collision = 0.4;
+						}
+
+						EnemyToCompareDifference = null;
+					}
+
+				}
+
+			}
 
 		}
 
+		this.visuals.PrioirtySort();
+/*
+
+			if (pC3){
+			let group3 = this.rtree.search(cC);
+
+
+				for(let i = 0; i<= group3.length-1;i++){
+
+					let skeletonGroup = this.rtree.search(group3[i]);
+
+
+						for(let i = 0; i<= skeletonGroup.length-1;i++){
+
+
+
+													let EnemyToCompareDifference = Vector.Difference(group3[i], skeletonGroup[i]);
+													let d = 20;
+
+													if (EnemyToCompareDifference.x<20)
+													if (EnemyToCompareDifference.x>-20)
+													if (EnemyToCompareDifference.y<20)
+													if (EnemyToCompareDifference.y>-20){
+													skeletonGroup[i].move(new Vector(0.1,0));}
+						}
+				}
+
+			}
+	*/
 
 		//endregion rtree
 
@@ -458,9 +577,6 @@ return;
 
 
 
-		if (this.visuals.app.Loading){
-			this.visuals.app.Loading.BackgroundManager.updatePositionBasedOnPlayer(this.player);
-		}
 
 		return;
 

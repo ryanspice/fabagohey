@@ -116,7 +116,7 @@ class Loading extends NewState {
 
 		this.visuals.PrioirtySort = function(){
 
-			this.PriorityRegistry.radixSort();
+			this.PriorityRegistry.radixSort(10);
 
 			return this.PriorityRegistry;
 		}

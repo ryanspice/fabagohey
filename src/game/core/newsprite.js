@@ -78,6 +78,15 @@ export default class NewSprite extends Sprite {
 
 	}
 
+	/**/
+
+	collide(other:any){
+
+
+
+	}
+
+
 	/* returns true if the object is invalid */
 
 	invalidate(e:any|null){
@@ -94,16 +103,50 @@ export default class NewSprite extends Sprite {
 
 	drawDebug(){
 
+
 		if (this.invalidate())
 			return;
 
+		let x = this.getX();
+		let y = this.getY();
+
+		if (x>320)
+			return;
+		if (x<0)
+			return;
+
+
+		let width = this._boundingBoxWidth*1.25;
+		let height = this._boundingBoxHeight*1.25;
+
 		if (this.collision==2)
-			this.visuals.rect_ext(this.getX(),this.getY()+4,25,25,1,debug.collision.maskAlpha,1,"#FF0000");
+			this.visuals.rect_ext(x,y+4,width,height,1,debug.collision.maskAlpha,1,"#FF0000");
 		else
 		if (this.collision==1)
-			this.visuals.rect_ext(this.getX(),this.getY()+4,25,25,1,debug.collision.maskAlpha,1,"#FFFF00");
-		else
-			this.visuals.rect_ext(this.getX(),this.getY()+4,25,25,1,debug.collision.maskAlpha,1,"#FFFFFF");
+			this.visuals.rect_ext(x,y+4,width,height,1,debug.collision.maskAlpha,1,"#FFFF00");
+
+
+			switch(this.collision){
+
+				case 0.2:
+				this.visuals.rect_ext(x,y+4,width,height,1,debug.collision.maskAlpha,1,"#00FF00");
+
+				break;
+				case 0.3:
+				this.visuals.rect_ext(x,y+4,width,height,1,debug.collision.maskAlpha+0.1,1,"#FFFF00");
+
+				break;
+
+				case 0.4:
+				this.visuals.rect_ext(x,y+4,width,height,1,debug.collision.maskAlpha+0.2,1,"#FF2200");
+
+				break;
+
+
+				default:
+					//this.visuals.rect_ext(x,y+4,width,height,1,debug.collision.maskAlpha,1,"#FFFFFF");
+
+			}
 
 	}
 
@@ -191,6 +234,52 @@ export default class NewSprite extends Sprite {
 
 	get state():IState {
 		return this._state;
+	}
+
+	/**/
+
+	_boundingBoxWidth:number;
+	_boundingBoxHeight:number;
+
+	/**/
+
+	getBoundingBoxWidth(){
+
+		return this._boundingBoxWidth || this.getWidth();
+	}
+
+	/**/
+
+	getBoundingBoxHeight(){
+
+		return this._boundingBoxHeight || this.getHeight();
+	}
+
+	/**/
+
+	get minX(){
+
+				return this.getX()-this.getBoundingBoxWidth();
+	}
+
+	/**/
+
+	get minY(){
+
+				return this.getY()-this.getBoundingBoxHeight();
+	}
+	/**/
+
+	get maxX(){
+
+		return this.getX()+this.getBoundingBoxWidth();
+	}
+
+	/**/
+
+	get maxY(){
+
+		return this.getY()+this.getBoundingBoxHeight();
 	}
 
 }
