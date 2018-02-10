@@ -23,6 +23,7 @@ import UI from './ui/ui';
 
 import utils from './utils';
 import debug from '../config';
+const collision = debug.collision;
 
 import Rectangle from "./core/rectangle";
 
@@ -92,9 +93,18 @@ class Game extends NewState {
 	static quad:any;
 	static rtree:any;
 
+	static allObjects:Array<any>;
+	static rtreeGroupA:Array<any>;
+	static rtreeGroupB:Array<any>;
+
 	static EnemyToCompareDifference:Vector;
 	static HCollisionDetectionDistance:Vector;
 	static VCollisionDetectionDistance:Vector;
+
+	static camera:Rectangle;
+
+	static drawBorders:any;
+	static drawDebug:any;
 
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
@@ -108,6 +118,9 @@ class Game extends NewState {
 	*/
 
 	static async init():Promise<void> {
+
+		this.objectA = null;
+		this.objectB = null;
 
 		//Assign object references.
 		this.enemies = [];
@@ -147,6 +160,7 @@ class Game extends NewState {
 			this.loader.getImageReference('./parallax-forest-middle-trees'),
 			this.loader.getImageReference('./parallax-forest-front-trees'),
 		];
+
 		for(let i = 3; i>=0;i--) {
 			let item;
 			///WARNING: Memory Leak Occurs when not creating these objects.... ???
@@ -172,8 +186,8 @@ class Game extends NewState {
 		for (let i = Game.skeletonCount; i>=0;i--){
 
 			//Create skeleton
-			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*225),120 + Math.random()*55,-1,1,1,0,-3,(264/11),35,this.visuals);
-			tempSkeleton.priority = 1000;
+			let tempSkeleton:Skeleton = await new Skeleton(this.sprSkeleton[0],175+i*(Math.random()*25),120 + Math.random()*55,-1,1,1,0,-3,(264/11),35,this.visuals);
+			//tempSkeleton.priority = 1000;
 			tempSkeleton.game = this;
 			tempSkeleton.off.x = 0;
 			this.enemies.push(tempSkeleton);
@@ -223,32 +237,30 @@ class Game extends NewState {
 		//TODO: bring into SpiceJS
 		await this.visuals.PrioirtySort();
 		await this.visuals.PriorityRegistry.reverse();
-		//this.quad = new QuadTree(0,new Rectangle(0,80,320,160));
 
+		//this.quad = new QuadTree(0,new Rectangle(0,80,320,160));
 		//this.quad = window.QuadController.FIND_EMPTY_QUAD(0, new Rectangle(0,80,320,160));
 
-		this.rtree = new RTree(15);
+		//Set CollisionNodes
+		this.rtree = new RTree(collision.rtree_nodes);
 
 		this.EnemyToCompareDifference = new Vector(0,0);
 		this.HCollisionDetectionDistance = new Vector(0,0);
 		this.VCollisionDetectionDistance = new Vector(0,0);
 
 
-		this.allObjects = new Array(32);
+		this.allObjects = new Array(collision.object_memorybuffer);
 		this.camera = new Rectangle((0),(0), (320),(180));
-		console.log(this.camera);
+
 	}
-
-	static camera:any;
-
 
 	static draw(){
 
-		document.title = 'Demo - ' + this.visuals.app.fps;
-
 		//TODO: put this into spicejs state class
-		if (!this.ready)
+		if (!this.ready){
+
 			return;
+		}
 
 		this.drawBorders();
 		this.drawDebug();
@@ -262,11 +274,10 @@ class Game extends NewState {
 
 	}
 
-	static allObjects:Array<any>;
-	static rtreeGroupA:Array<any>;
-	static rtreeGroupB:Array<any>;
 
 	static update() {
+
+		document.title = 'Demo - ' + this.visuals.app.fps;
 
 		//TODO: put this into spicejs state class
 		if (!this.ready)
@@ -319,8 +330,84 @@ class Game extends NewState {
 		let	EnemyToCompare:Vector|null;
 		let	EnemyToCompareDifference:Vector|null;
 		let diff;
+
+		//clear and reload list of objects to check
+		this.rtree.clear();
+		this.rtree.load(this.allObjects);
+
+		//return if objects are not inside camera TODO: use mins?
+		if (!this.rtree.collides(this.camera.mins))
+			return;
+
+		//find objects that are inside camera object
+		this.rtreeGroupA = this.rtree.search(this.camera.mins);
+
+		//loop camera objects
+		i = this.rtreeGroupA.length-1;
+		for(i; i>=0;i--){
+
+			//return if this object does collide
+			if (!this.rtree.collides(this.rtreeGroupA[i]))
+				continue;
+
+			//get working object
+			this.objectA = this.rtreeGroupA[i];
+			this.objectA.collision = 0;
+			this.objectA.priority = 100 - Math.floor(-this.objectA.getY()/100);
+
+			//find objects that collide with objects in view TODO: possibly create new RTREE for these? no maybe? idk
+			this.rtreeGroupB = this.rtree.search(this.objectA);
+
+			//loop colliding objects
+			for(let i = 0; i<= this.rtreeGroupB.length-1;i++){
+				//region collision
+
+				//get working object
+				this.objectB = this.rtreeGroupB[i];
+				this.objectB.collision = 0.2;
+
+				EnemyToCompareDifference = Vector.Difference(this.objectA, this.objectB);
+
+				let d = this.objectA._boundingBoxWidth+(this.objectA._boundingBoxWidth/1000);
+				let d2 = this.objectA._boundingBoxHeight+(this.objectA._boundingBoxHeight/1000);
+
+				if (EnemyToCompareDifference.x<d)
+				if (EnemyToCompareDifference.x>-d)
+				if (EnemyToCompareDifference.y<d2)
+				if (EnemyToCompareDifference.y>-d2){
+
+					this.objectB.move(new Vector((EnemyToCompareDifference.x)/-75 ,(EnemyToCompareDifference.y)/-200));
+					//this.objectA.move(new Vector((EnemyToCompareDifference.x)/75 ,(EnemyToCompareDifference.y)/200));
+
+					this.objectB.collision = 0.3;
+					this.objectA.collision = 0.3;
+
+					//this.rtreeGroupB[i].priority = 1000 + this.rtreeGroupB[i].y/this.rtreeGroupB[i].x;
+					//this.rtreeGroupA[i].priority = 1000 + this.rtreeGroupA[i].y/this.rtreeGroupA[i].x;
+				}
+				d /=2;
+				if (EnemyToCompareDifference.x<d)
+				if (EnemyToCompareDifference.x>-d)
+				if (EnemyToCompareDifference.y<d)
+				if (EnemyToCompareDifference.y>-d){
+
+					this.objectB.collision = 0.4;
+					this.objectA.collision = 0.4;
+				}
+
+				EnemyToCompareDifference = null;
+
+				//endregion collision
+			}
+
+
+
+		}
+
+		//endregion rtree
+
 		/*
- 		let isEmpty = (list, position) => {
+		let isEmpty = (list, position) => {
 
 			let item;
 			for(let i = 0; i<= list.length-1;i++){
@@ -341,126 +428,6 @@ class Game extends NewState {
 			return false;
 		};
 		*/
-		function sortByPosition(a, b){
-		  if (a.y == b.y) return a.x - b.x;
-		  return a.y - b.y;
-		}
-
-		this.rtree.clear();
-		this.rtree.load(this.allObjects);
-		if (this.rtree.collides(this.camera.mins)) {
-
-			this.rtreeGroupA = this.rtree.search(this.camera.mins);
-			let i = this.rtreeGroupA.length-1;
-
-			for(i; i>=0;i--){
-
-				this.rtreeGroupA[i].collision = 0;
-				//this.rtreeGroupA[i].priority = 1000 - this.rtreeGroupA[i].position.x/this.rtreeGroupA[i].position.y;
-
-				this.rtreeGroupA[i].priority = 100 - Math.floor(-this.rtreeGroupA[i].getY()/100);
-
-
-
-				if (this.rtreeGroupA[i]){
-
-					this.rtreeGroupB = this.rtree.search(this.rtreeGroupA[i]);
-
-					for(let i = 0; i<= this.rtreeGroupB.length-1;i++){
-
-						this.rtreeGroupB[i].collision = 0.2;
-
-						EnemyToCompareDifference = Vector.Difference(this.rtreeGroupA[i], this.rtreeGroupB[i]);
-
-						let d = this.rtreeGroupA[i]._boundingBoxWidth+(this.rtreeGroupA[i]._boundingBoxWidth/1000);
-						let d2 = this.rtreeGroupA[i]._boundingBoxHeight+(this.rtreeGroupA[i]._boundingBoxHeight/1000);
-
-						if (EnemyToCompareDifference.x<d)
-						if (EnemyToCompareDifference.x>-d)
-						if (EnemyToCompareDifference.y<d2)
-						if (EnemyToCompareDifference.y>-d2){
-
-							this.rtreeGroupB[i].move(new Vector((EnemyToCompareDifference.x)/-75 ,(EnemyToCompareDifference.y)/-200));
-							this.rtreeGroupA[i].move(new Vector((EnemyToCompareDifference.x)/75 ,(EnemyToCompareDifference.y)/200));
-
-							this.rtreeGroupB[i].collision = 0.3;
-							this.rtreeGroupA[i].collision = 0.3;
-
-							//this.rtreeGroupB[i].priority = 1000 + this.rtreeGroupB[i].y/this.rtreeGroupB[i].x;
-							//this.rtreeGroupA[i].priority = 1000 + this.rtreeGroupA[i].y/this.rtreeGroupA[i].x;
-						}
-						d /=2;
-						if (EnemyToCompareDifference.x<d)
-						if (EnemyToCompareDifference.x>-d)
-						if (EnemyToCompareDifference.y<d)
-						if (EnemyToCompareDifference.y>-d){
-
-							this.rtreeGroupB[i].collision = 0.4;
-							this.rtreeGroupA[i].collision = 0.4;
-						}
-
-						EnemyToCompareDifference = null;
-					}
-
-				}
-
-			}
-
-		}
-
-		this.visuals.PrioirtySort();
-/*
-
-			if (pC3){
-			let group3 = this.rtree.search(cC);
-
-
-				for(let i = 0; i<= group3.length-1;i++){
-
-					let skeletonGroup = this.rtree.search(group3[i]);
-
-
-						for(let i = 0; i<= skeletonGroup.length-1;i++){
-
-
-
-													let EnemyToCompareDifference = Vector.Difference(group3[i], skeletonGroup[i]);
-													let d = 20;
-
-													if (EnemyToCompareDifference.x<20)
-													if (EnemyToCompareDifference.x>-20)
-													if (EnemyToCompareDifference.y<20)
-													if (EnemyToCompareDifference.y>-20){
-													skeletonGroup[i].move(new Vector(0.1,0));}
-						}
-				}
-
-			}
-	*/
-
-		//endregion rtree
-
-/*
-		this.quad.clear();
-
-		let i = allObjectsLength;
-		for (i; i>0; i--) {
-		  this.quad.insert(this.enemies[i]);
-		}
-
-		let returnObjects = [];
-		i = allObjectsLength;
-		for (i; i>0; i--) {
-		  returnObjects = [];
-		  this.quad.retrieve(returnObjects, allObjects[i]);
-		  //window.RO = returnObjects;
-		  for (let x = 0; x < returnObjects.length-1; x++) {
-			  	//console.log(returnObjects[x]);
-		    // Run collision detection algorithm between objects
-		  }
-		}
-		*/
-		//endregion quad
 
 return;
 
@@ -583,5 +550,30 @@ return;
 	}
 
 }
+
 export {_SCORE_};
+
 export default new Game();
+
+//region quad code
+/*
+this.quad.clear();
+
+let i = allObjectsLength;
+for (i; i>0; i--) {
+  this.quad.insert(this.enemies[i]);
+}
+
+let returnObjects = [];
+i = allObjectsLength;
+for (i; i>0; i--) {
+  returnObjects = [];
+  this.quad.retrieve(returnObjects, allObjects[i]);
+  //window.RO = returnObjects;
+  for (let x = 0; x < returnObjects.length-1; x++) {
+		//console.log(returnObjects[x]);
+	// Run collision detection algorithm between objects
+  }
+}
+*/
+//endregion quad code
