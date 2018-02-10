@@ -2,10 +2,15 @@
 
 //region interfaces
 
+type TCollision = 'rtree'|'quadtree';
+
 interface ISettingsCollision {
 
 	masks:boolean;
 	maskAlpha:number;
+	type:TCollision;
+	rtree_nodes:number;
+	object_memorybuffer:number;
 
 }
 
@@ -22,7 +27,10 @@ interface ISettingsBorder {
 const collision:ISettingsCollision = {
 
 	'masks':false,
-	'maskAlpha':0.15
+	'maskAlpha':0.15,
+	'type':'rtree',
+	'rtree_nodes':15,
+	'object_memorybuffer':32,
 
 }
 

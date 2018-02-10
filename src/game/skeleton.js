@@ -65,6 +65,8 @@ export default class Skeleton extends RagPhysics {
 		this.timeoutmax = 120;
 		this.timeout = this.timeoutmax;
 		this.off.x = 1000;
+		this.index = 0;
+				this.index+=Math.round(Math.random()*25);
 
 		this.agility = 4;
 		this.respawn();
@@ -83,13 +85,20 @@ export default class Skeleton extends RagPhysics {
 
 		this.agility = 4;
 		this.hits = 0;
-		this.index = 0;
 
 		this.index+=Math.round(Math.random()*25);
 		this.agility+=Math.random()*_AgilityIncrease_*(this.position.x/1000);
 
 		this.setState('idle');
 		this.position.x = (this.game.player.position.x + ( (Math.random() < 0.5 ? -0.25 : 1)*380) ) - this.off.x;
+
+	}
+
+	/**/
+
+	collision(){
+
+
 
 	}
 
