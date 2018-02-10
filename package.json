@@ -36,7 +36,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.3",
+    "babel-eslint": "^8.2.1",
     "babel-loader": "^6.4.1",
     "babel-plugin-syntax-flow": "^6.8.0",
     "babel-plugin-transform-class-properties": "^6.6.0",
@@ -49,9 +49,9 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-0": "^6.1.18",
     "css-loader": "^0.23.1",
-    "eslint": "^4.12.1",
+    "eslint": "^4.17.0",
     "eslint-loader": "^1.9.0",
-    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-flowtype": "^2.43.0",
     "eslint-watch": "^3.1.3",
     "exports-loader": "^0.6.3",
     "file-loader": "^0.8.5",
@@ -62,12 +62,12 @@
     "jszip-utils": "0.0.2",
     "style-loader": "^0.13.0",
     "webpack": "^3.10.0",
-    "webpack-closure-compiler": "^2.1.5",
-    "webpack-dashboard": "^1.0.2"
+    "webpack-closure-compiler": "^2.1.6",
+    "webpack-dashboard": "^1.1.1"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
-    "copy-webpack-plugin": "^4.2.3",
+    "copy-webpack-plugin": "^4.4.1",
     "es6-promise": "^3.1.2",
     "html-webpack-plugin": "^1.7.0",
     "ryanspice2016-spicejs": "^0.8.5"
