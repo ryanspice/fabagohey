@@ -138,7 +138,7 @@ export default class RTree {
 
         if (data.length < this._minEntries) {
             for (var i = 0, len = data.length; i < len; i++) {
-
+				
                 this.insert(data[i]);
             }
             return this;

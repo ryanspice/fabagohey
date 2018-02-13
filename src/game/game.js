@@ -94,6 +94,8 @@ class Game extends NewState {
 	static rtree:any;
 
 	static allObjects:Array<any>;
+	static objectA:any;
+	static objectB:any;
 	static rtreeGroupA:Array<any>;
 	static rtreeGroupB:Array<any>;
 
@@ -105,6 +107,8 @@ class Game extends NewState {
 
 	static drawBorders:any;
 	static drawDebug:any;
+
+	static workingBoundingBox:Vector;
 
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
@@ -121,6 +125,9 @@ class Game extends NewState {
 
 		this.objectA = null;
 		this.objectB = null;
+
+		this.workingBoundingBox = new Vector();
+		this.workingComparison = new Vector();
 
 		//Assign object references.
 		this.enemies = [];
@@ -248,7 +255,6 @@ class Game extends NewState {
 		this.HCollisionDetectionDistance = new Vector(0,0);
 		this.VCollisionDetectionDistance = new Vector(0,0);
 
-
 		this.allObjects = new Array(collision.object_memorybuffer);
 		this.camera = new Rectangle((0),(0), (320),(180));
 
@@ -264,9 +270,6 @@ class Game extends NewState {
 
 		this.drawBorders();
 		this.drawDebug();
-
-		//let col = "#FFFFFF";
-		//this.hits = [];
 
 		//debug TODO: move to player
 		//if (this.debug)
@@ -294,8 +297,6 @@ class Game extends NewState {
 		if (this.player.x>20){
 			this.UI.update();
 		}
-
-		let OffsetX = 0;
 
 		//region Collision
 
@@ -325,12 +326,6 @@ class Game extends NewState {
 		//TODO: properly extend array types
 		this.allObjects = (this.allObjects:any).clean();
 
-		//var i2 = i;
-		let Enemy:Vector|null;
-		let	EnemyToCompare:Vector|null;
-		let	EnemyToCompareDifference:Vector|null;
-		let diff;
-
 		//clear and reload list of objects to check
 		this.rtree.clear();
 		this.rtree.load(this.allObjects);
@@ -353,7 +348,12 @@ class Game extends NewState {
 			//get working object
 			this.objectA = this.rtreeGroupA[i];
 			this.objectA.collision = 0;
-			this.objectA.priority = 100 - Math.floor(-this.objectA.getY()/100);
+			//this.objectA.priority = 100 - Math.floor(-this.objectA.getY()/100);
+
+			this.workingBoundingBox.position = new Vector(
+				this.objectA._boundingBoxWidth+(this.objectA._boundingBoxWidth/360),
+				this.objectA._boundingBoxHeight+(this.objectA._boundingBoxHeight/360)
+			);
 
 			//find objects that collide with objects in view TODO: possibly create new RTREE for these? no maybe? idk
 			this.rtreeGroupB = this.rtree.search(this.objectA);
@@ -366,18 +366,36 @@ class Game extends NewState {
 				this.objectB = this.rtreeGroupB[i];
 				this.objectB.collision = 0.2;
 
-				EnemyToCompareDifference = Vector.Difference(this.objectA, this.objectB);
+				//calculate difference between objects
+				this.diff = Vector.Difference(this.objectA, this.objectB);
+				this.workingComparison = Vector.Difference(this.objectA, this.objectB);
 
-				let d = this.objectA._boundingBoxWidth+(this.objectA._boundingBoxWidth/1000);
-				let d2 = this.objectA._boundingBoxHeight+(this.objectA._boundingBoxHeight/1000);
+				//objects intersect
+				if (this.objectB.intersects1d(this.workingComparison.x,-this.workingBoundingBox.x,this.workingBoundingBox.x))
+				if (this.objectB.intersects1d(this.workingComparison.y,-this.workingBoundingBox.y,this.workingBoundingBox.y)){
 
-				if (EnemyToCompareDifference.x<d)
-				if (EnemyToCompareDifference.x>-d)
-				if (EnemyToCompareDifference.y<d2)
-				if (EnemyToCompareDifference.y>-d2){
+					this.objectB.move(new Vector(-this.workingComparison.x/100,0))
+					this.objectB.collision = 0.3;
+					this.objectA.collision = 0.3;
+					// - Math.random()*1/100;//compare_enemy.velocity.x+=Enemy.dir/1.5,collision = true;
+				}else{
 
-					this.objectB.move(new Vector((EnemyToCompareDifference.x)/-75 ,(EnemyToCompareDifference.y)/-200));
-					//this.objectA.move(new Vector((EnemyToCompareDifference.x)/75 ,(EnemyToCompareDifference.y)/200));
+					//If overlapping
+					if (this.workingComparison.x>-0.5)
+					if (this.workingComparison.x<0.5){
+						this.objectB.move(new Vector(1,0))
+						this.objectB.collision = 0.4;
+						this.objectA.collision = 0.4;
+					}
+				}
+				continue;
+				if (this.workingComparison.x<d)
+				if (this.workingComparison.x>-d)
+				if (this.workingComparison.y<d2)
+				if (this.workingComparison.y>-d2){
+
+					this.objectB.move(new Vector((this.workingComparison.x)/-75 ,(this.workingComparison.y)/-200));
+					//this.objectA.move(new Vector((this.diff.x)/75 ,(this.diff.y)/200));
 
 					this.objectB.collision = 0.3;
 					this.objectA.collision = 0.3;
@@ -386,16 +404,16 @@ class Game extends NewState {
 					//this.rtreeGroupA[i].priority = 1000 + this.rtreeGroupA[i].y/this.rtreeGroupA[i].x;
 				}
 				d /=2;
-				if (EnemyToCompareDifference.x<d)
-				if (EnemyToCompareDifference.x>-d)
-				if (EnemyToCompareDifference.y<d)
-				if (EnemyToCompareDifference.y>-d){
+				if (this.workingComparison.x<d)
+				if (this.workingComparison.x>-d)
+				if (this.workingComparison.y<d)
+				if (this.workingComparison.y>-d){
 
 					this.objectB.collision = 0.4;
 					this.objectA.collision = 0.4;
 				}
 
-				EnemyToCompareDifference = null;
+				this.workingComparison = null;
 
 				//endregion collision
 			}

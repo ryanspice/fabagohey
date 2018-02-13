@@ -66,9 +66,10 @@ export default class Skeleton extends RagPhysics {
 		this.timeout = this.timeoutmax;
 		this.off.x = 1000;
 		this.index = 0;
-				this.index+=Math.round(Math.random()*25);
+		this.index+=Math.round(Math.random()*25);
 
 		this.agility = 4;
+		this.agility+=Math.round(Math.random()*0.1);
 		this.respawn();
 		this.setState('walk');
 
@@ -314,9 +315,9 @@ export default class Skeleton extends RagPhysics {
 
 	/**/
 
-	checkActive(e2:ISprite|null){
-
-		if (this.pState === 'dead' || this === e2){
+	checkActive(e2:ISprite|null, camera:any){
+		
+		if (this.pState === 'dead' || this === e2 || this.delete==true){
 
 			return null;
 		}
