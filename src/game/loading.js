@@ -10,14 +10,15 @@ import {
 	IApp,
 	IGraphics,
 	IVisuals,
-	IState,
-	IGamepad
+	IState
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 import Spinner from './ui/spinner';
 import NewState from './core/newstate';
 import XHRRequest from './core/network/XHRRequest';
+
+import Game from './game';
 
 import {
 	StatsBuffer
@@ -43,7 +44,7 @@ class Loading extends NewState {
 	static app:IApp;
 	static graphics:?IGraphics;
 	static visuals:IVisuals;
-	static gamepad:?IGamepad;
+	static gamepad:?any;
 
 	static spinner:Spinner;
 	static BackgroundManager:BackgroundController;
