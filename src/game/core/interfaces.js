@@ -6,6 +6,12 @@ export interface IState {
 
 }
 
+export type IXHRErrors = {
+
+	empty:XHRError,
+
+}
+
 export type dtoSpriteDataList = string[];
 export type dtoBatchDataValidation = dtoBatchData|HTMLImageElement|number|string;
 export type dtoBatchData = dtoDrawData|Image;
@@ -24,4 +30,8 @@ export type dtoDrawData = {
 	h:number,
 	visuals:any,
 	map?:Function,
+}
+
+export type XHRError = {
+	error:string;
 }

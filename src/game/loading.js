@@ -1,5 +1,7 @@
 //@flow
 
+//region imports
+
 import {
 	State
 } from 'ryanspice2016-spicejs';
@@ -8,13 +10,15 @@ import {
 	IApp,
 	IGraphics,
 	IVisuals,
-	IState
+	IState,
+	IGamepad
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
 import Game from './game';
 import Spinner from './ui/spinner';
-import NewState from './core/newstate.js';
+import NewState from './core/newstate';
+import XHRRequest from './core/network/XHRRequest';
 
 import {
 	StatsBuffer
@@ -24,6 +28,12 @@ import {
 	BackgroundController
 } from './background/background';
 
+//endregion imports
+
+/* TEMP: DATA API */
+const fetchAPI = 'http://ryanspice.com/api/fabagohey/index.php';
+const fetchXHR = async (url) => await (new XHRRequest(fetchAPI + url))
+
 // for Loading Loading Handler
 let lastError = 0;
 
@@ -31,9 +41,9 @@ let lastError = 0;
 
 class Loading extends NewState {
 
-	static app:?IApp;
+	static app:IApp;
 	static graphics:?IGraphics;
-	static visuals:?IVisuals;
+	static visuals:IVisuals;
 	static gamepad:?IGamepad;
 
 	static spinner:Spinner;
@@ -44,21 +54,39 @@ class Loading extends NewState {
 
 	static asyncDoneLoading:boolean = false;
 
+	static server:any;
+
 	/* Pass self into Sprite for secure inheritence ( SS ) */
 
 	constructor(){
 
 		super(Loading);
-
 	}
 
-	/* Initalize objects and load sprites */
+	/* Initalize references and load images */
 
 	static async init():Promise<void> {
+
+		this.server = (await fetchXHR('?client=fabagohey&version=0.1&spicejs=feb2018&time=1000'+new Date().getTime())).data();
 
 		//TODO: build into SpiceJS
 		this.asyncDoneLoading = false;
 		this.app.client.loader.graphics = await this.graphics;
+
+		//region Override Vector
+		/*
+		Vector.prototype.difference = new Vector();
+		Vector.prototype.Difference = function(vector:Vector){
+
+			this.difference.x = this.difference.x - vector.x;
+			this.difference.y = this.difference.y - vector.y;
+
+			return this.difference;
+
+		}
+		*/
+
+		//endregion
 
 		//region Override Visuals
 
@@ -134,11 +162,11 @@ class Loading extends NewState {
 		//Build gotoGame Function (lol)
 		this.gotoGame = ()=>{
 
+			//Delete spinner sprites from memory
 			for(let i=8;i>=0;--i){
 				this.spinner.sprites[i].delete = true;
 			}
 
-			//this.spinner = null;
 			this.visuals.PriorityRegistry.reverse(); //TODO: mitigate this
 			this.app.client.update.state = new State(Game);
 
@@ -171,7 +199,7 @@ class Loading extends NewState {
 		this.asyncDoneLoading = true;
 	}
 
-	/* Update objects */
+	/* */
 
 	static update(){
 
@@ -243,7 +271,7 @@ class Loading extends NewState {
 
 	};
 
-	/* UI Overlay*/
+	/* */
 
 	static draw(){
 
