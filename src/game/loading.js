@@ -15,7 +15,6 @@ import {
 	// $FlowFixMe
 } from '../../node_modules/ryanspice2016-spicejs/src/modules/core/interfaces/ITypes.js';
 
-import Game from './game';
 import Spinner from './ui/spinner';
 import NewState from './core/newstate';
 import XHRRequest from './core/network/XHRRequest';
@@ -30,9 +29,9 @@ import {
 
 //endregion imports
 
-/* TEMP: DATA API */
+/* TEMP: add fetch API to SpiceJS - DATA API */
 const fetchAPI = 'http://ryanspice.com/api/fabagohey/index.php';
-const fetchXHR = async (url) => await (new XHRRequest(fetchAPI + url))
+const fetchXHR = async (url) => await (new XHRRequest(fetchAPI + url));
 
 // for Loading Loading Handler
 let lastError = 0;
