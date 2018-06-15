@@ -4,7 +4,7 @@ declare var Vector;
 
 import Player from './player';
 
-import RagPhysics from './ragphysics';
+import Enemy from './enemy';
 
 import {
 	ISprite,
@@ -25,35 +25,23 @@ import {
 //const _AgilityIncrease_ = 0.05;
 const _AgilityIncrease_ = 0.15;
 
-
 let date = new Date();
-export default class Skeleton extends RagPhysics {
 
-	tick:Timer = new Timer(120);
-	collision:number;
+export default class Skeleton extends Enemy {
 
-	s:number;
-	a:number;
-	c:number;
-	xx:number;
-	yy:number;
-	w:number;
-	h:number;
+	static sprSkeleton:Array<any>;
+	static sprIdle:Array<any>;
+	static sprWalk:Array<any>;
+
 	pState:string;
 	dS:number;
 	timeoutmax:number;
 	timeout:number;
 
-	hits:number;
-	agility:number;
-	index:number;
-
-	off:Vector = new Vector(0,0);
-
 	_boundingBoxWidth:number = 12;
 	_boundingBoxHeight:number = 16;
 
-	game:any;
+	tick:Timer = new Timer(120);
 
 	/**/
 
@@ -68,81 +56,11 @@ export default class Skeleton extends RagPhysics {
 		this.index = 0;
 		this.index+=Math.round(Math.random()*25);
 
-		this.agility = 4;
+		this.agility = 2 + this.index/10;
 		this.agility+=Math.round(Math.random()*0.1);
+
 		this.respawn();
 		this.setState('walk');
-
-	}
-
-	/**/
-
-	respawn(){
-
-		if (this.tick.next()){
-
-			return;
-		}
-
-		this.agility = 4;
-		this.hits = 0;
-
-		this.index+=Math.round(Math.random()*25);
-		this.agility+=Math.random()*_AgilityIncrease_*(this.position.x/1000);
-
-		this.setState('idle');
-		this.position.x = (this.game.player.position.x + ( (Math.random() < 0.5 ? -0.25 : 1)*380) ) - this.off.x;
-
-	}
-
-	/**/
-
-	collision(){
-
-
-
-	}
-
-	/* Assign state and image for the state */
-
-	setState(str:string){
-
-		switch(str){
-
-			case 'idle':
-
-			this.pState = 'idle';
-			this.image_index = (Skeleton:any).sprIdle;
-
-			break;
-
-			case 'walk':
-
-			this.pState = 'walk';
-			this.image_index = (Skeleton:any).sprWalk;
-
-			break;
-			case 'dead':
-
-			this.pState = 'dead';
-
-			this.image_index = (Skeleton:any).sprSkeleton[5];
-
-			break;
-			case 'attack':
-
-			this.pState = 'attack';
-			this.image_index = (Skeleton:any).sprSkeleton[2];
-
-			break;
-			case 'hit':
-
-			this.pState = 'hit';
-			this.image_index = (Skeleton:any).sprSkeleton[3];
-
-			break;
-
-		}
 
 	}
 
@@ -155,7 +73,7 @@ export default class Skeleton extends RagPhysics {
 
 		if (this.game.player){
 
-			this.move(new Vector(-((this.game.player.velocity.x)*0.25)/(4-2.25),((this.game.player.velocity.y)*0.8)/(4-2.25)));
+			this.velocity = Vector.Combine(this.velocity,new Vector(-((this.game.player.velocity.x)*0.25)/(4-2.25),((this.game.player.velocity.y)*0.8)/(4-2.25)));
 
 		}
 
@@ -221,7 +139,7 @@ export default class Skeleton extends RagPhysics {
 				if (this.getX()>this.game.player.getX())
 				this.s = -1,velX -= Math.sin(this.index/360) * this.agility;
 
-				this.move(new Vector(velX,velY))
+				this.velocity = Vector.Combine(this.velocity,new Vector(velX,velY))
 
 			break;
 
@@ -279,6 +197,7 @@ export default class Skeleton extends RagPhysics {
 					//this.x+=800;
 
 				}
+
 				this.x-=((7-this.index)/10)*this.s;
 				this.hit = false;
 
@@ -313,48 +232,5 @@ export default class Skeleton extends RagPhysics {
 
 	}
 
-	/**/
-
-	checkActive(e2:ISprite|null, camera:any){
-		
-		if (this.pState === 'dead' || this === e2 || this.delete==true){
-
-			return null;
-		}
-
-		return this;
-	}
-
-	/**/
-
-	draw(){
-
-		//this.update();
-
-		if ((this.getX()>330||(this.getX()<-10)))
-			return;
-
-		if (this.pState == 'dead'){
-
-			if (this.dS<0){
-				this.visuals.image_flip(-1 + this.getX(),1);
-				this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h);
-			} else {
-				this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h);
-			} if (this.dS<0) {
-				this.visuals.image_flip(-1 + this.getX(),1);
-			}
-
-			return;
-		}
-
-		if (this.s<0)
-			this.visuals.image_flip(-1 + this.getX(),1),this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h)
-		else
-			this.visuals._image_part(this.img,this.getX(),this.getY(),this.s,this.a,this.c,this.xx,this.yy,this.w,this.h);
-		if (this.s<0)
-			this.visuals.image_flip(-1 + this.getX(),1);
-
-	}
 
 }
