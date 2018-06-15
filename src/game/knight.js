@@ -1,8 +1,8 @@
 //@flow
 
-import RagPhysics from './ragphysics';
+import LoosePhysics from "./core/dynamics/loose-physics";
 
-export default class Knight extends RagPhysics {
+export default class Knight extends LoosePhysics {
 
 	type:string;
 	dir:number;
